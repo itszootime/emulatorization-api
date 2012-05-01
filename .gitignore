@@ -1,0 +1,10 @@
+.DS_store
+.classpath
+.project
+.settings
+src/main/resources/config.yml
+src/main/webapp/samples
+src/test
+target/
+documentation.json
+samples.txt
