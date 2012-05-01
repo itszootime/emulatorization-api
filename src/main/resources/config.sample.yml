@@ -8,4 +8,4 @@ rserve:
   port: 44445
 
 webapp:
-  url: http://localhost:8080/emulation-tools-api
+  url: http://localhost:8080/emulatorization-api
