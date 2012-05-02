@@ -167,6 +167,7 @@
         </executions>
       </plugin>
     </plugins>
+    <finalName>emulatorization-api</finalName>
   </build>
 
 </project>
