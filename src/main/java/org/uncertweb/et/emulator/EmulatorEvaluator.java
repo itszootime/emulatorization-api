@@ -42,8 +42,8 @@ public class EmulatorEvaluator {
 			}
 		}
 
-		// get inputs values		
-		List<String> designInputIdentifiers = new ArrayList<String>();
+		// get input x values, filtering fixed	
+		List<String> designInputIdentifiers = design.getInputIdentifiers();
 		Double[][] xx = new Double[design.getSize()][];
 		for (int i = 0; i < design.getSize(); i++) {
 			xx[i] = new Double[variableInputIdentifiers.size()];
@@ -57,8 +57,7 @@ public class EmulatorEvaluator {
 			}
 		}
 		
-		Double[][] x = design.getPoints();
-		request.addParameter(new MLMatrix(x));
+		request.addParameter(new MLMatrix(xx));
 		
 		// training data
 		Double[][] xtrn = emulator.getTrainingDesign().getPoints();
