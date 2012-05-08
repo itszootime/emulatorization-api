@@ -1,5 +1,10 @@
 package org.uncertweb.et.sensitivity;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,17 +55,41 @@ public class Sobol {
 			// generate results
 			List<SobolOutputResult> results = new ArrayList<SobolOutputResult>();
 			for (Output output : outputs) {
-				// set y, triggers sa
-				runner.setY(processResult, output.getIdentifier());
-
-				// get sa results
-				results.add(runner.getResult(plot));
+				try {
+					// set y, triggers sa
+					runner.setY(processResult, output.getIdentifier());
+	
+					// get sa results
+					results.add(runner.getResult(plot));
+				}
+				catch (REngineException e) {
+					// FIXME: repeated below, plus useful for all R interaction
+					String message = (runner != null ? runner.getLastError() : null);
+					if (message == null) {
+						message = "Problem evaluating R expression.";
+					}
+					else {
+						message = "From R: " + message;
+					}
+					// very hacky
+			        BufferedImage img = new BufferedImage(500, 100, BufferedImage.TYPE_INT_ARGB);
+			        Graphics2D g2d = img.createGraphics();
+			        g2d.setPaint(Color.red);
+			        g2d.setFont(new Font("Serif", Font.BOLD, 20));
+			        FontMetrics fm = g2d.getFontMetrics();
+			        int x = 5;
+			        int y = fm.getHeight() + 5;
+			        g2d.drawString(message, x, y);
+			        g2d.dispose();
+					new SobolOutputResult(output.getIdentifier(), new ArrayList<SobolInputResult>(), img);
+					
+					//throw new SobolException(message);
+				}
 			}
 			
 			return results;
 		}
 		catch (REngineException e) {
-			// FIXME: repeated below, plus useful for all R interaction
 			String message = (runner != null ? runner.getLastError() : null);
 			if (message == null) {
 				message = "Problem evaluating R expression.";

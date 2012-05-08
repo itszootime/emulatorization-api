@@ -48,7 +48,7 @@ public class Validator {
 			Double rmse = Validator.calculateRMSE(measurements.getResults(outputIdentifier), processResults.getResults(outputIdentifier));
 			
 			// add to result
-			ValidatorOutputResult outputResult = new ValidatorOutputResult(outputIdentifier, zScores, rmse);
+			ValidatorOutputResult outputResult = new ValidatorOutputResult(outputIdentifier, zScores, null, null, null, rmse);
 			outputResults.add(outputResult);
 		}
 		
@@ -97,7 +97,7 @@ public class Validator {
 		
 		// construct result		
 		List<ValidatorOutputResult> outputResults = new ArrayList<ValidatorOutputResult>();
-		ValidatorOutputResult outputResult = new ValidatorOutputResult(outputId, zScores, rmse);
+		ValidatorOutputResult outputResult = new ValidatorOutputResult(outputId, zScores, processResults, meanResults, covarianceResults, rmse);
 		outputResults.add(outputResult);
 		ValidatorResult result = new ValidatorResult(outputResults, processDuration, emulatorDuration);
 		
