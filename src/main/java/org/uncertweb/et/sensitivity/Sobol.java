@@ -81,7 +81,7 @@ public class Sobol {
 			        int y = fm.getHeight() + 5;
 			        g2d.drawString(message, x, y);
 			        g2d.dispose();
-					new SobolOutputResult(output.getIdentifier(), new ArrayList<SobolInputResult>(), img);
+					results.add(new SobolOutputResult(output.getIdentifier(), new ArrayList<SobolInputResult>(), img));
 					
 					//throw new SobolException(message);
 				}
