@@ -78,6 +78,9 @@ public class SobolRunner {
 	}
 
 	public SobolOutputResult getResult(boolean doPlot) throws RserveException, REXPMismatchException {
+		// log
+		logger.info("Generating result for output '" + outputIdentifier + "'.");
+		
 		// TODO: could cache result
 		List<SobolInputResult> inputResults = new ArrayList<SobolInputResult>();
 		List<String> inputIdentifiers = x.getInputIdentifiers();
