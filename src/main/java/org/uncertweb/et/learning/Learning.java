@@ -27,7 +27,7 @@ public class Learning {
 	
 	public static LearningResult learn(Design design, ProcessEvaluationResult evaluationResult, String selectedOutputIdentifier, int trainingSetSize, String covarianceFunction, double lengthScale, double processVariance, Double nuggetVariance, String meanFunction) throws LearningException {
 		// setup request
-		MLRequest request = new MLRequest("learnEmulator", 5);
+		MLRequest request = new MLRequest("learn_emulator", 5);
 		
 		// fill design matrix with fixed inputs
 		MLMatrix x = new MLMatrix(design.getPoints());
