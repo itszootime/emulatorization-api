@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uncertweb.et.Config;
 import org.uncertweb.et.ConfigException;
 import org.uncertweb.et.MATLAB;
 import org.uncertweb.et.design.Design;
@@ -33,6 +34,7 @@ public class EmulatorEvaluator {
 		
 		// create matlab request
 		MLRequest request = new MLRequest("runEmulator", 2);
+		request.addParameter(new MLString((String)Config.getInstance().get("matlab", "gpml_path")));
 		
 		// filter out fixed
 		List<String> variableInputIdentifiers = new ArrayList<String>();

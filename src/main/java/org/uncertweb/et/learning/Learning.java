@@ -7,6 +7,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uncertweb.et.Config;
 import org.uncertweb.et.ConfigException;
 import org.uncertweb.et.MATLAB;
 import org.uncertweb.et.design.Design;
@@ -28,6 +29,7 @@ public class Learning {
 	public static LearningResult learn(Design design, ProcessEvaluationResult evaluationResult, String selectedOutputIdentifier, int trainingSetSize, String covarianceFunction, double lengthScale, double processVariance, Double nuggetVariance, String meanFunction) throws LearningException {
 		// setup request
 		MLRequest request = new MLRequest("learn_emulator", 5);
+		request.addParameter(new MLString((String)Config.getInstance().get("matlab", "gpml_path")));
 		
 		// fill design matrix with fixed inputs
 		MLMatrix x = new MLMatrix(design.getPoints());

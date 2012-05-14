@@ -2,6 +2,7 @@ matlab:
   host: localhost
   port: 44444
   # proxy: http://somehost/someproxy
+  gpml_path: /path/to/gpmlab
 
 rserve:
   host: localhost

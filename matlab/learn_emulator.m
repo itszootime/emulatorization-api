@@ -1,4 +1,4 @@
-function [ predmean, predcov, xtrn, ytrn, covfpar ] = learn_emulator( x, y, trnsize, covfname, covfpar, meanfname, meanfpar )
+function [ predmean, predcov, xtrn, ytrn, covfpar ] = learn_emulator( gpml_path, x, y, trnsize, covfname, covfpar, meanfname, meanfpar )
   % x - real data input
   % y - real data output
   % trnsize - the desired size of the training set
@@ -7,11 +7,11 @@ function [ predmean, predcov, xtrn, ytrn, covfpar ] = learn_emulator( x, y, trns
   % meanfname - mean function name
   % meanfpar - mean function parameters
 
-  %need to make sure gpmlab is in path first!
-  %prev = pwd();
-  %cd('gpmlab');
-  %setpath();
-  %cd(prev);
+  % need to make sure gpmlab is in path first!
+  prev = pwd();
+  cd(gpml_path);
+  setpath();
+  cd(prev);
 
   % -----------
   % Select some real data points for training set
