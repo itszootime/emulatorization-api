@@ -33,7 +33,7 @@ public class EmulatorEvaluator {
 		}
 		
 		// create matlab request
-		MLRequest request = new MLRequest("runEmulator", 2);
+		MLRequest request = new MLRequest("run_emulator", 2);
 		request.addParameter(new MLString((String)Config.getInstance().get("matlab", "gpml_path")));
 		
 		// filter out fixed
