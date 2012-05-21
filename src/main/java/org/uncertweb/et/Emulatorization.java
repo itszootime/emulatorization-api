@@ -114,7 +114,7 @@ public class Emulatorization {
 			else if (request instanceof LearningRequest) {
 				LearningRequest lRequest = (LearningRequest) request;
 
-				LearningResult result = Learning.learn(lRequest.getDesign(), lRequest.getEvaluationResult(), lRequest.getSelectedOutputIdentifier(), lRequest.getTrainingSetSize(), lRequest.getCovarianceFunction(), lRequest.getLengthScale(), lRequest.getProcessVariance(), lRequest.getNuggetVariance(), lRequest.getMeanFunction());
+				LearningResult result = Learning.learn(lRequest.getDesign(), lRequest.getEvaluationResult(), lRequest.getSelectedOutputIdentifier(), lRequest.getTrainingSetSize(), lRequest.getCovarianceFunction(), lRequest.getLengthScale(), lRequest.getProcessVariance(), lRequest.getNuggetVariance(), lRequest.getMeanFunction(), lRequest.isNormalisation());
 
 				return new LearningResponse(result);
 			}

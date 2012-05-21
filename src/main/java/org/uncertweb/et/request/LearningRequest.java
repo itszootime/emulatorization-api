@@ -18,8 +18,14 @@ public class LearningRequest extends Request {
 	private double processVariance;
 	private Double nuggetVariance;
 	
+	private boolean normalisation;
+	
 	public LearningRequest() {
 		
+	}
+
+	public boolean isNormalisation() {
+		return normalisation;
 	}
 
 	public Design getDesign() {

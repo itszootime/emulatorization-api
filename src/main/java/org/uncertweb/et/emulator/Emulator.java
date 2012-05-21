@@ -28,6 +28,12 @@ public class Emulator {
 	private double processVariance;
 	private Double nuggetVariance;
 	
+	// normalisation
+	private double[] designMean;
+	private double[] designStdDev;
+	private double evaluationResultMean;
+	private double evaluationResultStdDev;
+	
 	public List<Input> getInputs() {
 		return inputs;
 	}
@@ -63,5 +69,19 @@ public class Emulator {
 	public Double getNuggetVariance() {
 		return nuggetVariance;
 	}
+	public double[] getDesignMean() {
+		return designMean;
+	}
+	public double[] getDesignStdDev() {
+		return designStdDev;
+	}
+	public double getEvaluationResultMean() {
+		return evaluationResultMean;
+	}
+	public double getEvaluationResultStdDev() {
+		return evaluationResultStdDev;
+	}
+	
+	
 	
 }
