@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.math.stat.descriptive.moment.Mean;
-import org.apache.commons.math.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 public class NormalisedDesign extends Design {
 
@@ -55,14 +54,12 @@ public class NormalisedDesign extends Design {
 		List<String> identifiers = design.getInputIdentifiers();
 
 		// compute mean and stddev
-		Mean m = new Mean();
-		StandardDeviation sd = new StandardDeviation();
 		double[] mean = new double[design.getSize()];
 		double[] stdDev = new double[design.getSize()];
 		for (int i = 0; i < identifiers.size(); i++) {
-			double[] primitive = ArrayUtils.toPrimitive(design.getPoints(identifiers.get(i)));
-			mean[i] = m.evaluate(primitive);
-			stdDev[i] = sd.evaluate(primitive);
+			DescriptiveStatistics stats = new DescriptiveStatistics(ArrayUtils.toPrimitive(design.getPoints(identifiers.get(i))));
+			mean[i] = stats.getMean();
+			stdDev[i] = stats.getStandardDeviation();
 		}
 
 		// return

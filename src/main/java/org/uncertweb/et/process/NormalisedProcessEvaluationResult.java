@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.math.stat.descriptive.moment.Mean;
-import org.apache.commons.math.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.uncertweb.et.design.NormalisedDesign;
 
 /**
@@ -62,14 +61,12 @@ public class NormalisedProcessEvaluationResult extends ProcessEvaluationResult {
 		List<String> identifiers = result.getOutputIdentifiers();
 
 		// compute mean and stddev
-		Mean m = new Mean();
-		StandardDeviation sd = new StandardDeviation();
 		double[] mean = new double[result.getSize()];
 		double[] stdDev = new double[result.getSize()];
 		for (int i = 0; i < identifiers.size(); i++) {
-			double[] primitive = ArrayUtils.toPrimitive(result.getResults(identifiers.get(i)));
-			mean[i] = m.evaluate(primitive);
-			stdDev[i] = sd.evaluate(primitive);
+			DescriptiveStatistics stats = new DescriptiveStatistics(ArrayUtils.toPrimitive(result.getResults(identifiers.get(i))));
+			mean[i] = stats.getMean();
+			stdDev[i] = stats.getStandardDeviation();
 		}
 
 		// return
