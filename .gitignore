@@ -5,7 +5,8 @@
 .settings
 src/main/resources/config.yml
 src/main/webapp/samples
-src/test
+src/test/resources
+src/test/java/org/uncertweb/et/exp
 target/
 documentation.json
 samples.txt
