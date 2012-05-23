@@ -103,5 +103,21 @@ public class NormalisedDesign extends Design {
 
 		return design;
 	}
+	
+	public double[] getMeans() {
+		double[] means = new double[inputIdentifierList.size()];
+		for (int i = 0; i < inputIdentifierList.size(); i++) {
+			means[i] = meanMap.get(inputIdentifierList.get(i));
+		}
+		return means;
+	}
+	
+	public double[] getStdDevs() {
+		double[] stdDevs = new double[inputIdentifierList.size()];
+		for (int i = 0; i < inputIdentifierList.size(); i++) {
+			stdDevs[i] = stdDevMap.get(inputIdentifierList.get(i));
+		}
+		return stdDevs;
+	}
 
 }
