@@ -149,7 +149,7 @@ public class Learning {
 			if (normalisation) {
 				NormalisedDesign nd = (NormalisedDesign)x;
 				NormalisedProcessEvaluationResult nper = (NormalisedProcessEvaluationResult)y;
-				return new LearningResult(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, optCovParams[0], optCovParams[1] * optCovParams[1], nd.getMeans(), nd.getStdDevs(), nper.getMeans(), nper.getStdDevs());
+				return new LearningResult(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, optCovParams[0], optCovParams[1] * optCovParams[1], nd.getMeans(), nd.getStdDevs(), nper.getMean(selectedOutputIdentifier), nper.getStdDev(selectedOutputIdentifier));
 			}
 			else {
 				return new LearningResult(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, optCovParams[0], optCovParams[1] * optCovParams[1]);
