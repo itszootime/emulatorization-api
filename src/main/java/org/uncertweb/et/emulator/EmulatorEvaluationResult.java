@@ -74,4 +74,33 @@ public class EmulatorEvaluationResult {
 		return meanMap.get(outputIdentifiers.get(0)).length;
 	}
 	
+	public EmulatorEvaluationResult unnormalise(double mean, double stdDev) {
+		// construct
+		EmulatorEvaluationResult ueer = new EmulatorEvaluationResult();
+		
+		// only one output
+		String identifier = getOutputIdentifiers().get(0);
+		Double[] predictedMean = getMeanResults(identifier);
+		Double[] predictedCovariance = getCovarianceResults(identifier);
+		Double[] predictedStdDev = new Double[predictedCovariance.length];
+		for (int i = 0; i < predictedCovariance.length; i++) {
+			predictedStdDev[i] = Math.sqrt(predictedCovariance[i]);
+		}
+		
+		// unnormalise
+		Double[] unMean = new Double[predictedMean.length];
+		Double[] unCovariance = new Double[predictedCovariance.length];
+		for (int i = 0; i < predictedMean.length; i++) {
+			unMean[i] = predictedMean[i] * stdDev + mean;
+			double unStdDev = predictedStdDev[i] * stdDev;
+			unCovariance[i] = Math.pow(unStdDev, 2);
+		}
+		
+		// add to result
+		ueer.addResults(identifier, unMean, unCovariance);
+		
+		// all done
+		return ueer;
+	}
+	
 }

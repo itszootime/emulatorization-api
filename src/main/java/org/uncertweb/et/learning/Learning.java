@@ -11,6 +11,8 @@ import org.uncertweb.et.Config;
 import org.uncertweb.et.ConfigException;
 import org.uncertweb.et.MATLAB;
 import org.uncertweb.et.design.Design;
+import org.uncertweb.et.design.NormalisedDesign;
+import org.uncertweb.et.process.NormalisedProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
@@ -27,51 +29,17 @@ public class Learning {
 	private static final Logger logger = LoggerFactory.getLogger(Learning.class);
 
 	public static LearningResult learn(Design design, ProcessEvaluationResult evaluationResult, String selectedOutputIdentifier, int trainingSetSize, String covarianceFunction, double lengthScale, double processVariance, Double nuggetVariance, String meanFunction, boolean normalisation) throws LearningException {
-		try {
-			// setup x and y
-			MLMatrix x = new MLMatrix(design.getPoints());
-			Double[] results = evaluationResult.getResults(selectedOutputIdentifier);
-			double[][] yMatrix = new double[results.length][];
-			for (int i = 0; i < results.length; i++) {
-				yMatrix[i] = new double[] { results[i] };
-			}
-			MLMatrix y = new MLMatrix(yMatrix);
-
-			// from normalisation
-			double[] designMean = null;
-			double[] designStdDev = null;
-			Double evaluationResultMean = null;
-			Double evaluationResultStdDev = null;
-
+			// setup x
+			Design x = design;
+			
+			// setup y
+			ProcessEvaluationResult y = evaluationResult;
+			
 			// normalise?
-			if (normalisation) {				
-				// build request
-				MLRequest nrequest = new MLRequest("normalise", 3);
-				nrequest.addParameter(x);
-
-				// send
-				logger.info("Normalising inputs...");
-				MLResult nresult = MATLAB.sendRequest(nrequest);
-				x = nresult.getResult(0).getAsMatrix();
-				if (design.getInputIdentifiers().size() > 1) {
-					designMean = nresult.getResult(1).getAsArray().getArray();
-					designStdDev = nresult.getResult(2).getAsArray().getArray();
-				}
-				else {
-					designMean = new double[] { nresult.getResult(1).getAsScalar().getScalar() };
-					designStdDev = new double[] { nresult.getResult(2).getAsScalar().getScalar() };
-				}
-
-				// and for y
-				nrequest = new MLRequest("normalise", 3);
-				nrequest.addParameter(y);
-
-				// send
-				logger.info("Normalising output...");
-				nresult = MATLAB.sendRequest(nrequest);
-				y = nresult.getResult(0).getAsMatrix();
-				evaluationResultMean = nresult.getResult(1).getAsScalar().getScalar();
-				evaluationResultStdDev = nresult.getResult(2).getAsScalar().getScalar();
+			if (normalisation) {
+				logger.info("Normalising inputs and outputs...");
+				x = NormalisedDesign.fromDesign(x);
+				y = NormalisedProcessEvaluationResult.fromProcessEvaluationResult(y);
 			}
 
 			// setup request
@@ -79,10 +47,16 @@ public class Learning {
 			request.addParameter(new MLString((String)Config.getInstance().get("matlab", "gpml_path")));
 
 			// add x
-			request.addParameter(x);
+			request.addParameter(new MLMatrix(x.getPoints()));
 
 			// add y
-			request.addParameter(y);
+			// select output and transpose
+			Double[] results = y.getResults(selectedOutputIdentifier);
+			double[][] yt = new double[results.length][];
+			for (int i = 0; i < results.length; i++) {
+				yt[i] = new double[] { results[i] };
+			}
+			request.addParameter(new MLMatrix(yt));
 
 			// add training size
 			request.addParameter(new MLScalar(trainingSetSize));
@@ -141,7 +115,7 @@ public class Learning {
 
 
 			// send
-
+		try {
 			MLResult result = MATLAB.sendRequest(request);
 
 			double[] predictedMean = result.getResult(0).getAsArray().getArray();
@@ -173,7 +147,9 @@ public class Learning {
 			trainingEvaluationResult.addResults(selectedOutputIdentifier, ytrnArr);
 
 			if (normalisation) {
-				return new LearningResult(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, optCovParams[0], optCovParams[1] * optCovParams[1], designMean, designStdDev, evaluationResultMean, evaluationResultStdDev);
+				NormalisedDesign nd = (NormalisedDesign)x;
+				NormalisedProcessEvaluationResult nper = (NormalisedProcessEvaluationResult)y;
+				return new LearningResult(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, optCovParams[0], optCovParams[1] * optCovParams[1], nd.getMeans(), nd.getStdDevs(), nper.getMeans(), nper.getStdDevs());
 			}
 			else {
 				return new LearningResult(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, optCovParams[0], optCovParams[1] * optCovParams[1]);
