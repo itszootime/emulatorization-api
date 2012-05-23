@@ -108,7 +108,7 @@ public class Learning {
 			// call matlab to: create training set, setup gp, predict, optimise
 			logger.info("Learning emulator...");
 			for (String identifier : design.getInputIdentifiers()) {
-				DescriptiveStatistics stats = new DescriptiveStatistics(ArrayUtils.toPrimitive(design.getPoints(identifier)));
+				DescriptiveStatistics stats = new DescriptiveStatistics(ArrayUtils.toPrimitive(x.getPoints(identifier)));
 				logger.debug("identifier='" + identifier + "', min=" + stats.getMin() + ", max=" + stats.getMax());
 			}
 			logger.debug("meanfname=" + meanfname + ", meanfpar=" + Arrays.toString(meanfpar) + ", covfname=" + covfname + ", covfpar=" + Arrays.toString(covfpar));
