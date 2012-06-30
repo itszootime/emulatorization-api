@@ -41,10 +41,11 @@ import org.uncertweb.et.response.SensitivityResponse;
 import org.uncertweb.et.response.StatusResponse;
 import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.screening.Screening;
+import org.uncertweb.et.sensitivity.AnalysisOutputResult;
 import org.uncertweb.et.sensitivity.Sobol;
-import org.uncertweb.et.sensitivity.SobolOutputResult;
 import org.uncertweb.et.validation.Validator;
 import org.uncertweb.et.validation.ValidatorResult;
+import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
 
@@ -135,7 +136,7 @@ public class Emulatorization {
 			else if (request instanceof SensitivityRequest) {
 				SensitivityRequest sRequest = (SensitivityRequest) request;
 				
-				List<SobolOutputResult> results;
+				List<AnalysisOutputResult> results;
 				if (sRequest.getEmulator() != null) {
 					results = Sobol.run(sRequest.getEmulator(), sRequest.isPlot(), sRequest.getDesignSize(), sRequest.getNumBoot(), sRequest.getConfidenceLevel());
 				}
@@ -149,13 +150,16 @@ public class Emulatorization {
 				boolean matlabOK = false;
 				String matlabMessage;
 				try {
-					MLRequest mlRequest = new MLRequest("matlabVersion", 1);
+					MLRequest mlRequest = new MLRequest("matlab_version", 1);
 					MLResult result = MATLAB.sendRequest(mlRequest);
 					matlabOK = true;
 					matlabMessage = result.getResult(0).getAsString().getString() + " reporting for duty!";
 				}
 				catch (IOException e) {
 					matlabMessage = "Couldn't connect to MATLAB.";
+				}
+				catch (MLException e) {
+					matlabMessage = "Couldn't get version information from MATLAB.";
 				}
 				
 				boolean rserveOK = false;
