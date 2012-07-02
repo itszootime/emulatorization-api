@@ -201,6 +201,7 @@ public class PSProcessEvaluator extends AbstractProcessEvaluator {
 		}
 		catch (JDOMException e) {
 			// parsing schema problems
+			// TODO: also get here if user gives invalid url
 			throw new ProcessEvaluatorException();
 		}
 	}

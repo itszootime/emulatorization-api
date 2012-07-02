@@ -42,7 +42,7 @@ import org.uncertweb.et.response.StatusResponse;
 import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.screening.Screening;
 import org.uncertweb.et.sensitivity.AnalysisOutputResult;
-import org.uncertweb.et.sensitivity.Sobol;
+import org.uncertweb.et.sensitivity.sobol.Sobol;
 import org.uncertweb.et.validation.Validator;
 import org.uncertweb.et.validation.ValidatorResult;
 import org.uncertweb.matlab.MLException;

@@ -2,17 +2,17 @@ package org.uncertweb.et.response;
 
 import java.util.List;
 
-import org.uncertweb.et.sensitivity.SobolOutputResult;
+import org.uncertweb.et.sensitivity.AnalysisOutputResult;
 
 public class SensitivityResponse extends Response {
 
-	private List<SobolOutputResult> results;
+	private List<AnalysisOutputResult> results;
 
-	public SensitivityResponse(List<SobolOutputResult> results) {
+	public SensitivityResponse(List<AnalysisOutputResult> results) {
 		this.results = results;
 	}
 
-	public List<SobolOutputResult> getResults() {
+	public List<AnalysisOutputResult> getResults() {
 		return results;
 	}
 	

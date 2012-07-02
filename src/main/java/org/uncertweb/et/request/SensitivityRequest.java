@@ -10,6 +10,9 @@ public class SensitivityRequest extends Request {
 	
 	private boolean plot;
 	private int designSize;
+	private String method;
+	
+	// specific to sobol
 	private int numBoot;
 	private double confidenceLevel;
 	
@@ -34,28 +37,12 @@ public class SensitivityRequest extends Request {
 		return confidenceLevel;
 	}
 
-	public void setConfidenceLevel(double confidenceLevel) {
-		this.confidenceLevel = confidenceLevel;
-	}
-
 	public List<Output> getOutputs() {
 		return outputs;
 	}
 
 	public Emulator getEmulator() {
 		return emulator;
-	}
-
-	public void setInputs(List<Input> inputs) {
-		this.inputs = inputs;
-	}
-
-	public void setOutputs(List<Output> outputs) {
-		this.outputs = outputs;
-	}
-
-	public void setEmulator(Emulator emulator) {
-		this.emulator = emulator;
 	}
 
 	public String getServiceURL() {
@@ -70,16 +57,16 @@ public class SensitivityRequest extends Request {
 		return plot;
 	}
 
-	public void setPlot(boolean plot) {
-		this.plot = plot;
-	}
-
 	public int getDesignSize() {
 		return designSize;
 	}
 
 	public int getNumBoot() {
 		return numBoot;
+	}
+
+	public String getMethod() {
+		return method;
 	}
 	
 }
