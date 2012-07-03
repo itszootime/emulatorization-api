@@ -62,9 +62,9 @@ public class Servlet extends HttpServlet {
 			// send our response
 			logger.info("Processing completed successfully.");
 			json.encode(response, writer);
-			StringWriter w = new StringWriter();			
-			json.encode(response, w); // debug code
-			logger.debug(w.toString());
+//			StringWriter w = new StringWriter();			
+//			json.encode(response, w); // debug code
+//			logger.debug(w.toString());
 		}
 		catch (Exception e) {
 			logger.error("Encountered exception during processing.");
