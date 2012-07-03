@@ -103,7 +103,7 @@ public class SobolRunner {
 
 			// add to results
 			// 0 bootstrap replicates only gives a single value, but limited by calling class for now
-			inputResults.add(new AnalysisInputResult(inputIdentifiers.get(i - 1),
+			inputResults.add(new SobolInputResult(inputIdentifiers.get(i - 1),
 				firstArray[0], firstArray[1], firstArray[2], firstArray[3], firstArray[4],
 				totalArray[0], totalArray[1], totalArray[2], totalArray[3], totalArray[4]));
 			

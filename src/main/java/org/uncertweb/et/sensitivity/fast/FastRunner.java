@@ -58,8 +58,6 @@ public class FastRunner {
 		// FIXME: sampleSize cannot be small, otherwise this fails
 		
 		logger.info("Initialising fast99 with n=" + sampleSize + ".");
-		String str = "saFast <- fast99(model = NULL, factors = " + factors + ", n = "
-			+ sampleSize + ", q = " + q + ", q.arg = " + qarg + ")";
 		conn.voidEval("saFast <- fast99(model = NULL, factors = " + factors + ", n = "
 			+ sampleSize + ", q = " + q + ", q.arg = " + qarg + ")");
 
@@ -75,8 +73,6 @@ public class FastRunner {
 		// assign in R
 		conn.assign("y", convertToPrimitiveArray(y));
 		
-		String str = "c(" + StringUtils.join(y, ",") + ")";
-
 		// tell sobol
 		conn.voidEval("tell(saFast, y)");
 	}
@@ -119,7 +115,7 @@ public class FastRunner {
 			double dt = conn.eval("saFast$Dt[" + i + "]").asDouble();
 
 			// add to results
-			inputResults.add(new AnalysisInputResult(inputIdentifiers.get(i - 1), d1, 0, 0, 0, 0, dt, 0, 0, 0, 0));
+			inputResults.add(new FastInputResult(inputIdentifiers.get(i - 1), d1, dt));
 			
 			// do plot if requested			
 			if (doPlot) {

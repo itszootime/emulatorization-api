@@ -16,6 +16,7 @@ import org.uncertweb.et.parameter.VariableInput;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.response.Response;
+import org.uncertweb.et.sensitivity.AnalysisInputResult;
 import org.uncertweb.imagestorage.Base64ImageStorage;
 import org.uncertweb.imagestorage.ImageStorage;
 import org.uncertweb.imagestorage.ImageStorageException;
@@ -269,7 +270,13 @@ public class JSON {
 				
 				return emulatorResult;
 			}
-		});		
+		});	
+		gsonBuilder.registerTypeAdapter(AnalysisInputResult.class, new JsonSerializer<AnalysisInputResult>() {
+			@Override
+			public JsonElement serialize(AnalysisInputResult src, Type typeOfSrc, JsonSerializationContext context) {
+				return context.serialize(src, src.getClass());
+			}			
+		});
 	}
 
 	private void registerInstanceCreators(GsonBuilder gsonBuilder) {

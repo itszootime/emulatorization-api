@@ -42,6 +42,7 @@ import org.uncertweb.et.response.StatusResponse;
 import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.screening.Screening;
 import org.uncertweb.et.sensitivity.AnalysisOutputResult;
+import org.uncertweb.et.sensitivity.fast.Fast;
 import org.uncertweb.et.sensitivity.sobol.Sobol;
 import org.uncertweb.et.validation.Validator;
 import org.uncertweb.et.validation.ValidatorResult;
@@ -50,11 +51,11 @@ import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
 
 public class Emulatorization {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(Emulatorization.class);
-	
+
 	private Emulatorization() {
-		
+
 	}
 
 	// TODO: request object validation.
@@ -78,7 +79,7 @@ public class Emulatorization {
 				ProcessDescription processDescription = description.getProcessDescription(gpdRequest.getProcessIdentifier());
 
 				// FIXME: will return blank response if unsupported data type, should be an exception
-				
+
 				response = new GetProcessDescriptionResponse(processDescription);
 			}
 			else if (request instanceof ScreeningRequest) {				
@@ -87,7 +88,7 @@ public class Emulatorization {
 				int numTraj = sRequest.getNumTrajectories();
 				int discretisationLevel = sRequest.getDiscretisationLevel();
 				int deltaP = sRequest.getDeltaP();
-				
+
 				Screening screening;
 				if (numTraj == 0 && discretisationLevel == 0 && deltaP == 0) {
 					screening = new Screening(sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.getInputs(), sRequest.getOutputs());
@@ -95,14 +96,14 @@ public class Emulatorization {
 				else {
 					screening = new Screening(sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.getInputs(), sRequest.getOutputs(), numTraj, discretisationLevel, deltaP);
 				}
-				
+
 				response = new ScreeningResponse(screening.run());
 			}
 			else if (request instanceof DesignRequest) {
 				DesignRequest dRequest = (DesignRequest) request;
-				
+
 				Design design = LHSDesign.create(dRequest.getInputs(), dRequest.getSize());
-				
+
 				response = new DesignResponse(design);
 			}
 			else if (request instanceof EvaluateProcessRequest) {
@@ -121,9 +122,9 @@ public class Emulatorization {
 			}
 			else if (request instanceof ValidationRequest) {
 				ValidationRequest vRequest = (ValidationRequest) request;
-				
+
 				ValidatorResult result = Validator.validate(vRequest.getServiceURL(), vRequest.getProcessIdentifier(), vRequest.getInputs(), vRequest.getOutputs(), vRequest.getEmulator(), vRequest.getDesignSize());
-				
+
 				return new ValidationResponse(result);
 			}
 			else if (request instanceof EvaluateEmulatorRequest) {
@@ -135,15 +136,25 @@ public class Emulatorization {
 			}
 			else if (request instanceof SensitivityRequest) {
 				SensitivityRequest sRequest = (SensitivityRequest) request;
-				
+
 				List<AnalysisOutputResult> results;
-				if (sRequest.getEmulator() != null) {
-					results = Sobol.run(sRequest.getEmulator(), sRequest.isPlot(), sRequest.getDesignSize(), sRequest.getNumBoot(), sRequest.getConfidenceLevel());
+				if (sRequest.getMethod().equals("sobol")) {
+					if (sRequest.getEmulator() != null) {
+						results = Sobol.run(sRequest.getEmulator(), sRequest.isPlot(), sRequest.getDesignSize(), sRequest.getNumBoot(), sRequest.getConfidenceLevel());
+					}
+					else {
+						results = Sobol.run(sRequest.getInputs(), sRequest.getOutputs(), sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.isPlot(), sRequest.getDesignSize(), sRequest.getNumBoot(), sRequest.getConfidenceLevel());
+					}
 				}
 				else {
-					results = Sobol.run(sRequest.getInputs(), sRequest.getOutputs(), sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.isPlot(), sRequest.getDesignSize(), sRequest.getNumBoot(), sRequest.getConfidenceLevel());
+					if (sRequest.getEmulator() != null) {
+						results = Fast.run(sRequest.getEmulator(), sRequest.isPlot(), sRequest.getDesignSize());
+					}
+					else {
+						results = Fast.run(sRequest.getInputs(), sRequest.getOutputs(), sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.isPlot(), sRequest.getDesignSize());
+					}	
 				}
-				
+
 				return new SensitivityResponse(results);
 			}
 			else if (request instanceof StatusRequest) {
@@ -161,7 +172,7 @@ public class Emulatorization {
 				catch (MLException e) {
 					matlabMessage = "Couldn't get version information from MATLAB.";
 				}
-				
+
 				boolean rserveOK = false;
 				String rserveMessage;
 				RConnection c = null;
@@ -178,7 +189,7 @@ public class Emulatorization {
 						c.close();
 					}
 				}
-				
+
 				return new StatusResponse("I'm working fine!", matlabOK, matlabMessage, rserveOK, rserveMessage);
 			}
 			else {
