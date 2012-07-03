@@ -55,10 +55,10 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 				String processIdentifier = operation.getAttributeValue("name");
 				
 				// maybe some metadata
-				String detail = getDetailMetadata(operation);
+				String description = getDescriptionMetadata(operation);
 
 				// create process
-				ProcessDescription processDescription = new ProcessDescription(processIdentifier, detail);
+				ProcessDescription processDescription = new ProcessDescription(processIdentifier, description);
 
 				try {
 					// for each process, get inputs and outputs
@@ -139,7 +139,7 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 		}
 		
 		// try get some metadata
-		String detail = getDetailMetadata(parameterElement);
+		String detail = getDescriptionMetadata(parameterElement);
 
 		if (dataType != null) {
 			ParameterDescription description = new ParameterDescription(identifier, detail, dataType);
@@ -150,7 +150,7 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 		}
 	}
 	
-	private static String getDetailMetadata(Element element) {
+	private static String getDescriptionMetadata(Element element) {
 		String detail = null;
 		Element annotation = element.getChild("annotation", Namespaces.XSD);
 		if (annotation != null) {
