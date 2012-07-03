@@ -113,9 +113,10 @@ public class FastRunner {
 			
 			double d1 = conn.eval("saFast$D1[" + i + "]").asDouble();
 			double dt = conn.eval("saFast$Dt[" + i + "]").asDouble();
+			double v = conn.eval("saFast$V[" + i + "]").asDouble();
 
 			// add to results
-			inputResults.add(new FastInputResult(inputIdentifiers.get(i - 1), d1, dt));
+			inputResults.add(new FastInputResult(inputIdentifiers.get(i - 1), d1, dt, v));
 			
 			// do plot if requested			
 			if (doPlot) {

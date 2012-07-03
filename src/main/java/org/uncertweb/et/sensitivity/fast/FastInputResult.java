@@ -6,11 +6,13 @@ public class FastInputResult extends AnalysisInputResult {
 
 	private double d1;
 	private double dt;
+	private double v;
 	
-	public FastInputResult(String inputIdentifier, double d1, double dt) {
+	public FastInputResult(String inputIdentifier, double d1, double dt, double v) {
 		super(inputIdentifier);
 		this.d1 = d1;
 		this.dt = dt;
+		this.v = v;
 	}
 
 	public double getD1() {
@@ -20,5 +22,9 @@ public class FastInputResult extends AnalysisInputResult {
 	public double getDt() {
 		return dt;
 	}	
+	
+	public double getV() {
+		return v;
+	}
 	
 }
