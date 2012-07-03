@@ -156,7 +156,9 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 
 		if (dataType != null) {
 			ParameterDescription description = new ParameterDescription(identifier, dataType);
-			description.setDetail(detail);
+			if (detail != null) {
+				description.setDetail(detail.trim());
+			}
 			return description;
 		}
 		else {
