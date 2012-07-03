@@ -53,9 +53,12 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 			for (Object o : operations) {
 				Element operation = (Element) o;
 				String processIdentifier = operation.getAttributeValue("name");
+				
+				// maybe some metadata
+				String detail = getDetailMetadata(operation);
 
 				// create process
-				ProcessDescription processDescription = new ProcessDescription(processIdentifier);
+				ProcessDescription processDescription = new ProcessDescription(processIdentifier, detail);
 
 				try {
 					// for each process, get inputs and outputs
@@ -136,8 +139,20 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 		}
 		
 		// try get some metadata
+		String detail = getDetailMetadata(parameterElement);
+
+		if (dataType != null) {
+			ParameterDescription description = new ParameterDescription(identifier, detail, dataType);
+			return description;
+		}
+		else {
+			throw new UnsupportedDataTypeException();
+		}
+	}
+	
+	private static String getDetailMetadata(Element element) {
 		String detail = null;
-		Element annotation = parameterElement.getChild("annotation", Namespaces.XSD);
+		Element annotation = element.getChild("annotation", Namespaces.XSD);
 		if (annotation != null) {
 			String documentation = annotation.getChildText("documentation", Namespaces.XSD);
 			if (documentation != null) {
@@ -149,21 +164,11 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 					metadata.put(m.group(1), m.group(2));
 				}
 				if (metadata.containsKey("description")) {
-					detail = metadata.get("description");
+					detail = metadata.get("description").trim();
 				}
 			}
 		}
-
-		if (dataType != null) {
-			ParameterDescription description = new ParameterDescription(identifier, dataType);
-			if (detail != null) {
-				description.setDetail(detail.trim());
-			}
-			return description;
-		}
-		else {
-			throw new UnsupportedDataTypeException();
-		}
+		return detail;
 	}
 	
 //	try {

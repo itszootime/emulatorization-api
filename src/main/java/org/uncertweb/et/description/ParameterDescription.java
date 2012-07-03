@@ -1,5 +1,6 @@
 package org.uncertweb.et.description;
 
+
 public class ParameterDescription {
 	
 	public enum DataType { Numeric };
@@ -12,18 +13,12 @@ public class ParameterDescription {
 	private int maxOccurs;
 	
 	public ParameterDescription(String identifier, DataType dataType) {
-		this.identifier = identifier;
-		this.dataType = dataType;
-		this.minOccurs = 1;
-		this.maxOccurs = 1;
+		this(identifier, dataType, 1, 1);
 	}
 	
 	public ParameterDescription(String identifier, DataType dataType, String encodingType) {
-		this.identifier = identifier;
-		this.dataType = dataType;
+		this(identifier, dataType);
 		this.encodingType = encodingType;
-		this.minOccurs = 1;
-		this.maxOccurs = 1;
 	}
 	
 	public ParameterDescription(String identifier, DataType dataType, int minOccurs, int maxOccurs) {
@@ -34,11 +29,8 @@ public class ParameterDescription {
 	}
 	
 	public ParameterDescription(String identifier, DataType dataType, String encodingType, int minOccurs, int maxOccurs) {
-		this.identifier = identifier;
-		this.dataType = dataType;
+		this(identifier, dataType, minOccurs, maxOccurs);
 		this.encodingType = encodingType;
-		this.minOccurs = minOccurs;
-		this.maxOccurs = maxOccurs;
 	}
 	
 	public ParameterDescription(String identifier, String detail, DataType dataType, int minOccurs, int maxOccurs) {
@@ -48,6 +40,11 @@ public class ParameterDescription {
 
 	public ParameterDescription(String identifier, String detail, DataType dataType, String encodingType, int minOccurs, int maxOccurs) {
 		this(identifier, dataType, encodingType, minOccurs, maxOccurs);
+		this.detail = detail;
+	}
+
+	public ParameterDescription(String identifier, String detail, DataType dataType) {
+		this(identifier, dataType);
 		this.detail = detail;
 	}
 
