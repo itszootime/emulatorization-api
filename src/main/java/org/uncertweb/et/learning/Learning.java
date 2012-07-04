@@ -42,7 +42,7 @@ public class Learning {
 			}
 
 			// setup request
-			MLRequest request = new MLRequest("learn_emulator", 5);
+			MLRequest request = new MLRequest("learn_emulator", 3);
 			request.addParameter(new MLString((String)Config.getInstance().get("matlab", "gpml_path")));
 
 			// add x
