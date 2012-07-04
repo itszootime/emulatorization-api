@@ -5,12 +5,10 @@ import org.uncertweb.et.process.ProcessEvaluationResult;
 
 public class LearningRequest extends Request {
 
-	private Design design;
-	private ProcessEvaluationResult evaluationResult;
+	private Design trainingDesign;
+	private ProcessEvaluationResult trainingEvaluationResult;
 	
 	private String selectedOutputIdentifier;
-	
-	private int trainingSetSize;
 
 	private String meanFunction;
 	private String covarianceFunction;
@@ -28,22 +26,18 @@ public class LearningRequest extends Request {
 		return normalisation;
 	}
 
-	public Design getDesign() {
-		return design;
+	public Design getTrainingDesign() {
+		return trainingDesign;
 	}
 
-	public ProcessEvaluationResult getEvaluationResult() {
-		return evaluationResult;
+	public ProcessEvaluationResult getTrainingEvaluationResult() {
+		return trainingEvaluationResult;
 	}
 
 	public String getSelectedOutputIdentifier() {
 		return selectedOutputIdentifier;
 	}
-
-	public int getTrainingSetSize() {
-		return trainingSetSize;
-	}
-
+	
 	public String getMeanFunction() {
 		return meanFunction;
 	}

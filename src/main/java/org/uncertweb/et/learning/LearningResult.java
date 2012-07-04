@@ -13,10 +13,8 @@ public class LearningResult {
 	// predicted covariance
 	private double[] predictedCovariance;
 	
-	// input training set
+	// input and output training set (useful if normalised)
 	private Design trainingDesign;
-	
-	// output training set
 	private ProcessEvaluationResult trainingEvaluationResult;
 	
 	// optimised

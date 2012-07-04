@@ -1,4 +1,4 @@
-function [ predmean, predcov, xtrn, ytrn, covfpar ] = learn_emulator( gpml_path, x, y, trnsize, covfname, covfpar, meanfname, meanfpar )
+function [ predmean, predcov, covfpar ] = learn_emulator( gpml_path, xtrn, ytrn, covfname, covfpar, meanfname, meanfpar )
   % x - real data input
   % y - real data output
   % trnsize - the desired size of the training set
@@ -12,15 +12,6 @@ function [ predmean, predcov, xtrn, ytrn, covfpar ] = learn_emulator( gpml_path,
   cd(gpml_path);
   setpath();
   cd(prev);
-
-  % -----------
-  % Select some real data points for training set
-  % -----------
-  ntrn = trnsize;
-  I = randperm(size(x,1));
-  I = I(1:ntrn);
-  xtrn = x(I,:);
-  ytrn = y(I);
 
   % -----------
   % Predict using GP

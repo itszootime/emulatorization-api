@@ -20,7 +20,6 @@ import org.uncertweb.matlab.MLResult;
 import org.uncertweb.matlab.value.MLArray;
 import org.uncertweb.matlab.value.MLCell;
 import org.uncertweb.matlab.value.MLMatrix;
-import org.uncertweb.matlab.value.MLScalar;
 import org.uncertweb.matlab.value.MLString;
 import org.uncertweb.matlab.value.MLValue;
 
@@ -28,7 +27,7 @@ public class Learning {
 
 	private static final Logger logger = LoggerFactory.getLogger(Learning.class);
 
-	public static LearningResult learn(Design design, ProcessEvaluationResult evaluationResult, String selectedOutputIdentifier, int trainingSetSize, String covarianceFunction, double lengthScale, double processVariance, Double nuggetVariance, String meanFunction, boolean normalisation) throws LearningException {
+	public static LearningResult learn(Design design, ProcessEvaluationResult evaluationResult, String selectedOutputIdentifier, String covarianceFunction, double lengthScale, double processVariance, Double nuggetVariance, String meanFunction, boolean normalisation) throws LearningException {
 			// setup x
 			Design x = design;
 			
@@ -57,10 +56,7 @@ public class Learning {
 				yt[i] = new double[] { results[i] };
 			}
 			request.addParameter(new MLMatrix(yt));
-
-			// add training size
-			request.addParameter(new MLScalar(trainingSetSize));
-
+			
 			// setup covariance function
 			MLValue covfname;
 			double[] covfpar;
@@ -120,39 +116,15 @@ public class Learning {
 
 			double[] predictedMean = result.getResult(0).getAsArray().getArray();
 			double[] predictedCovariance = result.getResult(1).getAsArray().getArray();
-			double[][] xtrn = result.getResult(2).getAsMatrix().getMatrix();
-			double[][] ytrn = result.getResult(3).getAsMatrix().getMatrix();
-			double[] optCovParams = result.getResult(4).getAsArray().getArray();
-
-			Design trainingDesign = new Design(xtrn.length);
-			ProcessEvaluationResult trainingEvaluationResult = new ProcessEvaluationResult();
-
-			for (int i = 0; i < design.getInputIdentifiers().size(); i++) {
-				// i is our row
-				Double[] trn = new Double[xtrn.length];
-
-				// j is the realisation
-				for (int j = 0; j < xtrn.length; j++) {
-					trn[j] = xtrn[j][i];
-				}
-
-				trainingDesign.addPoints(design.getInputIdentifiers().get(i), trn);
-			}
-
-			double[] ytrnArr = new double[ytrn.length];
-			for (int i = 0; i < ytrn.length; i++) {
-				ytrnArr[i] = ytrn[i][0]; // as we are only looking at one output
-			}
-
-			trainingEvaluationResult.addResults(selectedOutputIdentifier, ytrnArr);
-
+			double[] optCovParams = result.getResult(2).getAsArray().getArray();
+			
 			if (normalisation) {
 				NormalisedDesign nd = (NormalisedDesign)x;
 				NormalisedProcessEvaluationResult nper = (NormalisedProcessEvaluationResult)y;
-				return new LearningResult(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, optCovParams[0], optCovParams[1] * optCovParams[1], nd.getMeans(), nd.getStdDevs(), nper.getMean(selectedOutputIdentifier), nper.getStdDev(selectedOutputIdentifier));
+				return new LearningResult(predictedMean, predictedCovariance, nd, nper, optCovParams[0], optCovParams[1] * optCovParams[1], nd.getMeans(), nd.getStdDevs(), nper.getMean(selectedOutputIdentifier), nper.getStdDev(selectedOutputIdentifier));
 			}
 			else {
-				return new LearningResult(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, optCovParams[0], optCovParams[1] * optCovParams[1]);
+				return new LearningResult(predictedMean, predictedCovariance, x, y, optCovParams[0], optCovParams[1] * optCovParams[1]);
 			}
 		}
 		catch (MLException e) {
