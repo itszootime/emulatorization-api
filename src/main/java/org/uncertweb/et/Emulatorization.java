@@ -122,8 +122,14 @@ public class Emulatorization {
 			}
 			else if (request instanceof ValidationRequest) {
 				ValidationRequest vRequest = (ValidationRequest) request;
-
-				ValidatorResult result = Validator.validate(vRequest.getServiceURL(), vRequest.getProcessIdentifier(), vRequest.getInputs(), vRequest.getOutputs(), vRequest.getEmulator(), vRequest.getDesignSize());
+				
+				ValidatorResult result;
+				if (vRequest.getDesign() != null) {
+					result = Validator.validate(vRequest.getEmulator(), vRequest.getDesign(), vRequest.getEvaluationResult());
+				}
+				else {
+					result = Validator.validate(vRequest.getServiceURL(), vRequest.getProcessIdentifier(), vRequest.getInputs(), vRequest.getOutputs(), vRequest.getEmulator(), vRequest.getDesignSize());
+				}
 
 				return new ValidationResponse(result);
 			}

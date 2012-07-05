@@ -6,12 +6,10 @@ public class ValidatorResult {
 
 	private List<ValidatorOutputResult> outputResults;
 	private long emulatorTime;
-	private long processTime;	
 	
-	public ValidatorResult(List<ValidatorOutputResult> outputResults, long processTime, long emulatorTime) {
+	public ValidatorResult(List<ValidatorOutputResult> outputResults, long emulatorTime) {
 		super();
 		this.outputResults = outputResults;
-		this.processTime = processTime;
 		this.emulatorTime = emulatorTime;
 	}
 	
@@ -22,9 +20,5 @@ public class ValidatorResult {
 	public long getEmulatorTime() {
 		return emulatorTime;
 	}
-	
-	public long getProcessTime() {
-		return processTime;
-	}	
 	
 }

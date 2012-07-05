@@ -53,7 +53,7 @@ public class Validator {
 		}
 		
 		// construct result
-		ValidatorResult result = new ValidatorResult(outputResults, 0, 0);
+		ValidatorResult result = new ValidatorResult(outputResults, 0);
 		return result;
 	}
 
@@ -61,17 +61,22 @@ public class Validator {
 		// create design
 		Design design = LHSDesign.create(inputs, designSize);
 		
+		// evaluate process
+		long time = System.nanoTime();
+		ProcessEvaluationResult processResult = ProcessEvaluator.evaluate(serviceURL, processIdentifier, inputs, outputs, design);
+		long processDuration = System.nanoTime() - time;
+		logger.info("Took " + (double)processDuration / 1000000000.0 + "s to evaluate process.");
+		
+		// validate
+		return validate(emulator, design, processResult);
+	}
+
+	public static ValidatorResult validate(Emulator emulator, Design design, ProcessEvaluationResult processResult) throws ProcessEvaluatorException, EmulatorEvaluatorException {
 		// evaluate emulator
 		long time = System.nanoTime();
 		EmulatorEvaluationResult emulatorResult = EmulatorEvaluator.run(emulator, design);
 		long emulatorDuration = System.nanoTime() - time;
 		logger.info("Took " + (double)emulatorDuration / 1000000000.0 + "s to evaluate emulator.");
-
-		// evaluate process
-		time = System.nanoTime();
-		ProcessEvaluationResult processResult = ProcessEvaluator.evaluate(serviceURL, processIdentifier, inputs, outputs, design);
-		long processDuration = System.nanoTime() - time;
-		logger.info("Took " + (double)processDuration / 1000000000.0 + "s to evaluate process.");
 
 		// fetch results
 		// FIXME: emulators can only be trained for one output... should be more elegant here!
@@ -99,7 +104,7 @@ public class Validator {
 		List<ValidatorOutputResult> outputResults = new ArrayList<ValidatorOutputResult>();
 		ValidatorOutputResult outputResult = new ValidatorOutputResult(outputId, zScores, processResults, meanResults, covarianceResults, rmse);
 		outputResults.add(outputResult);
-		ValidatorResult result = new ValidatorResult(outputResults, processDuration, emulatorDuration);
+		ValidatorResult result = new ValidatorResult(outputResults, emulatorDuration);
 		
 		return result;
 	}
