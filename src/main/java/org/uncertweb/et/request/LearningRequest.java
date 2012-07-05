@@ -5,8 +5,8 @@ import org.uncertweb.et.process.ProcessEvaluationResult;
 
 public class LearningRequest extends Request {
 
-	private Design trainingDesign;
-	private ProcessEvaluationResult trainingEvaluationResult;
+	private Design design;
+	private ProcessEvaluationResult evaluationResult;
 	
 	private String selectedOutputIdentifier;
 
@@ -26,12 +26,12 @@ public class LearningRequest extends Request {
 		return normalisation;
 	}
 
-	public Design getTrainingDesign() {
-		return trainingDesign;
+	public Design getDesign() {
+		return design;
 	}
 
-	public ProcessEvaluationResult getTrainingEvaluationResult() {
-		return trainingEvaluationResult;
+	public ProcessEvaluationResult getEvaluationResult() {
+		return evaluationResult;
 	}
 
 	public String getSelectedOutputIdentifier() {

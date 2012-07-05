@@ -55,8 +55,8 @@ public class EmulatorEvaluator {
 			request.addParameter(new MLMatrix(variableDesign.getPoints()));
 
 			// training data
-			Double[][] xtrn = emulator.getTrainingDesign().getPoints();
-			Double[][] ytrn = emulator.getTrainingEvaluationResult().getResults();
+			Double[][] xtrn = emulator.getDesign().getPoints();
+			Double[][] ytrn = emulator.getEvaluationResult().getResults();
 			request.addParameter(new MLMatrix(xtrn));
 			request.addParameter(new MLMatrix(ytrn));
 

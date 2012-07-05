@@ -18,8 +18,8 @@ public class Emulator {
 	// ^ because i'm lazy and don't want to make a gson deserializer for parameterized list/collection
 	
 	// input and output training sets
-	private Design trainingDesign;
-	private ProcessEvaluationResult trainingEvaluationResult;
+	private Design design;
+	private ProcessEvaluationResult evaluationResult;
 	
 	// function names and parameters
 	private String meanFunction; // "zero", "constant", "linear", "quadratic"
@@ -47,11 +47,11 @@ public class Emulator {
 	public ParameterDescription[] getOutputDescriptions() {
 		return outputDescriptions;
 	}
-	public Design getTrainingDesign() {
-		return trainingDesign;
+	public Design getDesign() {
+		return design;
 	}
-	public ProcessEvaluationResult getTrainingEvaluationResult() {
-		return trainingEvaluationResult;
+	public ProcessEvaluationResult getEvaluationResult() {
+		return evaluationResult;
 	}
 	public String getMeanFunction() {
 		return meanFunction;

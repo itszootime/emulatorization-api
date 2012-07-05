@@ -14,8 +14,8 @@ public class LearningResult {
 	private double[] predictedCovariance;
 	
 	// input and output training set (useful if normalised)
-	private Design trainingDesign;
-	private ProcessEvaluationResult trainingEvaluationResult;
+	private Design design;
+	private ProcessEvaluationResult evaluationResult;
 	
 	// optimised
 	private double lengthScale;
@@ -31,11 +31,11 @@ public class LearningResult {
 		this(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, lengthScale, processVariance, null, null, null, null);
 	}
 	
-	public LearningResult(double[] predictedMean, double[] predictedCovariance, Design trainingDesign, ProcessEvaluationResult trainingEvaluationResult, double lengthScale, double processVariance, double[] designMean, double[] designStdDev, Double evaluationResultMean, Double evaluationResultStdDev) {
+	public LearningResult(double[] predictedMean, double[] predictedCovariance, Design design, ProcessEvaluationResult evaluationResult, double lengthScale, double processVariance, double[] designMean, double[] designStdDev, Double evaluationResultMean, Double evaluationResultStdDev) {
 		this.predictedMean = predictedMean;
 		this.predictedCovariance = predictedCovariance;
-		this.trainingDesign = trainingDesign;
-		this.trainingEvaluationResult = trainingEvaluationResult;
+		this.design = design;
+		this.evaluationResult = evaluationResult;
 		this.lengthScale = lengthScale;
 		this.processVariance = processVariance;
 		this.designMean = designMean;
@@ -52,12 +52,12 @@ public class LearningResult {
 		return predictedCovariance;
 	}
 
-	public Design getTrainingDesign() {
-		return trainingDesign;
+	public Design getDesign() {
+		return design;
 	}
 
-	public ProcessEvaluationResult getTrainingEvaluationResult() {
-		return trainingEvaluationResult;
+	public ProcessEvaluationResult getEvaluationResult() {
+		return evaluationResult;
 	}
 
 	public double getLengthScale() {
