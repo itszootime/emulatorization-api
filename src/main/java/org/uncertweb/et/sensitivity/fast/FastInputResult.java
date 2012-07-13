@@ -4,27 +4,44 @@ import org.uncertweb.et.sensitivity.AnalysisInputResult;
 
 public class FastInputResult extends AnalysisInputResult {
 
-	private double d1;
-	private double dt;
-	private double v;
+	private double mainEffect;
+	private double interactions;
+	private double variance;
 	
-	public FastInputResult(String inputIdentifier, double d1, double dt, double v) {
+	public FastInputResult(String inputIdentifier, double mainEffect, double interactions, double variance) {
 		super(inputIdentifier);
-		this.d1 = d1;
-		this.dt = dt;
-		this.v = v;
+		this.mainEffect = mainEffect;
+		this.interactions = interactions;
+		this.variance = variance;
 	}
 
-	public double getD1() {
-		return d1;
+	/**
+	 * the estimations of Variances of the Conditional Expectations (VCE) with respect
+	 * to each factor
+	 * 
+	 * @return
+	 */
+	public double getMainEffect() {
+		return mainEffect;
 	}
 
-	public double getDt() {
-		return dt;
+	/**
+	 * the estimations of VCE with respect to each factor complementary set of factors
+	 * ("all but Xi")
+	 * 
+	 * @return
+	 */
+	public double getInteractions() {
+		return interactions;
 	}	
 	
-	public double getV() {
-		return v;
+	/**
+	 * the estimation of variance
+	 * 
+	 * @return
+	 */
+	public double getVariance() {
+		return variance;
 	}
 	
 }
