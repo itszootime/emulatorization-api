@@ -8,6 +8,7 @@ public class ParameterDescription {
 	private String detail;
 	private DataType dataType;	
 	private String encodingType;
+	private String uom;
 	private int minOccurs;
 	private int maxOccurs;
 	
@@ -72,6 +73,14 @@ public class ParameterDescription {
 	
 	public void setDetail(String detail) {
 		this.detail = detail;
+	}
+	
+	public String getUom() {
+		return uom;
+	}
+
+	public void setUom(String uom) {
+		this.uom = uom;
 	}
 	
 }

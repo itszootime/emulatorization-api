@@ -57,7 +57,8 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 				String processIdentifier = operation.getAttributeValue("name");
 				
 				// maybe some metadata
-				String description = getDescriptionMetadata(operation);
+				Map<String, String> metadata = getDescriptionMetadata(operation);
+				String description = metadata.get("description");
 
 				// create process
 				ProcessDescription processDescription = new ProcessDescription(processIdentifier, description);
@@ -140,12 +141,15 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 				}
 			}
 		}
-		
-		// try get some metadata
-		String detail = getDescriptionMetadata(parameterElement);
 
 		if (dataType != null) {
-			ParameterDescription description = new ParameterDescription(detail, dataType);
+			ParameterDescription description = new ParameterDescription(dataType);
+			
+			// try get some metadata
+			Map<String, String> metadata = getDescriptionMetadata(parameterElement);
+			description.setDetail(metadata.get("description"));
+			description.setUom(metadata.get("variable-units-of-measure"));
+			
 			return description;
 		}
 		else {
@@ -153,25 +157,21 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 		}
 	}
 	
-	private static String getDescriptionMetadata(Element element) {
-		String detail = null;
+	private static Map<String, String> getDescriptionMetadata(Element element) {
 		Element annotation = element.getChild("annotation", Namespaces.XSD);
+		Map<String, String> metadata = new HashMap<String, String>();
 		if (annotation != null) {
 			String documentation = annotation.getChildText("documentation", Namespaces.XSD);
 			if (documentation != null) {
 				// parse
-				Map<String, String> metadata = new HashMap<String, String>();
-				Pattern p = java.util.regex.Pattern.compile("@([a-z-]+)\\s([\\w\\s-\\.]+)");
+				Pattern p = java.util.regex.Pattern.compile("@([a-z-]+)\\s([\\w\\s-\\/:\\.]+)");
 				Matcher m = p.matcher(documentation);
 				while (m.find()) {
-					metadata.put(m.group(1), m.group(2));
-				}
-				if (metadata.containsKey("description")) {
-					detail = metadata.get("description").trim();
+					metadata.put(m.group(1), m.group(2).trim());
 				}
 			}
 		}
-		return detail;
+		return metadata;
 	}
 	
 //	try {
