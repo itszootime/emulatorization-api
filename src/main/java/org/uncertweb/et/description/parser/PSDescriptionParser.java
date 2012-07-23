@@ -164,7 +164,7 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 			String documentation = annotation.getChildText("documentation", Namespaces.XSD);
 			if (documentation != null) {
 				// parse
-				Pattern p = java.util.regex.Pattern.compile("@([a-z-]+)\\s([\\w\\s-\\/:\\.]+)");
+				Pattern p = java.util.regex.Pattern.compile("@([a-z-]+)\\s([\\w\\s-\\/:\\(\\)\\[\\]=%*\\.]+)");
 				Matcher m = p.matcher(documentation);
 				while (m.find()) {
 					metadata.put(m.group(1), m.group(2).trim());
