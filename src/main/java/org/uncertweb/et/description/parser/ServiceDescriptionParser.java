@@ -39,7 +39,7 @@ public class ServiceDescriptionParser {
 				}
 				logger.info("Using " + parser.getClass().getSimpleName() + " to parse service description.");
 				ServiceDescription description = parser.parse();
-				//serviceDescriptionMap.put(serviceURL, description);
+				serviceDescriptionMap.put(serviceURL, description);
 				return description;
 			}
 			catch (IOException e) {
