@@ -1,26 +1,13 @@
 package org.uncertweb.et.parameter;
 
-public class Output {
-	
-	private String identifier;
-	private boolean included;
+public class Output extends Parameter {
 	
 	public Output(String identifier) {
-		this.identifier = identifier;
-		included = true;
+		super(identifier);
 	}
 	
-	public Output(String identifier, boolean included) {
-		this.identifier = identifier;
-		this.included = included;
-	}
-	
-	public String getIdentifier() {
-		return identifier;
-	}
-	
-	public boolean isIncluded() {
-		return included;
+	public Output(String identifier, ParameterDescription description) {
+		super(identifier, description);
 	}
 
 }

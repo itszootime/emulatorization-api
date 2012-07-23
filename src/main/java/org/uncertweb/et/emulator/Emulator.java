@@ -2,7 +2,6 @@ package org.uncertweb.et.emulator;
 
 import java.util.List;
 
-import org.uncertweb.et.description.ParameterDescription;
 import org.uncertweb.et.design.Design;
 import org.uncertweb.et.parameter.Input;
 import org.uncertweb.et.parameter.Output;
@@ -13,9 +12,6 @@ public class Emulator {
 	// input and output descriptions
 	private List<Input> inputs;
 	private List<Output> outputs;
-	private ParameterDescription[] inputDescriptions;
-	private ParameterDescription[] outputDescriptions;
-	// ^ because i'm lazy and don't want to make a gson deserializer for parameterized list/collection
 	
 	// input and output training sets
 	private Design design;
@@ -40,19 +36,15 @@ public class Emulator {
 	public List<Output> getOutputs() {
 		return outputs;
 	}
-		
-	public ParameterDescription[] getInputDescriptions() {
-		return inputDescriptions;
-	}
-	public ParameterDescription[] getOutputDescriptions() {
-		return outputDescriptions;
-	}
+	
 	public Design getDesign() {
 		return design;
 	}
+	
 	public ProcessEvaluationResult getEvaluationResult() {
 		return evaluationResult;
 	}
+	
 	public String getMeanFunction() {
 		return meanFunction;
 	}
@@ -60,28 +52,32 @@ public class Emulator {
 	public String getCovarianceFunction() {
 		return covarianceFunction;
 	}
+	
 	public double getLengthScale() {
 		return lengthScale;
 	}
+	
 	public double getProcessVariance() {
 		return processVariance;
 	}
 	public Double getNuggetVariance() {
 		return nuggetVariance;
 	}
+	
 	public double[] getDesignMean() {
 		return designMean;
 	}
+	
 	public double[] getDesignStdDev() {
 		return designStdDev;
 	}
+	
 	public double getEvaluationResultMean() {
 		return evaluationResultMean;
 	}
+	
 	public double getEvaluationResultStdDev() {
 		return evaluationResultStdDev;
-	}
-	
-	
+	}	
 	
 }

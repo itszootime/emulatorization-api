@@ -1,19 +1,13 @@
 package org.uncertweb.et.parameter;
 
-// FIXME: bit hacky
-public class Input {
-
-	private String identifier;
-	private boolean included;
+public class Input extends Parameter {
 	
 	public Input(String identifier) {
-		this.identifier = identifier;
-		included = true;
+		super(identifier);
 	}
 	
-	public Input(String identifier, boolean included) {
-		this.identifier = identifier;
-		this.included = included;
+	public Input(String identifier, ParameterDescription description) {
+		super(identifier, description);
 	}
 	
 	public boolean isVariableInput() {
@@ -30,14 +24,6 @@ public class Input {
 	
 	public ConstantInput getAsConstantInput() {
 		return (ConstantInput) this;
-	}
-
-	public String getIdentifier() {
-		return identifier;
-	}
-	
-	public boolean isIncluded() {
-		return included;
 	}
 	
 }

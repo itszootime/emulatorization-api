@@ -80,7 +80,7 @@ public class Validator {
 
 		// fetch results
 		// FIXME: emulators can only be trained for one output... should be more elegant here!
-		String outputId = emulator.getOutputDescriptions()[0].getIdentifier();
+		String outputId = emulator.getOutputs().get(0).getIdentifier();
 		Double[] processResults = processResult.getResults(outputId);
 		Double[] meanResults = emulatorResult.getMeanResults(outputId);
 		Double[] covarianceResults = emulatorResult.getCovarianceResults(outputId);

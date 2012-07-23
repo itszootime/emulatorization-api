@@ -13,10 +13,12 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uncertweb.et.description.ParameterDescription;
 import org.uncertweb.et.description.ProcessDescription;
 import org.uncertweb.et.description.ServiceDescription;
-import org.uncertweb.et.description.ParameterDescription.DataType;
+import org.uncertweb.et.parameter.Input;
+import org.uncertweb.et.parameter.Output;
+import org.uncertweb.et.parameter.ParameterDescription;
+import org.uncertweb.et.parameter.ParameterDescription.DataType;
 import org.uncertweb.xml.Namespaces;
 import org.uncertweb.xml.XPathWrapper;
 
@@ -65,24 +67,26 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 					List<?> inputs = ((Element) XPathWrapper.newInstance("//xsd:element[@name = '" + processIdentifier + "Request']/xsd:complexType/xsd:sequence").selectSingleNode(schema)).getChildren();
 					for (Object oo : inputs) {
 						// get element
-						Element input = (Element) oo;
+						Element inputElement = (Element) oo;
 
 						// skip the requested output element
-						if (!input.getAttributeValue("name").equals("RequestedOutputs")) { 
+						String identifier = inputElement.getAttributeValue("name"); 
+						if (!identifier.equals("RequestedOutputs")) { 
 							// get description, add to process
-							ParameterDescription inputDescription = parseParameterDescription(input);
-							processDescription.addInputDescription(inputDescription);
+							Input input = new Input(identifier, parseParameterDescription(inputElement));
+							processDescription.addInput(input);
 						}
 					}
 
 					List<?> outputs = ((Element) XPathWrapper.newInstance("//xsd:element[@name = '" + processIdentifier + "Response']/xsd:complexType/xsd:sequence").selectSingleNode(schema)).getChildren();
 					for (Object oo : outputs) {
 						// get element
-						Element output = (Element) oo;
+						Element outputElement = (Element) oo;
 
 						// get description, add to process
-						ParameterDescription outputDescription = parseParameterDescription(output);
-						processDescription.addOutputDescription(outputDescription);
+						String identifier = outputElement.getAttributeValue("name");
+						Output output = new Output(identifier, parseParameterDescription(outputElement));
+						processDescription.addOutput(output);
 					}
 
 					// add to service description
@@ -103,7 +107,6 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 
 	private static ParameterDescription parseParameterDescription(Element parameterElement) throws JDOMException, UnsupportedDataTypeException {
 		// parameters to fill
-		String identifier = parameterElement.getAttributeValue("name");
 		DataType dataType = null;
 
 		// check if really simple
@@ -142,7 +145,7 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 		String detail = getDescriptionMetadata(parameterElement);
 
 		if (dataType != null) {
-			ParameterDescription description = new ParameterDescription(identifier, detail, dataType);
+			ParameterDescription description = new ParameterDescription(detail, dataType);
 			return description;
 		}
 		else {

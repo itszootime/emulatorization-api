@@ -10,10 +10,12 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uncertweb.et.description.ParameterDescription;
 import org.uncertweb.et.description.ProcessDescription;
 import org.uncertweb.et.description.ServiceDescription;
-import org.uncertweb.et.description.ParameterDescription.DataType;
+import org.uncertweb.et.parameter.Input;
+import org.uncertweb.et.parameter.Output;
+import org.uncertweb.et.parameter.ParameterDescription;
+import org.uncertweb.et.parameter.ParameterDescription.DataType;
 import org.uncertweb.xml.Namespaces;
 import org.uncertweb.xml.XPathWrapper;
 
@@ -97,7 +99,7 @@ public class WPSDescriptionParser extends AbstractServiceDescriptionParser {
 							DataType dataType = parseParameterDataType(inputElement);
 							int minOccurs = Integer.parseInt(inputElement.getAttributeValue("minOccurs"));
 							int maxOccurs = Integer.parseInt(inputElement.getAttributeValue("maxOccurs"));
-							processDescription.addInputDescription(new ParameterDescription(identifier, dataType, minOccurs, maxOccurs));
+							processDescription.addInput(new Input(identifier, new ParameterDescription(dataType, minOccurs, maxOccurs)));
 						}
 
 						// parse outputs
@@ -107,7 +109,7 @@ public class WPSDescriptionParser extends AbstractServiceDescriptionParser {
 							Element outputElement = (Element) o;
 							String identifier = outputElement.getChildText("Identifier", Namespaces.OWS);
 							DataType dataType = parseParameterDataType(outputElement);
-							processDescription.addOutputDescription(new ParameterDescription(identifier, dataType));
+							processDescription.addOutput(new Output(identifier, new ParameterDescription(dataType)));
 						}
 
 						// add

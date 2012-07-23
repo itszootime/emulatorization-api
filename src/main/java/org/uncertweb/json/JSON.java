@@ -5,13 +5,13 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
-import org.uncertweb.et.description.ParameterDescription;
-import org.uncertweb.et.description.ParameterDescription.DataType;
 import org.uncertweb.et.design.Design;
 import org.uncertweb.et.emulator.EmulatorEvaluationResult;
 import org.uncertweb.et.parameter.ConstantInput;
 import org.uncertweb.et.parameter.Input;
 import org.uncertweb.et.parameter.Output;
+import org.uncertweb.et.parameter.ParameterDescription;
+import org.uncertweb.et.parameter.ParameterDescription.DataType;
 import org.uncertweb.et.parameter.VariableInput;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.request.Request;

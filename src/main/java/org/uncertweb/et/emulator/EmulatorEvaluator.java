@@ -27,7 +27,7 @@ public class EmulatorEvaluator {
 
 	public static EmulatorEvaluationResult run(Emulator emulator, Design design) throws EmulatorEvaluatorException {
 		// check if emulator has more than 1 output, unsupported
-		if (emulator.getOutputDescriptions().length > 1) {
+		if (emulator.getOutputs().size() > 1) {
 			throw new EmulatorEvaluatorException("Emulators with more than one output are currently unsupported.");
 		}
 
@@ -124,7 +124,7 @@ public class EmulatorEvaluator {
 			
 			// create result
 			EmulatorEvaluationResult er = new EmulatorEvaluationResult();
-			er.addResults(emulator.getOutputDescriptions()[0].getIdentifier(), predictedMean, predictedCovariance);
+			er.addResults(emulator.getOutputs().get(0).getIdentifier(), predictedMean, predictedCovariance);
 
 			// un-normalise mean and std dev
 			if (emulator.getDesignMean() != null) {
