@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
