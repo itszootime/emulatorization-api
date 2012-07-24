@@ -14,6 +14,8 @@ public class NormalisedDesign extends Design {
 	
 	public NormalisedDesign(int size) {
 		super(size);
+		this.meanMap = new HashMap<String, Double>();
+		this.stdDevMap = new HashMap<String, Double>();
 	}
 	
 	public void addPoints(String inputIdentifier, Double[] points, Double mean, Double stdDev) {
@@ -27,9 +29,7 @@ public class NormalisedDesign extends Design {
 
 	private NormalisedDesign(Design original, double[] mean, double[] stdDev) {
 		// construct
-		super(original.getSize());
-		this.meanMap = new HashMap<String, Double>();
-		this.stdDevMap = new HashMap<String, Double>();
+		this(original.getSize());
 
 		// get identifiers
 		List<String> identifiers = original.getInputIdentifiers();

@@ -12,6 +12,7 @@ import org.uncertweb.et.design.Design;
 import org.uncertweb.et.design.NormalisedDesign;
 import org.uncertweb.et.parameter.Input;
 import org.uncertweb.et.parameter.VariableInput;
+import org.uncertweb.et.process.NormalisedProcessEvaluationResult;
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
@@ -42,9 +43,10 @@ public class EmulatorEvaluator {
 
 		// do we need to normalise?
 		try {
-			if (emulator.getDesignMean() != null) {
+			if (emulator.getDesign() instanceof NormalisedDesign) {
 				// normalise
-				variableDesign = NormalisedDesign.fromDesign(variableDesign, emulator.getDesignMean(), emulator.getDesignStdDev());
+				NormalisedDesign norm = (NormalisedDesign)emulator.getDesign();
+				variableDesign = NormalisedDesign.fromDesign(variableDesign, norm.getMeans(), norm.getStdDevs());
 			}
 
 			// create matlab request
@@ -123,12 +125,14 @@ public class EmulatorEvaluator {
 			}
 			
 			// create result
+			String outputIdentifier = emulator.getOutputs().get(0).getIdentifier();
 			EmulatorEvaluationResult er = new EmulatorEvaluationResult();
-			er.addResults(emulator.getOutputs().get(0).getIdentifier(), predictedMean, predictedCovariance);
+			er.addResults(outputIdentifier, predictedMean, predictedCovariance);
 
 			// un-normalise mean and std dev
-			if (emulator.getDesignMean() != null) {
-				er = er.unnormalise(emulator.getEvaluationResultMean(), emulator.getEvaluationResultStdDev());
+			if (emulator.getEvaluationResult() instanceof NormalisedProcessEvaluationResult) {
+				NormalisedProcessEvaluationResult nper = (NormalisedProcessEvaluationResult)emulator.getEvaluationResult();
+				er = er.unnormalise(nper.getMean(outputIdentifier), nper.getStdDev(outputIdentifier));
 			}
 
 			// return result

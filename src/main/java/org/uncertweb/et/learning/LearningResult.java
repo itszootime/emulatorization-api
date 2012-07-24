@@ -21,27 +21,13 @@ public class LearningResult {
 	private double lengthScale;
 	private double processVariance;
 	
-	// normalisation
-	private double[] designMean;
-	private double[] designStdDev;
-	private Double evaluationResultMean;
-	private Double evaluationResultStdDev;
-	
-	public LearningResult(double[] predictedMean, double[] predictedCovariance, Design trainingDesign, ProcessEvaluationResult trainingEvaluationResult, double lengthScale, double processVariance) {
-		this(predictedMean, predictedCovariance, trainingDesign, trainingEvaluationResult, lengthScale, processVariance, null, null, null, null);
-	}
-	
-	public LearningResult(double[] predictedMean, double[] predictedCovariance, Design design, ProcessEvaluationResult evaluationResult, double lengthScale, double processVariance, double[] designMean, double[] designStdDev, Double evaluationResultMean, Double evaluationResultStdDev) {
+	public LearningResult(double[] predictedMean, double[] predictedCovariance, Design design, ProcessEvaluationResult evaluationResult, double lengthScale, double processVariance) {
 		this.predictedMean = predictedMean;
 		this.predictedCovariance = predictedCovariance;
 		this.design = design;
 		this.evaluationResult = evaluationResult;
 		this.lengthScale = lengthScale;
 		this.processVariance = processVariance;
-		this.designMean = designMean;
-		this.designStdDev = designStdDev;
-		this.evaluationResultMean = evaluationResultMean;
-		this.evaluationResultStdDev = evaluationResultStdDev;
 	}
 
 	public double[] getPredictedMean() {
@@ -66,22 +52,6 @@ public class LearningResult {
 
 	public double getProcessVariance() {
 		return processVariance;
-	}
-
-	public double[] getDesignMean() {
-		return designMean;
-	}
-
-	public double[] getDesignStdDev() {
-		return designStdDev;
-	}
-
-	public Double getEvaluationResultMean() {
-		return evaluationResultMean;
-	}
-
-	public Double getEvaluationResultStdDev() {
-		return evaluationResultStdDev;
 	}
 	
 }

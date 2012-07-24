@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
 import org.uncertweb.et.design.Design;
+import org.uncertweb.et.design.NormalisedDesign;
 import org.uncertweb.et.emulator.EmulatorEvaluationResult;
 import org.uncertweb.et.parameter.ConstantInput;
 import org.uncertweb.et.parameter.Input;
@@ -13,6 +14,7 @@ import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.parameter.ParameterDescription;
 import org.uncertweb.et.parameter.ParameterDescription.DataType;
 import org.uncertweb.et.parameter.VariableInput;
+import org.uncertweb.et.process.NormalisedProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.response.Response;
@@ -170,6 +172,13 @@ public class JSON {
 					else {
 						o.addProperty("point", src.getPoints(inputIdentifier)[0]);
 					}
+					
+					// add normalisation params
+					if (src instanceof NormalisedDesign) {
+						NormalisedDesign n = (NormalisedDesign)src;
+						o.addProperty("mean", n.getMean(inputIdentifier));
+						o.addProperty("stdDev", n.getStdDev(inputIdentifier));
+					}
 				}
 
 				return obj;
@@ -190,13 +199,26 @@ public class JSON {
 				for (JsonElement element : array) {
 					JsonObject o = element.getAsJsonObject();
 					String inputIdentifier = o.get("inputIdentifier").getAsString();
-					if (o.has("points")) {					
-						Double[] points = context.deserialize(o.get("points"), Double[].class);
-						design.addPoints(inputIdentifier, points);
+					
+					// create new design object if required
+					if (o.has("mean") && !(design instanceof NormalisedDesign)) {
+						design = new NormalisedDesign(design.getSize());
 					}
-					else {
-						Double point = o.get("point").getAsDouble();
-						design.addPoint(inputIdentifier, point);
+					
+					// add to design
+					if (design instanceof NormalisedDesign) {
+						NormalisedDesign n = (NormalisedDesign)design;
+						Double[] points = context.deserialize(o.get("points"), Double[].class);
+						n.addPoints(inputIdentifier, points, o.get("mean").getAsDouble(), o.get("stdDev").getAsDouble());
+					} else {					
+						if (o.has("points")) {					
+							Double[] points = context.deserialize(o.get("points"), Double[].class);
+							design.addPoints(inputIdentifier, points);
+						}
+						else {
+							Double point = o.get("point").getAsDouble();
+							design.addPoint(inputIdentifier, point);
+						}
 					}
 				}
 				
@@ -214,6 +236,13 @@ public class JSON {
 					array.add(obj);
 					obj.addProperty("outputIdentifier", outputIdentifier);
 					obj.add("results", context.serialize(src.getResults(outputIdentifier)));
+					
+					// add normalisation params
+					if (src instanceof NormalisedProcessEvaluationResult) {
+						NormalisedProcessEvaluationResult n = (NormalisedProcessEvaluationResult)src;
+						obj.addProperty("mean", n.getMean(outputIdentifier));
+						obj.addProperty("stdDev", n.getStdDev(outputIdentifier));
+					}
 				}
 
 				return array;
@@ -229,8 +258,21 @@ public class JSON {
 				for (JsonElement element : array) {
 					JsonObject obj = element.getAsJsonObject();
 					String outputIdentifier = obj.get("outputIdentifier").getAsString();
-					Double[] results = context.deserialize(obj.get("results"), Double[].class);
-					evaluationResult.addResults(outputIdentifier, results);
+					
+					// create new result object if required
+					if (obj.has("mean") && !(evaluationResult instanceof NormalisedProcessEvaluationResult)) {
+						evaluationResult = new NormalisedProcessEvaluationResult();
+					}
+					
+					// add to result
+					if (evaluationResult instanceof NormalisedProcessEvaluationResult) {
+						NormalisedProcessEvaluationResult n = (NormalisedProcessEvaluationResult)evaluationResult;
+						Double[] points = context.deserialize(obj.get("results"), Double[].class);
+						n.addResults(outputIdentifier, points, obj.get("mean").getAsDouble(), obj.get("stdDev").getAsDouble());
+					} else {					
+						Double[] results = context.deserialize(obj.get("results"), Double[].class);
+						evaluationResult.addResults(outputIdentifier, results);
+					}					
 				}
 				
 				return evaluationResult;

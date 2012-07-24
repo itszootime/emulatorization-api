@@ -118,14 +118,7 @@ public class Learning {
 			double[] predictedCovariance = result.getResult(1).getAsArray().getArray();
 			double[] optCovParams = result.getResult(2).getAsArray().getArray();
 			
-			if (normalisation) {
-				NormalisedDesign nd = (NormalisedDesign)x;
-				NormalisedProcessEvaluationResult nper = (NormalisedProcessEvaluationResult)y;
-				return new LearningResult(predictedMean, predictedCovariance, nd, nper, optCovParams[0], optCovParams[1] * optCovParams[1], nd.getMeans(), nd.getStdDevs(), nper.getMean(selectedOutputIdentifier), nper.getStdDev(selectedOutputIdentifier));
-			}
-			else {
-				return new LearningResult(predictedMean, predictedCovariance, x, y, optCovParams[0], optCovParams[1] * optCovParams[1]);
-			}
+			return new LearningResult(predictedMean, predictedCovariance, x, y, optCovParams[0], optCovParams[1] * optCovParams[1]);
 		}
 		catch (MLException e) {
 			throw new LearningException("Couldn't perform learning: " + e.getMessage());

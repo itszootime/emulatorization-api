@@ -21,6 +21,8 @@ public class NormalisedProcessEvaluationResult extends ProcessEvaluationResult {
 	
 	public NormalisedProcessEvaluationResult() {
 		super();
+		this.meanMap = new HashMap<String, Double>();
+		this.stdDevMap = new HashMap<String, Double>();
 	}
 	
 	public void addResults(String outputIdentifier, Double[] results, Double mean, Double stdDev) {
@@ -34,9 +36,7 @@ public class NormalisedProcessEvaluationResult extends ProcessEvaluationResult {
 
 	private NormalisedProcessEvaluationResult(ProcessEvaluationResult original, double[] mean, double[] stdDev) {
 		// construct
-		super();
-		this.meanMap = new HashMap<String, Double>();
-		this.stdDevMap = new HashMap<String, Double>();
+		this();
 
 		// get identifiers
 		List<String> identifiers = original.getOutputIdentifiers();
@@ -77,12 +77,12 @@ public class NormalisedProcessEvaluationResult extends ProcessEvaluationResult {
 		return new NormalisedProcessEvaluationResult(result, mean, stdDev);
 	}
 
-	public double getMean(String inputIdentifier) {
-		return meanMap.get(inputIdentifier);
+	public double getMean(String outputIdentifier) {
+		return meanMap.get(outputIdentifier);
 	}
 
-	public double getStdDev(String inputIdentifier) {
-		return stdDevMap.get(inputIdentifier);
+	public double getStdDev(String outputIdentifier) {
+		return stdDevMap.get(outputIdentifier);
 	}
 
 	public ProcessEvaluationResult unnormalise() {
