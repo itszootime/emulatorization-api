@@ -27,7 +27,8 @@ public class Config {
 
 	public Config() {
 		map = new HashMap<Object, Object>();
-		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("config.yml");
+		String configName = "et.yml";
+		InputStream stream = this.getClass().getClassLoader().getResourceAsStream(configName);
 		Object o;
 		try {
 			if (stream != null) {
@@ -36,11 +37,11 @@ public class Config {
 			else {
 
 				try {
-					o = Yaml.load(new File("src/main/resources/config.yml"));
+					o = Yaml.load(new File("src/main/resources", configName));
 				}
 				catch (FileNotFoundException e1) {
 					try {
-						o = Yaml.load(new File("config.yml"));
+						o = Yaml.load(new File(configName));
 					}
 					catch (FileNotFoundException e2) {
 						logger.info("Couldn't find config file, functionality will be limited.");
