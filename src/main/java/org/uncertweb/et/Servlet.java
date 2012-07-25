@@ -13,12 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uncertweb.et.json.JSON;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.response.Response;
 import org.uncertweb.imagestorage.FileImageStorage;
 import org.uncertweb.imagestorage.ImageStorage;
 import org.uncertweb.imagestorage.ImageStorageException;
-import org.uncertweb.json.JSON;
 
 /**
  * Servlet implementation class ScreeningServlet
