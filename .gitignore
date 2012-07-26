@@ -4,6 +4,7 @@
 .externalToolBuilders
 .settings
 src/main/resources/et.yml
+src/main/resources/log4j.properties
 src/main/webapp/samples
 src/test/resources
 src/test/java/org/uncertweb/et/exp
