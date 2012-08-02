@@ -170,7 +170,8 @@ public class Emulatorization {
 					MLRequest mlRequest = new MLRequest("matlab_version", 1);
 					MLResult result = MATLAB.sendRequest(mlRequest);
 					matlabOK = true;
-					matlabMessage = result.getResult(0).getAsString().getString() + " reporting for duty!";
+					//result.getResult(0).getAsString().getString()
+					matlabMessage =  "Ready.";
 				}
 				catch (IOException e) {
 					matlabMessage = "Couldn't connect to MATLAB.";
@@ -185,7 +186,8 @@ public class Emulatorization {
 				try {
 					c = R.getConnection();
 					rserveOK = true;
-					rserveMessage = c.eval("R.Version()$version.string").asString() + " ready for action!";
+					//c.eval("R.Version()$version.string").asString()
+					rserveMessage = "Ready.";
 				}
 				catch (RserveException e) {
 					rserveMessage = "Couldn't connect to R.";
@@ -196,7 +198,7 @@ public class Emulatorization {
 					}
 				}
 
-				return new StatusResponse("I'm working fine!", matlabOK, matlabMessage, rserveOK, rserveMessage);
+				return new StatusResponse("Ready.", matlabOK, matlabMessage, rserveOK, rserveMessage);
 			}
 			else {
 				// shouldn't ever happen
