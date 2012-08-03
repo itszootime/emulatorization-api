@@ -22,4 +22,8 @@ public abstract class Parameter {
 		return description;
 	}
 	
+	public void setDescription(ParameterDescription description) {
+		this.description = description;
+	}
+	
 }
