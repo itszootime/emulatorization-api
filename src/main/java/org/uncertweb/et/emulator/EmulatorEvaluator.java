@@ -10,8 +10,6 @@ import org.uncertweb.et.ConfigException;
 import org.uncertweb.et.MATLAB;
 import org.uncertweb.et.design.Design;
 import org.uncertweb.et.design.NormalisedDesign;
-import org.uncertweb.et.parameter.Input;
-import org.uncertweb.et.parameter.VariableInput;
 import org.uncertweb.et.process.NormalisedProcessEvaluationResult;
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
@@ -32,21 +30,17 @@ public class EmulatorEvaluator {
 			throw new EmulatorEvaluatorException("Emulators with more than one output are currently unsupported.");
 		}
 
-		// filter out fixed
-		Design variableDesign = new Design(design.getSize());
-		for (Input input : emulator.getInputs()) {
-			if (input instanceof VariableInput) {
-				String identifier = input.getIdentifier();
-				variableDesign.addPoints(identifier, design.getPoints(identifier));
-			}
-		}
+		// don't filter out fixed
+		// an emulator shouldn't have any fixed inputs anyway??
 
 		// do we need to normalise?
 		try {
+			Design runDesign = design;
+			
 			if (emulator.getDesign() instanceof NormalisedDesign) {
 				// normalise
 				NormalisedDesign norm = (NormalisedDesign)emulator.getDesign();
-				variableDesign = NormalisedDesign.fromDesign(variableDesign, norm.getMeans(), norm.getStdDevs());
+				runDesign = NormalisedDesign.fromDesign(design, norm.getMeans(), norm.getStdDevs());
 			}
 
 			// create matlab request
@@ -54,7 +48,7 @@ public class EmulatorEvaluator {
 			request.addParameter(new MLString((String)Config.getInstance().get("matlab", "gpml_path")));
 
 			// add points to evaluate against		
-			request.addParameter(new MLMatrix(variableDesign.getPoints()));
+			request.addParameter(new MLMatrix(runDesign.getPoints()));
 
 			// training data
 			Double[][] xtrn = emulator.getDesign().getPoints();
