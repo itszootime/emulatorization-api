@@ -17,16 +17,14 @@ function [ predmean, predcov ] = run_emulator( gpml_path, x, xtrn, ytrn, covfnam
   % -----------
   covf.name = covfname;
   covf.par = log(covfpar');
+  
+  meanf.name = meanfname;
+  meanf.par = meanfpar;
 
-  gp = gpinit(xtrn,ytrn,covf);
-
-  gp.meanf.name = meanfname;
-  gp.meanf.par = meanfpar';
-
-  gp.pred.covtype = 'diag';
+  gp = gpinit(xtrn,ytrn,covf,meanf);
 
   gp = gppred(gp,x);
 
   predmean = gp.pred.mean';
-  predcov = gp.pred.cov;
+  predcov = diag(gp.pred.cov)';
 end

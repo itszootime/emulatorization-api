@@ -1,7 +1,6 @@
 package org.uncertweb.et.emulator;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +10,12 @@ import org.uncertweb.et.MATLAB;
 import org.uncertweb.et.design.Design;
 import org.uncertweb.et.design.NormalisedDesign;
 import org.uncertweb.et.process.NormalisedProcessEvaluationResult;
+import org.uncertweb.et.util.EmulatorUtil;
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
-import org.uncertweb.matlab.value.MLArray;
-import org.uncertweb.matlab.value.MLCell;
 import org.uncertweb.matlab.value.MLMatrix;
 import org.uncertweb.matlab.value.MLString;
-import org.uncertweb.matlab.value.MLValue;
 
 public class EmulatorEvaluator {
 
@@ -57,53 +54,16 @@ public class EmulatorEvaluator {
 			request.addParameter(new MLMatrix(ytrn));
 
 			// setup covariance function
-			MLValue covfname;
-			double[] covfpar;
-			if (emulator.getCovarianceFunction().equals("squared_exponential")) {
-				covfname = new MLString("covSEiso");
-			}
-			else {
-				covfname = new MLString("covMatern3iso");
-			}
-			if (emulator.getNuggetVariance() != null) {
-				covfname = new MLCell(new MLValue[] {
-					new MLString("covSum"),
-					new MLCell(new MLValue[] { covfname, new MLString("covNoise") }) });
-				covfpar = new double[] { emulator.getLengthScale(), Math.sqrt(emulator.getProcessVariance()), emulator.getNuggetVariance() };
-			}
-			else {
-				covfpar = new double[] { emulator.getLengthScale(), Math.sqrt(emulator.getProcessVariance()) };
-			}
-			request.addParameter(covfname);		
-			request.addParameter(new MLArray(covfpar));
-
+			EmulatorUtil.addCovarianceFunction(request, emulator.getDesign(), emulator.getCovarianceFunction(),
+				emulator.getLengthScale(), emulator.getNuggetVariance());
+			
 			// setup mean function
-			String meanfname;
-			double[] meanfpar;
-			if (emulator.getMeanFunction().equals("zero")) {
-				meanfname = "";
-				meanfpar = new double[] {};
-			}
-			else {
-				meanfname = "mean_poly";
-				meanfpar = new double[1];
-				if (emulator.getMeanFunction().equals("constant")) {
-					meanfpar[0] = 0;
-				}
-				else if (emulator.getMeanFunction().equals("linear")) {
-					meanfpar[0] = 1;
-				}
-				else {
-					meanfpar[0] = 2;
-				}
-			}
-			request.addParameter(new MLString(meanfname));
-			request.addParameter(new MLArray(meanfpar));
+			EmulatorUtil.addMeanFunction(request, emulator.getMeanFunction());
 
 			// run emulator
 			// run with matlab
 			logger.info("Evaluating emulator over " + design.getSize() + " input points...");
-			logger.debug("meanfname=" + meanfname + ", meanfpar=" + Arrays.toString(meanfpar) + ", covfname=" + covfname + ", covfpar=" + Arrays.toString(covfpar));
+			logger.debug("meanfname=" + request.getParameter(6).getAsString() + ", covfname=" + request.getParameter(4).getAsString());
 			MLResult result = MATLAB.sendRequest(request);
 
 			// read output

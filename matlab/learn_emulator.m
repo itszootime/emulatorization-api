@@ -18,13 +18,11 @@ function [ predmean, predcov, covfpar ] = learn_emulator( gpml_path, xtrn, ytrn,
   % -----------
   covf.name = covfname;
   covf.par = log(covfpar');
+  
+  meanf.name = meanfname;
+  meanf.par = meanfpar;
 
-  gp = gpinit(xtrn,ytrn,covf);
-
-  gp.meanf.name = meanfname;
-  gp.meanf.par = meanfpar';
-
-  gp.pred.covtype = 'diag';
+  gp = gpinit(xtrn, ytrn, covf, meanf);
 
   % -----------
   % Optimise GP
@@ -34,7 +32,7 @@ function [ predmean, predcov, covfpar ] = learn_emulator( gpml_path, xtrn, ytrn,
   gp = gppred(gp,xtrn);
 
   predmean = gp.pred.mean';
-  predcov = gp.pred.cov;
+  predcov = diag(gp.pred.cov)';
 
   covfpar = gp.covf.par';
 end
