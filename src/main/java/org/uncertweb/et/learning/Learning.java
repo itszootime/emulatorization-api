@@ -66,7 +66,7 @@ public class Learning {
 			DescriptiveStatistics stats = new DescriptiveStatistics(ArrayUtils.toPrimitive(x.getPoints(identifier)));
 			logger.debug("identifier='" + identifier + "', min=" + stats.getMin() + ", max=" + stats.getMax());
 		}
-		logger.debug("meanfname=" + request.getParameter(6).getAsString() + ", covfname=" + request.getParameter(4).getAsString());
+		logger.debug("meanfname=" + request.getParameter(5).getAsString() + ", covfname=" + request.getParameter(3).getAsString());
 
 		// send
 		try {
