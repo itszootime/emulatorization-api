@@ -19,7 +19,7 @@ public class ProcessEvaluator {
 
 	public static ProcessEvaluationResult evaluate(String serviceURL, String processIdentifier, List<Input> inputs, List<Output> outputs, Design design) throws ProcessEvaluatorException {
 		try {
-			logger.info("Finding evaluator for " + serviceURL + "...");
+			logger.info("Finding evaluator for " + processIdentifier + " at " + serviceURL + "...");
 			SAXBuilder builder = new SAXBuilder();
 			Element root = builder.build(new URL(serviceURL + "?wsdl").openStream()).getRootElement();
 			AbstractProcessEvaluator evaluator;
