@@ -21,7 +21,6 @@ public class Emulator {
 	private String meanFunction; // "zero", "constant", "linear", "quadratic"
 	private String covarianceFunction; // "squared_exponential", "matern" -> all isotropic for now
 	private double lengthScale;
-	private double processVariance;
 	private Double nuggetVariance;
 	
 	public List<Input> getInputs() {
@@ -50,10 +49,7 @@ public class Emulator {
 	public double getLengthScale() {
 		return lengthScale;
 	}
-	
-	public double getProcessVariance() {
-		return processVariance;
-	}
+
 	public Double getNuggetVariance() {
 		return nuggetVariance;
 	}

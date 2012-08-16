@@ -19,12 +19,13 @@ import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
 import org.uncertweb.matlab.value.MLMatrix;
 import org.uncertweb.matlab.value.MLString;
+import org.uncertweb.matlab.value.MLValue;
 
 public class Learning {
 
 	private static final Logger logger = LoggerFactory.getLogger(Learning.class);
 
-	public static LearningResult learn(Design design, ProcessEvaluationResult evaluationResult, String selectedOutputIdentifier, String covarianceFunction, double lengthScale, double processVariance, Double nuggetVariance, String meanFunction, boolean normalisation) throws LearningException {
+	public static LearningResult learn(Design design, ProcessEvaluationResult evaluationResult, String selectedOutputIdentifier, String covarianceFunction, double lengthScale, Double nuggetVariance, String meanFunction, boolean normalisation) throws LearningException {
 		// setup x
 		Design x = design;
 
@@ -66,7 +67,7 @@ public class Learning {
 			DescriptiveStatistics stats = new DescriptiveStatistics(ArrayUtils.toPrimitive(x.getPoints(identifier)));
 			logger.debug("identifier='" + identifier + "', min=" + stats.getMin() + ", max=" + stats.getMax());
 		}
-		logger.debug("meanfname=" + request.getParameter(5).getAsString() + ", covfname=" + request.getParameter(3).getAsString());
+		logger.debug("meanfname=" + request.getParameter(5).toString() + ", covfname=" + request.getParameter(3).toString());
 
 		// send
 		try {
@@ -74,9 +75,20 @@ public class Learning {
 
 			double[] predictedMean = result.getResult(0).getAsArray().getArray();
 			double[] predictedCovariance = result.getResult(1).getAsArray().getArray();
-			double[] optCovParams = result.getResult(2).getAsArray().getArray();
+			
+			MLValue optCovParams = result.getResult(2);
+			double optLengthScale;
+			Double optNuggetVariance = null;
+			if (optCovParams.isScalar()) {
+				optLengthScale = optCovParams.getAsScalar().getScalar();
+			}
+			else {
+				double[] optCovParamsArr = optCovParams.getAsArray().getArray();
+				optLengthScale = optCovParamsArr[0];
+				optNuggetVariance = Math.pow(Math.exp(optCovParamsArr[1]), 2);
+			}			
 
-			return new LearningResult(predictedMean, predictedCovariance, x, y, optCovParams[0], optCovParams[1] * optCovParams[1]);
+			return new LearningResult(predictedMean, predictedCovariance, x, y, optLengthScale, optNuggetVariance);
 		}
 		catch (MLException e) {
 			throw new LearningException("Couldn't perform learning: " + e.getMessage());

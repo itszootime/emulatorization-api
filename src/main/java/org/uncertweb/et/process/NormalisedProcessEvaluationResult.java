@@ -107,5 +107,21 @@ public class NormalisedProcessEvaluationResult extends ProcessEvaluationResult {
 
 		return result;
 	}
+	
+	public double[] getMeans() {
+		double[] means = new double[outputIdentifiers.size()];
+		for (int i = 0; i < outputIdentifiers.size(); i++) {
+			means[i] = meanMap.get(outputIdentifiers.get(i));
+		}
+		return means;
+	}
+	
+	public double[] getStdDevs() {
+		double[] stdDevs = new double[outputIdentifiers.size()];
+		for (int i = 0; i < outputIdentifiers.size(); i++) {
+			stdDevs[i] = stdDevMap.get(outputIdentifiers.get(i));
+		}
+		return stdDevs;
+	}
 
 }

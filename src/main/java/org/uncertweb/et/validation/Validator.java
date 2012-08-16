@@ -14,6 +14,7 @@ import org.uncertweb.et.emulator.EmulatorEvaluator;
 import org.uncertweb.et.emulator.EmulatorEvaluatorException;
 import org.uncertweb.et.parameter.Input;
 import org.uncertweb.et.parameter.Output;
+import org.uncertweb.et.process.NormalisedProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
@@ -84,6 +85,9 @@ public class Validator {
 		Double[] processResults = processResult.getResults(outputId);
 		Double[] meanResults = emulatorResult.getMeanResults(outputId);
 		Double[] covarianceResults = emulatorResult.getCovarianceResults(outputId);
+		
+		// for test REMOVE!
+		NormalisedProcessEvaluationResult nper = NormalisedProcessEvaluationResult.fromProcessEvaluationResult(processResult, ((NormalisedProcessEvaluationResult)emulator.getEvaluationResult()).getMeans(), ((NormalisedProcessEvaluationResult)emulator.getEvaluationResult()).getStdDevs());
 		
 //		for (int i = 0; i < design.getSize(); i++) {
 //			System.out.println(processResults[i] + ", " + meanResults[i] + " with " + covarianceResults[i] + " covariance");

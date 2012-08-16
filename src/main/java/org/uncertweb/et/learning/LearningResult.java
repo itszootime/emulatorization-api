@@ -19,15 +19,15 @@ public class LearningResult {
 	
 	// optimised
 	private double lengthScale;
-	private double processVariance;
+	private Double nuggetVariance;
 	
-	public LearningResult(double[] predictedMean, double[] predictedCovariance, Design design, ProcessEvaluationResult evaluationResult, double lengthScale, double processVariance) {
+	public LearningResult(double[] predictedMean, double[] predictedCovariance, Design design, ProcessEvaluationResult evaluationResult, double lengthScale, Double nuggetVariance) {
 		this.predictedMean = predictedMean;
 		this.predictedCovariance = predictedCovariance;
 		this.design = design;
 		this.evaluationResult = evaluationResult;
 		this.lengthScale = lengthScale;
-		this.processVariance = processVariance;
+		this.nuggetVariance = nuggetVariance;
 	}
 
 	public double[] getPredictedMean() {
@@ -50,8 +50,8 @@ public class LearningResult {
 		return lengthScale;
 	}
 
-	public double getProcessVariance() {
-		return processVariance;
+	public double getNuggetVariance() {
+		return nuggetVariance;
 	}
 	
 }

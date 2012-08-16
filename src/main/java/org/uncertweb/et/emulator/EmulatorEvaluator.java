@@ -63,7 +63,7 @@ public class EmulatorEvaluator {
 			// run emulator
 			// run with matlab
 			logger.info("Evaluating emulator over " + design.getSize() + " input points...");
-			logger.debug("meanfname=" + request.getParameter(6).getAsString() + ", covfname=" + request.getParameter(4).getAsString());
+			logger.debug("meanfname=" + request.getParameter(6).toString() + ", covfname=" + request.getParameter(4).toString());
 			MLResult result = MATLAB.sendRequest(request);
 
 			// read output
