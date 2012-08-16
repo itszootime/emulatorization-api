@@ -130,9 +130,6 @@
     </resources>
     <plugins>
       <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
-      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>1.6</source>
@@ -140,20 +137,10 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.7</version>
-        <configuration>
-          <show>public</show>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
+        <artifactId>maven-jar-plugin</artifactId>
       </plugin>
+      <!-- <plugin> <artifactId>maven-javadoc-plugin</artifactId> <version>2.7</version> <configuration> <show>public</show> </configuration> <executions> <execution> <phase>package</phase> <goals> <goal>jar</goal> 
+        </goals> </execution> </executions> </plugin> -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2</version>
@@ -175,5 +162,39 @@
     </plugins>
     <finalName>emulatorization-api</finalName>
   </build>
+
+  <profiles>
+    <profile>
+      <id>production</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <tasks>
+                    <delete file="${project.build.outputDirectory}/et.sample.yml" />
+                    <delete file="${project.build.outputDirectory}/et.yml" />
+                    <move file="${project.build.outputDirectory}/et.production.yml" tofile="${project.build.outputDirectory}/et.yml" />
+                  </tasks>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
