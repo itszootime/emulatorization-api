@@ -20,17 +20,18 @@ public class EmulatorUtil {
 		List<Double> covfparList = new ArrayList<Double>();
 		
 		if (covarianceFunction.equals("squared_exponential")) {
-			covfname = new MLString("covSEisoUnit");
-			covfparList.add(lengthScale); 
+			covfname = new MLString("covSEardUnit");
 		}
 		else {
 			covfname = new MLString("covMatern3ardUnit");
-			StandardDeviation sd = new StandardDeviation();
-			for (int i = 0 ; i < x.getInputIdentifiers().size(); i++) {
-				String inputIdentifier = x.getInputIdentifiers().get(i);
-				covfparList.add(lengthScale * sd.evaluate(ArrayUtils.toPrimitive(x.getPoints(inputIdentifier))));
-			}
 		}
+		
+		StandardDeviation sd = new StandardDeviation();
+		for (int i = 0 ; i < x.getInputIdentifiers().size(); i++) {
+			String inputIdentifier = x.getInputIdentifiers().get(i);
+			covfparList.add(lengthScale * sd.evaluate(ArrayUtils.toPrimitive(x.getPoints(inputIdentifier))));
+		}
+		
 		if (nuggetVariance != null) {
 			covfname = new MLCell(new MLValue[] {
 				new MLString("covSum"),
