@@ -25,7 +25,7 @@ public class Learning {
 
 	private static final Logger logger = LoggerFactory.getLogger(Learning.class);
 
-	public static LearningResult learn(Design design, ProcessEvaluationResult evaluationResult, String selectedOutputIdentifier, String covarianceFunction, double lengthScale, Double nuggetVariance, String meanFunction, boolean normalisation) throws LearningException {
+	public static LearningResult learn(Design design, ProcessEvaluationResult evaluationResult, String selectedOutputIdentifier, String covarianceFunction, double lengthScaleMultiplier, Double nuggetVariance, String meanFunction, boolean normalisation) throws LearningException {
 		// setup x
 		Design x = design;
 
@@ -56,7 +56,7 @@ public class Learning {
 		request.addParameter(new MLMatrix(yt));
 
 		// add covariance function params
-		EmulatorUtil.addCovarianceFunction(request, x, covarianceFunction, lengthScale, nuggetVariance);
+		EmulatorUtil.addCovarianceFunction(request, x, covarianceFunction, lengthScaleMultiplier, nuggetVariance);
 
 		// setup mean function
 		EmulatorUtil.addMeanFunction(request, meanFunction);
@@ -77,18 +77,22 @@ public class Learning {
 			double[] predictedCovariance = result.getResult(1).getAsArray().getArray();
 			
 			MLValue optCovParams = result.getResult(2);
-			double optLengthScale;
+			double[] optLengthScales = new double[x.getInputIdentifiers().size()];
 			Double optNuggetVariance = null;
 			if (optCovParams.isScalar()) {
-				optLengthScale = optCovParams.getAsScalar().getScalar();
+				optLengthScales[0] = optCovParams.getAsScalar().getScalar();
 			}
 			else {
 				double[] optCovParamsArr = optCovParams.getAsArray().getArray();
-				optLengthScale = optCovParamsArr[0];
-				optNuggetVariance = Math.pow(Math.exp(optCovParamsArr[1]), 2);
+				for (int i = 0; i < optLengthScales.length; i++) {
+					optLengthScales[i] = optCovParamsArr[i];
+				}
+				if (nuggetVariance != null) {
+					optNuggetVariance = Math.pow(Math.exp(optCovParamsArr[optCovParamsArr.length - 1]), 2);
+				}
 			}			
 
-			return new LearningResult(predictedMean, predictedCovariance, x, y, optLengthScale, optNuggetVariance);
+			return new LearningResult(predictedMean, predictedCovariance, x, y, optLengthScales, optNuggetVariance);
 		}
 		catch (MLException e) {
 			throw new LearningException("Couldn't perform learning: " + e.getMessage());

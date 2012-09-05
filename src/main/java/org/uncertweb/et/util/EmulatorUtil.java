@@ -15,7 +15,7 @@ import org.uncertweb.matlab.value.MLValue;
 public class EmulatorUtil {
 
 	public static void addCovarianceFunction(MLRequest request, Design x, String covarianceFunction,
-		Double lengthScale, Double nuggetVariance) {
+		Double lengthScaleMultiplier, Double nuggetVariance) {
 		MLValue covfname;
 		List<Double> covfparList = new ArrayList<Double>();
 		
@@ -29,7 +29,7 @@ public class EmulatorUtil {
 		StandardDeviation sd = new StandardDeviation();
 		for (int i = 0 ; i < x.getInputIdentifiers().size(); i++) {
 			String inputIdentifier = x.getInputIdentifiers().get(i);
-			covfparList.add(lengthScale * sd.evaluate(ArrayUtils.toPrimitive(x.getPoints(inputIdentifier))));
+			covfparList.add(lengthScaleMultiplier * sd.evaluate(ArrayUtils.toPrimitive(x.getPoints(inputIdentifier))));
 		}
 		
 		if (nuggetVariance != null) {

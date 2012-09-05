@@ -21,9 +21,9 @@ function [ predmean, predcov ] = run_emulator( gpml_path, x, xtrn, ytrn, covfnam
   meanf.name = meanfname;
   meanf.par = meanfpar;
 
-  gp = gpinit(xtrn,ytrn,covf,meanf);
+  gp = gpinit(xtrn, ytrn, covf, meanf);
 
-  gp = gppred(gp,x);
+  gp = gppred(gp, x);
 
   predmean = gp.pred.mean';
   predcov = diag(gp.pred.cov)';

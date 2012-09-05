@@ -12,7 +12,7 @@ public class LearningRequest extends Request {
 
 	private String meanFunction;
 	private String covarianceFunction;
-	private double lengthScale;
+	private double lengthScaleMultiplier;
 	private Double nuggetVariance;
 	
 	private boolean normalisation;
@@ -45,8 +45,8 @@ public class LearningRequest extends Request {
 		return covarianceFunction;
 	}
 
-	public double getLengthScale() {
-		return lengthScale;
+	public double getLengthScaleMultiplier() {
+		return lengthScaleMultiplier;
 	}
 
 	public Double getNuggetVariance() {

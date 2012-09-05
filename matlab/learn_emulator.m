@@ -29,7 +29,7 @@ function [ predmean, predcov, covfpar ] = learn_emulator( gpml_path, xtrn, ytrn,
   % -----------
 
   gp = gpmml(gp);
-  gp = gppred(gp,xtrn);
+  gp = gppred(gp, xtrn);
 
   predmean = gp.pred.mean';
   predcov = diag(gp.pred.cov)';

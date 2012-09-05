@@ -55,7 +55,7 @@ public class EmulatorEvaluator {
 
 			// setup covariance function
 			EmulatorUtil.addCovarianceFunction(request, emulator.getDesign(), emulator.getCovarianceFunction(),
-				emulator.getLengthScale(), emulator.getNuggetVariance());
+				emulator.getLengthScaleMultiplier(), emulator.getNuggetVariance());
 			
 			// setup mean function
 			EmulatorUtil.addMeanFunction(request, emulator.getMeanFunction());
@@ -93,7 +93,7 @@ public class EmulatorEvaluator {
 			return er;
 		}
 		catch (MLException e) {
-			throw new EmulatorEvaluatorException("Couldn't run emulator. " + e.getMessage());
+			throw new EmulatorEvaluatorException("Couldn't evaluate emulator. " + e.getMessage());
 		}
 		catch (IOException e) {
 			throw new EmulatorEvaluatorException("Couldn't connect to MATLAB.");

@@ -10,7 +10,7 @@ import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.parameter.VariableInput;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 
-public class SimulatorExample {
+public class SimpleSimulator {
 	
 	public static final List<Input> INPUTS = Arrays.asList(new Input[] {
 		new VariableInput("Rainfall", 0.0, 1.0),
