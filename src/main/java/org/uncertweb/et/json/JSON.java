@@ -49,7 +49,7 @@ public class JSON {
 		// setup gson builder
 		gsonBuilder = new GsonBuilder();
 		registerSerializers(gsonBuilder);
-		registerDeserializers(gsonBuilder);
+		registerAlizers(gsonBuilder);
 		registerInstanceCreators(gsonBuilder);
 		
 		// set image storage
@@ -103,12 +103,13 @@ public class JSON {
 		});
 	}
 
-	private void registerDeserializers(GsonBuilder gsonBuilder) {
+	private void registerAlizers(GsonBuilder gsonBuilder) {
 		gsonBuilder.registerTypeAdapter(JsonElement.class, new JsonDeserializer<JsonElement>() {
 			public JsonElement deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 				return json;
 			}
 		});
+		gsonBuilder.registerTypeAdapter(Input.class, new InputSerializer());
 		gsonBuilder.registerTypeAdapter(Input.class, new InputDeserializer());
 		gsonBuilder.registerTypeAdapter(Request.class, new RequestDeserializer());
 		gsonBuilder.registerTypeAdapter(Design.class, new DesignSerializer());
