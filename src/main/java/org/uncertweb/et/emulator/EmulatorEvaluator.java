@@ -55,7 +55,7 @@ public class EmulatorEvaluator {
 
 			// setup covariance function
 			EmulatorUtil.addCovarianceFunction(request, emulator.getDesign(), emulator.getCovarianceFunction(),
-				emulator.getLengthScaleMultiplier(), emulator.getNuggetVariance());
+				emulator.getLengthScales(), emulator.getNuggetVariance());
 			
 			// setup mean function
 			EmulatorUtil.addMeanFunction(request, emulator.getMeanFunction());

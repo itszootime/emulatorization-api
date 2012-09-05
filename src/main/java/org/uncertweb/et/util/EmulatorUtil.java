@@ -13,9 +13,9 @@ import org.uncertweb.matlab.value.MLString;
 import org.uncertweb.matlab.value.MLValue;
 
 public class EmulatorUtil {
-
+	
 	public static void addCovarianceFunction(MLRequest request, Design x, String covarianceFunction,
-		Double lengthScaleMultiplier, Double nuggetVariance) {
+		double lengthScales[], Double nuggetVariance) {
 		MLValue covfname;
 		List<Double> covfparList = new ArrayList<Double>();
 		
@@ -24,12 +24,10 @@ public class EmulatorUtil {
 		}
 		else {
 			covfname = new MLString("covMatern3ardUnit");
-		}
+		}		
 		
-		StandardDeviation sd = new StandardDeviation();
-		for (int i = 0 ; i < x.getInputIdentifiers().size(); i++) {
-			String inputIdentifier = x.getInputIdentifiers().get(i);
-			covfparList.add(lengthScaleMultiplier * sd.evaluate(ArrayUtils.toPrimitive(x.getPoints(inputIdentifier))));
+		for (int i = 0 ; i < lengthScales.length; i++) {
+			covfparList.add(lengthScales[i]);
 		}
 		
 		if (nuggetVariance != null) {
@@ -43,6 +41,19 @@ public class EmulatorUtil {
 
 		request.addParameter(covfname);		
 		request.addParameter(new MLArray(covfpar));
+	}
+
+	public static void addCovarianceFunction(MLRequest request, Design x, String covarianceFunction,
+		double lengthScaleMultiplier, Double nuggetVariance) {
+		// calculate length scales
+		StandardDeviation sd = new StandardDeviation();
+		double[] lengthScales = new double[x.getInputIdentifiers().size()];
+		for (int i = 0 ; i < lengthScales.length; i++) {
+			String inputIdentifier = x.getInputIdentifiers().get(i);
+			lengthScales[i] = lengthScaleMultiplier * sd.evaluate(ArrayUtils.toPrimitive(x.getPoints(inputIdentifier)));
+		}
+		
+		addCovarianceFunction(request, x, covarianceFunction, lengthScales, nuggetVariance);
 	}
 	
 	public static void addMeanFunction(MLRequest request, String meanFunction) {
