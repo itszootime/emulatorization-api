@@ -35,7 +35,7 @@ public class InputSerializer implements JsonSerializer<Input> {
 			range.addProperty("min", vi.getMin());
 			range.addProperty("max", vi.getMax());
 		}
-		else {
+		else if (src instanceof ConstantInput) {
 			// cast
 			ConstantInput ci = (ConstantInput)src;
 			
