@@ -19,6 +19,7 @@ import org.uncertweb.et.parameter.Input;
 import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.parameter.ParameterDescription;
 import org.uncertweb.et.parameter.ParameterDescription.DataType;
+import org.uncertweb.et.parameter.VariableInput;
 import org.uncertweb.xml.Namespaces;
 import org.uncertweb.xml.XPathWrapper;
 
@@ -57,8 +58,8 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 				String processIdentifier = operation.getAttributeValue("name");
 				
 				// maybe some metadata
-				Map<String, String> metadata = getDescriptionMetadata(operation);
-				String description = metadata.get("description");
+				Map<String, String> processMetadata = getDescriptionMetadata(operation);
+				String description = processMetadata.get("description");
 
 				// create process
 				ProcessDescription processDescription = new ProcessDescription(processIdentifier, description);
@@ -74,7 +75,18 @@ public class PSDescriptionParser extends AbstractServiceDescriptionParser {
 						String identifier = inputElement.getAttributeValue("name"); 
 						if (!identifier.equals("RequestedOutputs")) { 
 							// get description, add to process
-							Input input = new Input(identifier, parseParameterDescription(inputElement));
+							Input input;
+							Map<String, String> inputMetadata = getDescriptionMetadata(inputElement);
+							if (inputMetadata.containsKey("variable-minimum") && inputMetadata.containsKey("variable-maximum")) {
+								// FIXME: what if they only have one??
+								double min = Double.parseDouble(inputMetadata.get("variable-minimum"));
+								double max = Double.parseDouble(inputMetadata.get("variable-maximum"));
+								input = new VariableInput(identifier, min, max);
+								input.setDescription(parseParameterDescription(inputElement));
+							}
+							else {
+								input = new Input(identifier, parseParameterDescription(inputElement));
+							}
 							processDescription.addInput(input);
 						}
 					}
