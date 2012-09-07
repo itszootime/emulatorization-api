@@ -23,7 +23,6 @@ public class ScreeningRequest extends Request {
 	 */
 	private int numTrajectories; // R
 	private int discretisationLevel; // p
-	private int deltaP; // multiplicative factor of delta/(p-1)
 	
 	public ScreeningRequest() {
 		
@@ -51,10 +50,6 @@ public class ScreeningRequest extends Request {
 
 	public int getDiscretisationLevel() {
 		return discretisationLevel;
-	}
-
-	public int getDeltaP() {
-		return deltaP;
 	}
 
 }
