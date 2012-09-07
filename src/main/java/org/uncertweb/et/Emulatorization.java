@@ -87,14 +87,13 @@ public class Emulatorization {
 
 				int numTraj = sRequest.getNumTrajectories();
 				int discretisationLevel = sRequest.getDiscretisationLevel();
-				int deltaP = sRequest.getDeltaP();
 
 				Screening screening;
-				if (numTraj == 0 && discretisationLevel == 0 && deltaP == 0) {
+				if (numTraj == 0 && discretisationLevel == 0) {
 					screening = new Screening(sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.getInputs(), sRequest.getOutputs());
 				}
 				else {
-					screening = new Screening(sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.getInputs(), sRequest.getOutputs(), numTraj, discretisationLevel, deltaP);
+					screening = new Screening(sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.getInputs(), sRequest.getOutputs(), numTraj, discretisationLevel);
 				}
 
 				response = new ScreeningResponse(screening.run());

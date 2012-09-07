@@ -36,11 +36,10 @@ public class Screening {
 		this.outputs = outputs;
 	}
 	
-	public Screening(String serviceURL, String processIdentifier, List<Input> inputs, List<Output> outputs, int numTrajectories, int discretisationLevel, int deltaP) {
+	public Screening(String serviceURL, String processIdentifier, List<Input> inputs, List<Output> outputs, int numTrajectories, int discretisationLevel) {
 		this(serviceURL, processIdentifier, inputs, outputs);
 		this.numTrajectories = numTrajectories;
 		this.discretisationLevel = discretisationLevel;
-		this.deltaP = deltaP;
 	}
 
 	public List<MorrisOutputResult> run() throws ScreeningException, ProcessEvaluatorException, DesignException {
