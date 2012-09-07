@@ -21,6 +21,7 @@ public class Screening {
 	private List<Output> outputs;
 	private int numTrajectories = 5;
 	private int discretisationLevel = 10;
+	private int deltaP = 1; 
 	
 	public Screening(String serviceURL, String processIdentifier, List<Input> inputs, List<Output> outputs) {
 		this.serviceURL = serviceURL;
@@ -35,11 +36,11 @@ public class Screening {
 		this.outputs = outputs;
 	}
 	
-	public Screening(String serviceURL, String processIdentifier, List<Input> inputs, List<Output> outputs, int numTrajectories, int discretisationLevel) {
+	public Screening(String serviceURL, String processIdentifier, List<Input> inputs, List<Output> outputs, int numTrajectories, int discretisationLevel, int deltaP) {
 		this(serviceURL, processIdentifier, inputs, outputs);
 		this.numTrajectories = numTrajectories;
-		// discretisation level needs to be even
 		this.discretisationLevel = discretisationLevel;
+		this.deltaP = deltaP;
 	}
 
 	public List<MorrisOutputResult> run() throws ScreeningException, ProcessEvaluatorException, DesignException {
@@ -49,7 +50,7 @@ public class Screening {
 	}
 
 	private MorrisDesign runDesign() throws DesignException {
-		return MorrisDesign.create(variableInputs, numTrajectories, discretisationLevel);
+		return MorrisDesign.create(variableInputs, numTrajectories, discretisationLevel, deltaP);
 	}
 
 	private ProcessEvaluationResult runEval(MorrisDesign design) throws ProcessEvaluatorException {

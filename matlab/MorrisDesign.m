@@ -1,4 +1,4 @@
-function [BallTraj, PstarTraj, delta01] = MorrisDesign(R, k, p, linearTransformation)
+function [BallTraj, PstarTraj, delta01] = MorrisDesign(R,k,p,deltaP, linearTransformation)
 %% function to generate morris design - pass in number of trajectories (R),
 %% input dimension (k)
 %% Also pass discretisation level (p) and multiplicative factor of delta/(p-1).
@@ -15,12 +15,11 @@ function [BallTraj, PstarTraj, delta01] = MorrisDesign(R, k, p, linearTransforma
 if(mod(p,2) ~= 0)
     error('MorrisDesign::p should be even');
 end
-
-%if(~isnan(deltaP) )
-%    delta01 = deltaP / (p-1); % we actually pass in multiplicative factor over grid
-%else
+if(~isnan(deltaP) )
+    delta01 = deltaP / (p-1); % we actually pass in multiplicative factor over grid
+else
     delta01 = p/(2*(p-1));    % default suggested in Morris paper
-%end
+end
 
 if(exist('linearTransformation','var'))
     % UNDONE Need delta per vabiable

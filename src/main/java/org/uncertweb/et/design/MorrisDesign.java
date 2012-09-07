@@ -50,7 +50,7 @@ public class MorrisDesign extends Design {
 		linearTransformationMap.put(inputIdentifier, linearTransformation);
 	}
 
-	public static MorrisDesign create(List<VariableInput> inputs, int r, int p) throws DesignException {
+	public static MorrisDesign create(List<VariableInput> inputs, int r, int p, int deltaP) throws DesignException {
 		// create linear transformation
 		Double[][] linearTransformation = new Double[inputs.size()][];
 		for (int i = 0; i < inputs.size(); i++) {
@@ -68,6 +68,7 @@ public class MorrisDesign extends Design {
 			request.addParameter(new MLScalar(r));
 			request.addParameter(new MLScalar(inputs.size()));
 			request.addParameter(new MLScalar(p));
+			request.addParameter(new MLScalar(deltaP));
 			request.addParameter(new MLMatrix(linearTransformation));
 			
 			// send request

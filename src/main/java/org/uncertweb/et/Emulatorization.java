@@ -48,6 +48,7 @@ import org.uncertweb.et.validation.Validator;
 import org.uncertweb.et.validation.ValidatorResult;
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
+import org.uncertweb.matlab.MLResult;
 
 public class Emulatorization {
 
@@ -86,13 +87,14 @@ public class Emulatorization {
 
 				int numTraj = sRequest.getNumTrajectories();
 				int discretisationLevel = sRequest.getDiscretisationLevel();
+				int deltaP = sRequest.getDeltaP();
 
 				Screening screening;
-				if (numTraj == 0 && discretisationLevel == 0) {
+				if (numTraj == 0 && discretisationLevel == 0 && deltaP == 0) {
 					screening = new Screening(sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.getInputs(), sRequest.getOutputs());
 				}
 				else {
-					screening = new Screening(sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.getInputs(), sRequest.getOutputs(), numTraj, discretisationLevel);
+					screening = new Screening(sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.getInputs(), sRequest.getOutputs(), numTraj, discretisationLevel, deltaP);
 				}
 
 				response = new ScreeningResponse(screening.run());
@@ -166,7 +168,7 @@ public class Emulatorization {
 				String matlabMessage;
 				try {
 					MLRequest mlRequest = new MLRequest("matlab_version", 1);
-					MATLAB.sendRequest(mlRequest);
+					MLResult result = MATLAB.sendRequest(mlRequest);
 					matlabOK = true;
 					//result.getResult(0).getAsString().getString()
 					matlabMessage =  "Ready";
