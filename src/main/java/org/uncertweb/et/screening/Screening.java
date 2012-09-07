@@ -49,8 +49,7 @@ public class Screening {
 	}
 
 	private MorrisDesign runDesign() throws DesignException {
-		int deltaP = discretisationLevel / (2 * (discretisationLevel - 1));
-		return MorrisDesign.create(variableInputs, numTrajectories, discretisationLevel, deltaP);
+		return MorrisDesign.create(variableInputs, numTrajectories, discretisationLevel);
 	}
 
 	private ProcessEvaluationResult runEval(MorrisDesign design) throws ProcessEvaluatorException {
