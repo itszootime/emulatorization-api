@@ -1,7 +1,8 @@
 package org.uncertweb.et.test;
 
 import java.text.DecimalFormat;
-import static org.junit.Assert.*;
+
+import org.junit.Assert;
 
 public class TestHelper {
 	
@@ -12,9 +13,9 @@ public class TestHelper {
 	}
 	
 	public static void assertArrayEquals(Double[] expected, Double[] actual, double delta) {
-		assertEquals(expected.length, actual.length);
+		Assert.assertEquals(expected.length, actual.length);
 		for (int i = 0; i < expected.length; i++) {
-			assertEquals(expected[i], actual[i], delta);
+			Assert.assertEquals(expected[i], actual[i], delta);
 		}
 	}
 

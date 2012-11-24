@@ -10,6 +10,10 @@ import org.uncertweb.et.process.ProcessEvaluationResult;
 
 public class ValidationRequest extends Request {
 	
+	// emulator + simulator url, input spec
+	// emulator + simulator results
+	// simulator results + simulator results
+	
 	private Emulator emulator;
 	
 	// can have this
@@ -23,8 +27,20 @@ public class ValidationRequest extends Request {
 	private Design design;
 	private ProcessEvaluationResult evaluationResult;
 	
+	// or these
+	private ProcessEvaluationResult observedResult;
+	private ProcessEvaluationResult simulatedResult;
+	
 	public ValidationRequest() {
 		
+	}
+	
+	public ProcessEvaluationResult getObservedResult() {
+		return observedResult;
+	}
+	
+	public ProcessEvaluationResult getSimulatedResult() {
+		return simulatedResult;
 	}
 
 	public String getServiceURL() {
