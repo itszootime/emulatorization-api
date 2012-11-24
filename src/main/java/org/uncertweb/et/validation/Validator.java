@@ -1,6 +1,7 @@
 package org.uncertweb.et.validation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,10 +15,12 @@ import org.uncertweb.et.emulator.EmulatorEvaluator;
 import org.uncertweb.et.emulator.EmulatorEvaluatorException;
 import org.uncertweb.et.parameter.Input;
 import org.uncertweb.et.parameter.Output;
-import org.uncertweb.et.process.NormalisedProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
+import org.uncertweb.et.value.Ensemble;
+import org.uncertweb.et.value.Numeric;
+import org.uncertweb.et.value.Values;
 
 public class Validator {
 
@@ -32,21 +35,11 @@ public class Validator {
 	
 	
 	private static final Logger logger = LoggerFactory.getLogger(Validator.class);
-
-//	public static List<ValidatorOutputResult> validate(Double[] observed, Double[] predicted) {
-//		return calculateZScores(observed, predicted);
-//	}
 	
-	// observed (real measurement)
-	// vs samples (from model)
-	
-	public static ValidatorResult validate(ProcessEvaluationResult measurements, ProcessEvaluationResult processResults) {
-		// for each output
-		List<ValidatorOutputResult> outputResults = new ArrayList<ValidatorOutputResult>();
-		for (String outputIdentifier : measurements.getOutputIdentifiers()) {
-			// calculate z scores and rmse
-			Double[] zScores = Validator.calculateZScores(measurements.getResults(outputIdentifier), processResults.getResults(outputIdentifier));
-			Double rmse = Validator.calculateRMSE(measurements.getResults(outputIdentifier), processResults.getResults(outputIdentifier));
+	public static ValidatorResult validate(Values<Numeric> observed, Values<Ensemble> simulated) {
+		// calculate
+		Double[] zScores = Validator.calculateZScores(observed, simulated);
+		Double rmse = Validator.calculateRMSE(measurements.getResults(outputIdentifier), processResults.getResults(outputIdentifier));
 			
 			// add to result
 			ValidatorOutputResult outputResult = new ValidatorOutputResult(outputIdentifier, zScores, null, null, null, rmse);
@@ -54,7 +47,7 @@ public class Validator {
 		}
 		
 		// construct result
-		ValidatorResult result = new ValidatorResult(outputResults, 0);
+		ValidatorResult result = new ValidatorResult(Arrays.asList(new ValidationOutputResult[] { result }));
 		return result;
 	}
 
@@ -108,7 +101,7 @@ public class Validator {
 		List<ValidatorOutputResult> outputResults = new ArrayList<ValidatorOutputResult>();
 		ValidatorOutputResult outputResult = new ValidatorOutputResult(outputId, zScores, processResults, meanResults, covarianceResults, rmse);
 		outputResults.add(outputResult);
-		ValidatorResult result = new ValidatorResult(outputResults, emulatorDuration);
+		ValidatorResult result = new ValidatorResult(outputResults);
 		
 		return result;
 	}

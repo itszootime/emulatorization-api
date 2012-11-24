@@ -1,24 +1,35 @@
 package org.uncertweb.et.validation;
 
-import java.util.List;
+import org.uncertweb.et.value.Numeric;
+import org.uncertweb.et.value.Values;
 
 public class ValidatorResult {
 
-	private List<ValidatorOutputResult> outputResults;
-	private long emulatorTime;
+	private Values<Numeric> standardScores;
+	private double rmse;
 	
-	public ValidatorResult(List<ValidatorOutputResult> outputResults, long emulatorTime) {
-		super();
-		this.outputResults = outputResults;
-		this.emulatorTime = emulatorTime;
+	private Values<?> observed;
+	private Values<?> simulated;
+	
+	public ValidatorResult(Values<Numeric> standardScores, double rmse) {
+		this.standardScores = standardScores;
+		this.rmse = rmse;
 	}
 	
-	public List<ValidatorOutputResult> getOutputResults() {
-		return outputResults;
+	public Values<?> getObserved() {
+		return observed;
 	}
 	
-	public long getEmulatorTime() {
-		return emulatorTime;
+	public Values<?> getSimulated() {
+		return simulated;
+	}
+	
+	public Values<Numeric> getStandardScores() {
+		return standardScores;
+	}
+	
+	public double getRMSE() {
+		return rmse;
 	}
 	
 }

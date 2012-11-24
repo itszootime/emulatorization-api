@@ -124,7 +124,7 @@ public class Emulatorization {
 
 				ValidatorResult result;
 				if (vRequest.getEmulator() == null) {
-					
+					result = Validator.validate(vRequest.getObservedResult(), vRequest.getSimulatedResult());
 				}
 				else {
 					if (vRequest.getDesign() != null) {
