@@ -19,6 +19,7 @@ import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
 import org.uncertweb.et.value.Ensemble;
+import org.uncertweb.et.value.MeanCovariance;
 import org.uncertweb.et.value.Numeric;
 import org.uncertweb.et.value.Values;
 
@@ -122,15 +123,16 @@ public class Validator {
 		return scores;
 	}
 	
-	public static Double[] calculateZScores(Double[] observed, Double[] predictedMean, Double[] predictedCovariance) {
-		Double[] scores = new Double[observed.length];
-		for (int i = 0; i < observed.length; i++) {
-			// for each result
-			double stdev = Math.sqrt(Math.abs(predictedCovariance[i]));
-			double diff = observed[i] - predictedMean[i];
+	public static Values<Numeric> calculateStandardScores(Values<Numeric> observed, Values<MeanCovariance> simulated) {
+		double[] scores = new double[observed.size()];
+		for (int i = 0; i < scores.length; i++) {
+			Numeric n = observed.get(i);
+			MeanCovariance mc = simulated.get(i);
+			double stdev = Math.sqrt(Math.abs(mc.getCovariance()));
+			double diff = n.getNumber() - mc.getMean();
 			scores[i] = diff / stdev;
 		}
-		return scores;
+		return Values.fromNumericArray(scores);
 	}
 
 	private static Double calculateMean(Double[] values) {

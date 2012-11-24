@@ -8,10 +8,10 @@ public class Values<T extends Value> implements Iterable<T> {
 	
 	// each value can have an identifier?
 	
-	private List<T> values;
+	private List<T> list;
 	
 	private Values() {
-		values = new ArrayList<T>();
+		list = new ArrayList<T>();
 	}
 	
 	/**
@@ -29,23 +29,40 @@ public class Values<T extends Value> implements Iterable<T> {
 	}
 	
 	public void add(T value) {
-		values.add(value);
+		list.add(value);
+	}
+	
+	public T get(int index) {
+		return list.get(index);
+	}
+	
+	public int size() {
+		return list.size();
 	}
 	
 	public List<T> getValues() {
-		return values;
+		return list;
+	}
+	
+	public static double[] toNumericArray(Values<Numeric> values) {
+		double[] array = new double[values.size()];
+		for (int i = 0; i < array.length; i++) {
+			Numeric n = values.get(i);
+			array[i] = n.getNumber();
+		}
+		return array;
 	}
 	
 	/**
-	 * Each row should contain a mean and variance.
+	 * Each row should contain a mean and covariance.
 	 * 
 	 * @param matrix
 	 * @return
 	 */
-	public static Values<MeanVariance> fromMeanVarianceMatrix(double[][] matrix) {
-		Values<MeanVariance> v = new Values<MeanVariance>();
+	public static Values<MeanCovariance> fromMeanCovarianceMatrix(double[][] matrix) {
+		Values<MeanCovariance> v = new Values<MeanCovariance>();
 		for (int row = 0; row < matrix.length; row++) {
-			v.add(new MeanVariance(matrix[row][0], matrix[row][1]));
+			v.add(new MeanCovariance(matrix[row][0], matrix[row][1]));
 		}
 		return v;
 	}
@@ -56,7 +73,7 @@ public class Values<T extends Value> implements Iterable<T> {
 	 * @param array
 	 * @return
 	 */
-	public static Values<Numeric> fromArray(double[] array) {
+	public static Values<Numeric> fromNumericArray(double[] array) {
 		Values<Numeric> v = new Values<Numeric>();
 		for (int i = 0; i < array.length; i++) {
 			v.add(new Numeric(array[i]));
@@ -66,7 +83,7 @@ public class Values<T extends Value> implements Iterable<T> {
 
 	@Override
 	public Iterator<T> iterator() {
-		return values.iterator();
+		return list.iterator();
 	}
 
 }

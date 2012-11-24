@@ -25,7 +25,7 @@ public class TestData {
 	public static Values<Numeric> getObservedValues() {
 		double[] observed = new double[] { 21.489, 25.592, 31.988, 33.653, 25.465, 23.407,
 				19.12, 16.28, 15.299, 15.576 };
-		return Values.fromArray(observed);
+		return Values.fromNumericArray(observed);
 	}
 
 }
