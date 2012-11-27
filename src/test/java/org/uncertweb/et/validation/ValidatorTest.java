@@ -18,27 +18,47 @@ public class ValidatorTest {
 	
 	@Test
 	public void rmseNumeric() {
-		fail();
+		NumericValues observed = TestData.getNuObserved();
+		Validator validator = new Validator(observed, TestData.getNuObserved());
+		
+		// check
+		assertThat(validator.getRMSE(), equalTo(0.0));
 	}
 	
 	@Test
 	public void standardScoresNumeric() {
-		fail();
-	}
-	
-	@Test
-	public void rmseEnsembles() {
-		Validator validator = new Validator(TestData.getNuObserved(), TestData.getNuPredicted());
+		NumericValues observed = TestData.getNuObserved();
+		Validator validator = new Validator(observed, TestData.getNuObserved());
 		
 		// get scores
 		NumericValues scores = validator.getStandardScores();
 		
 		// check
+		assertThat(scores.size(), equalTo(observed.size()));
+		assertThat(scores.get(0).getNumber(), 1000.0, 0.0));
+		assertThat(scores.get(2).getNumber(), closeTo(1000.0, 0.0));
+	}
+	
+	@Test
+	public void rmseEnsembles() {
+		Validator validator = new Validator(TestData.getNuObserved(), TestData.getNuPredicted());
+				
+		// check
+		assertThat(validator.getRMSE(), closeTo(1000.0, 0.0));
 	}
 	
 	@Test
 	public void standardScoresEnsembles() {
-		Validator validator = new Validator(TestData.getNuObserved(), TestData.getNuPredicted());
+		NumericValues observed = TestData.getNuObserved();
+		Validator validator = new Validator(observed, TestData.getNuPredicted());
+		
+		// get scores
+		NumericValues scores = validator.getStandardScores();
+		
+		// check
+		assertThat(scores.size(), equalTo(observed.size()));
+		assertThat(scores.get(0).getNumber(), closeTo(1000.0, 0.0));
+		assertThat(scores.get(2).getNumber(), closeTo(1000.0, 0.0));
 	}
 	
 	@Test

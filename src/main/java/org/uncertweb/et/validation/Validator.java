@@ -17,28 +17,30 @@ import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
+import org.uncertweb.et.value.EnsembleValues;
 import org.uncertweb.et.value.MeanVariance;
 import org.uncertweb.et.value.MeanVarianceValues;
 import org.uncertweb.et.value.Numeric;
 import org.uncertweb.et.value.NumericValues;
+import org.uncertweb.et.value.Values;
 
 public class Validator {
 
 	private static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
 	private NumericValues observed;
-	private MeanVarianceValues predicted;
+	private Values predicted;
 
-	public Validator(NumericValues observed, MeanVarianceValues predicted) {
+	public Validator(NumericValues observed, Values predicted) {
 		this.observed = observed;
 		this.predicted = predicted;
-	}	
+	}
 
 	public NumericValues getObserved() {
 		return observed;
 	}
-	
-	public MeanVarianceValues getPredicted() {
+
+	public Values getPredicted() {
 		return predicted;
 	}
 
@@ -85,7 +87,7 @@ public class Validator {
 		// build values for now
 		NumericValues simulated = NumericValues.fromArray(ArrayUtils.toPrimitive(processResults));
 		MeanVarianceValues emulated = MeanVarianceValues.fromArrays(ArrayUtils.toPrimitive(meanResults), ArrayUtils.toPrimitive(covarianceResults));
-		
+
 		// return
 		return new Validator(simulated, emulated);
 	}
@@ -94,9 +96,20 @@ public class Validator {
 		double[] o = observed.toArray();
 		double[] p = new double[predicted.size()];
 
-		// use means
-		for (int i = 0; i < p.length; i++) {
-			p[i] = predicted.get(i).getMean();
+		// means, numeric, or ensembles?
+		if (predicted instanceof MeanVarianceValues) {
+			for (int i = 0; i < p.length; i++) {
+				p[i] = ((MeanVarianceValues)predicted).get(i).getMean();
+			}
+		}
+		else if (predicted instanceof NumericValues) {
+			p = ((NumericValues)predicted).toArray();
+		}
+		else {
+			// not sure yet! just taking first member in ensemble here
+			for (int i = 0; i < p.length; i++) {
+				p[i] = ((EnsembleValues)predicted).get(i).getMembers()[0];
+			}
 		}
 
 		// calculate
@@ -108,21 +121,30 @@ public class Validator {
 
 		return Math.sqrt(total);		
 	}
-	
+
 	public NumericValues getStandardScores() {
 		double[] scores = new double[observed.size()];
-		
+
 		for (int i = 0; i < scores.length; i++) {
 			// get observed and predicted
 			Numeric o = observed.get(i);
-			MeanVariance p = predicted.get(i);
+			MeanVariance p;
 			
-			// calculate
-			double stdev = Math.sqrt(Math.abs(p.getVariance()));
-			double diff = o.getNumber() - p.getMean();
-			scores[i] = diff / stdev;
+			if (predicted instanceof MeanVarianceValues) {
+				p = ((MeanVarianceValues)predicted).get(i);
+				double stdev = Math.sqrt(Math.abs(p.getVariance()));
+				double diff = o.getNumber() - p.getMean();
+				scores[i] = diff / stdev;
+			}
+			else if (predicted instanceof NumericValues) {
+				scores[i] = 
+			}
+			else {
+				// making this up
+				scores[i] = 123;
+			}
 		}
-		
+
 		return NumericValues.fromArray(scores);
 	}
 
@@ -147,23 +169,7 @@ public class Validator {
 	//		return NumericValues.fromArray(scores);
 	//	}
 	//
-	//	private static double calculateMean(double[] values) {
-	//		double total = 0d;
-	//		for (double value : values) {
-	//			total += value;
-	//		}
-	//		return total / values.length;
-	//	}
-	//
-	//	private static double calculateVariance(double[] values) {
-	//		double mean = calculateMean(values);
-	//		double var = 0d;
-	//		for (double value : values) {
-	//			var += Math.pow(value - mean, 2);
-	//		}
-	//		return var / values.length;
-	//	}
-	//	
+
 
 
 }

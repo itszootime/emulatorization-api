@@ -34,6 +34,27 @@ public class NumericValues implements Values, Iterable<Numeric> {
 		return list.iterator();
 	}
 	
+	public double getStandardDeviation() {
+		return Math.sqrt(getVariance());
+	}
+	
+	public double getVariance() {
+		double mean = getMean();
+		double var = 0.0;
+		for (Numeric v : this) {
+			var += Math.pow(v.getNumber() - mean, 2);
+		}
+		return var / (size() - 1);
+	}
+	
+	public double getMean() {
+		double sum = 0.0;
+		for (Numeric v : this) {
+			sum += v.getNumber();
+		}
+		return sum / size();
+	}
+	
 	/**
 	 * Standard numeric values.
 	 * 
