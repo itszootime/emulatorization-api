@@ -18,4 +18,8 @@ public class MeanVariance implements Value {
 		return variance;
 	}
 	
+	public double getStandardDeviation() {
+		return Math.sqrt(getVariance());
+	}
+	
 }

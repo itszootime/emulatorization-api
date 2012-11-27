@@ -35,8 +35,8 @@ public class ValidatorTest {
 		
 		// check
 		assertThat(scores.size(), equalTo(observed.size()));
-		assertThat(scores.get(0).getNumber(), closeTo(0.0, 0.0));
-		assertThat(scores.get(2).getNumber(), closeTo(0.0, 0.0));
+		assertThat(scores.get(0).getNumber(), equalTo(0.0));
+		assertThat(scores.get(2).getNumber(), equalTo(0.0));
 	}
 	
 	@Test
@@ -44,7 +44,7 @@ public class ValidatorTest {
 		Validator validator = new Validator(TestData.getNuObserved(), TestData.getNuPredicted());
 				
 		// check
-		assertThat(validator.getRMSE(), closeTo(1000.0, 0.0));
+		assertThat(validator.getRMSE(), closeTo(20.7213, 0.0001));
 	}
 	
 	@Test
@@ -57,8 +57,8 @@ public class ValidatorTest {
 		
 		// check
 		assertThat(scores.size(), equalTo(observed.size()));
-		assertThat(scores.get(0).getNumber(), closeTo(1000.0, 0.0));
-		assertThat(scores.get(2).getNumber(), closeTo(1000.0, 0.0));
+		assertThat(scores.get(0).getNumber(), closeTo(-8.3571, 0.0001));
+		assertThat(scores.get(2).getNumber(), closeTo(-2.783, 0.0001));
 	}
 	
 	@Test

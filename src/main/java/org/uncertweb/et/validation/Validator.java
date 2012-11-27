@@ -17,6 +17,7 @@ import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
+import org.uncertweb.et.value.Ensemble;
 import org.uncertweb.et.value.EnsembleValues;
 import org.uncertweb.et.value.MeanVariance;
 import org.uncertweb.et.value.MeanVarianceValues;
@@ -106,9 +107,9 @@ public class Validator {
 			p = ((NumericValues)predicted).toArray();
 		}
 		else {
-			// not sure yet! just taking first member in ensemble here
+			// not sure yet! using mean of ensemble members
 			for (int i = 0; i < p.length; i++) {
-				p[i] = ((EnsembleValues)predicted).get(i).getMembers()[0];
+				p[i] = ((EnsembleValues)predicted).get(i).getMean();
 			}
 		}
 
@@ -128,13 +129,11 @@ public class Validator {
 		for (int i = 0; i < scores.length; i++) {
 			// get observed and predicted
 			Numeric o = observed.get(i);
-			MeanVariance p;
 			
 			if (predicted instanceof MeanVarianceValues) {
-				p = ((MeanVarianceValues)predicted).get(i);
-				double stdev = Math.sqrt(Math.abs(p.getVariance()));
+				MeanVariance p = ((MeanVarianceValues)predicted).get(i);
 				double diff = o.getNumber() - p.getMean();
-				scores[i] = diff / stdev;
+				scores[i] = diff / p.getStandardDeviation();
 			}
 			else if (predicted instanceof NumericValues) {
 				NumericValues values = (NumericValues)predicted;
@@ -142,8 +141,10 @@ public class Validator {
 				scores[i] = diff / values.getStandardDeviation();
 			}
 			else {
-				// making this up
-				scores[i] = 123;
+				// not sure yet! using ensemble members mean and variance
+				Ensemble p = ((EnsembleValues)predicted).get(i);
+				double diff = o.getNumber() - p.getMean();
+				scores[i] = diff / p.getStandardDeviation();
 			}
 		}
 
