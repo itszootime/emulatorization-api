@@ -1,9 +1,36 @@
 package org.uncertweb.et.value;
 
-public class MeanVarianceValues extends Values<MeanVariance> {
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class MeanVarianceValues implements Values, Iterable<MeanVariance> {
+	
+	private List<MeanVariance> list;
+	
+	public MeanVarianceValues() {
+		list = new ArrayList<MeanVariance>();
+	}
 	
 	public void add(double mean, double variance) {
-		add(new MeanVariance(mean, variance));
+		list.add(new MeanVariance(mean, variance));
+	}
+	
+	public void add(MeanVariance meanVariance) {
+		list.add(meanVariance);
+	}
+	
+	public MeanVariance get(int index) {
+		return list.get(index);
+	}
+	
+	public int size() {
+		return list.size();
+	}
+	
+	@Override
+	public Iterator<MeanVariance> iterator() {
+		return list.iterator();
 	}
 	
 	/**

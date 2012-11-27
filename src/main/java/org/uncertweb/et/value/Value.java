@@ -1,5 +1,5 @@
 package org.uncertweb.et.value;
 
-public class Value {
+public interface Value {
 
 }

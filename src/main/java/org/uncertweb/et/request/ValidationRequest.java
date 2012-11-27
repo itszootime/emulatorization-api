@@ -24,19 +24,19 @@ public class ValidationRequest extends Request {
 	private ProcessEvaluationResult evaluationResult;
 	
 	// or these
-	private NumericValues observedValues;
-	private EnsembleValues simulatedValues;
+	private NumericValues observed;
+	private EnsembleValues predicted;
 	
 	public ValidationRequest() {
 		
 	}
 	
-	public NumericValues getObservedValues() {
-		return observedValues;
+	public NumericValues getObserved() {
+		return observed;
 	}
 	
-	public EnsembleValues getSimulatedValues() {
-		return simulatedValues;
+	public EnsembleValues getPredicted() {
+		return predicted;
 	}
 
 	public String getServiceURL() {

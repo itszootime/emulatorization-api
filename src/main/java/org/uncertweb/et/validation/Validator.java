@@ -1,5 +1,6 @@
 package org.uncertweb.et.validation;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -17,58 +18,50 @@ import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
-import org.uncertweb.et.value.EnsembleValues;
 import org.uncertweb.et.value.MeanVariance;
 import org.uncertweb.et.value.MeanVarianceValues;
 import org.uncertweb.et.value.Numeric;
 import org.uncertweb.et.value.NumericValues;
-import org.uncertweb.et.value.Values;
 
 public class Validator {
 
-	// make something simple
-	// json inputs:
-	//   String serviceURL;
-	//   String processIdentifier;
-	//   List<Input> inputs;	  } for creating design, need min/max
-	//   List<Output> outputs;	  }
-	//   Emulator emulator;
-	
-	
-	
 	private static final Logger logger = LoggerFactory.getLogger(Validator.class);
+
+	private NumericValues observed;
+	private MeanVarianceValues predicted;
+
+	public Validator(NumericValues observed, MeanVarianceValues predicted) {
+		this.observed = observed;
+		this.predicted = predicted;
+	}	
+
+	public NumericValues getObserved() {
+		return observed;
+	}
 	
-	public static ValidatorResult validate(NumericValues observed, EnsembleValues simulated) {
-		// calculate
-//		double[] standardScores = Validator.calculateStandardScores(observed, simulated);
-//		Double rmse = Validator.calculateRMSE(measurements.getResults(outputIdentifier), processResults.getResults(outputIdentifier));
-//			
-//			// add to result
-//			ValidatorOutputResult outputResult = new ValidatorOutputResult(outputIdentifier, zScores, null, null, null, rmse);
-//			outputResults.add(outputResult);
-//		}
-//		
-//		// construct result
-//		ValidatorResult result = new ValidatorResult(Arrays.asList(new ValidationOutputResult[] { result }));
-//		return result;
-		return null;
+	public MeanVarianceValues getPredicted() {
+		return predicted;
 	}
 
-	public static ValidatorResult validate(String serviceURL, String processIdentifier, List<Input> inputs, List<Output> outputs, Emulator emulator, int designSize) throws DesignException, ProcessEvaluatorException, EmulatorEvaluatorException {
-		// create design
+	public static Validator usingSimulatorAndEmulator(String serviceURL, String processIdentifier, Emulator emulator, int designSize) throws DesignException, ProcessEvaluatorException, EmulatorEvaluatorException {
+		// get inputs and outputs from emulator
+		List<Input> inputs = emulator.getInputs();
+		List<Output> outputs = emulator.getOutputs();
+
+		// create design for evaluation
 		Design design = LHSDesign.create(inputs, designSize);
-		
+
 		// evaluate process
 		long time = System.nanoTime();
 		ProcessEvaluationResult processResult = ProcessEvaluator.evaluate(serviceURL, processIdentifier, inputs, outputs, design);
 		long processDuration = System.nanoTime() - time;
 		logger.info("Took " + (double)processDuration / 1000000000.0 + "s to evaluate process.");
-		
+
 		// validate
-		return validate(emulator, design, processResult);
+		return Validator.usingPredictionsAndEmulator(design, processResult, emulator);
 	}
 
-	public static ValidatorResult validate(Emulator emulator, Design design, ProcessEvaluationResult processResult) throws ProcessEvaluatorException, EmulatorEvaluatorException {
+	public static Validator usingPredictionsAndEmulator(Design design, ProcessEvaluationResult processResult, Emulator emulator) throws ProcessEvaluatorException, EmulatorEvaluatorException {
 		// evaluate emulator
 		long time = System.nanoTime();
 		EmulatorEvaluationResult emulatorResult = EmulatorEvaluator.run(emulator, design);
@@ -81,81 +74,97 @@ public class Validator {
 		Double[] processResults = processResult.getResults(outputId);
 		Double[] meanResults = emulatorResult.getMeanResults(outputId);
 		Double[] covarianceResults = emulatorResult.getCovarianceResults(outputId);
-		
+
 		// for test REMOVE!
 		// NormalisedProcessEvaluationResult nper = NormalisedProcessEvaluationResult.fromProcessEvaluationResult(processResult, ((NormalisedProcessEvaluationResult)emulator.getEvaluationResult()).getMeans(), ((NormalisedProcessEvaluationResult)emulator.getEvaluationResult()).getStdDevs());
-		
-//		for (int i = 0; i < design.getSize(); i++) {
-//			System.out.println(processResults[i] + ", " + meanResults[i] + " with " + covarianceResults[i] + " covariance");
-//			System.out.println(processResults[i] - meanResults[i] + " difference");
-//		}
-		
+
+		//		for (int i = 0; i < design.getSize(); i++) {
+		//			System.out.println(processResults[i] + ", " + meanResults[i] + " with " + covarianceResults[i] + " covariance");
+		//			System.out.println(processResults[i] - meanResults[i] + " difference");
+		//		}
+
 		// build values for now
 		NumericValues simulated = NumericValues.fromArray(ArrayUtils.toPrimitive(processResults));
 		MeanVarianceValues emulated = MeanVarianceValues.fromArrays(ArrayUtils.toPrimitive(meanResults), ArrayUtils.toPrimitive(covarianceResults));
-		
-		// calculate
-		logger.info("Calculating standard scores and RMSE...");
-		Values<Numeric> standardScores = Validator.calculateStandardScores(simulated, emulated);
-		double rmse = Validator.calculateRMSE(simulated, emulated);
-		
-		// construct result		
-		ValidatorResult result = new ValidatorResult(standardScores, rmse);
-		return result;
+
+		// return
+		return new Validator(simulated, emulated);
 	}
-	
-	public static NumericValues calculateStandardScores(NumericValues observed, NumericValues simulated) {
-		double[] scores = new double[observed.size()];
-		double stdev = Math.sqrt(Validator.calculateVariance(simulated.toArray()));
-		for (int i = 0; i < scores.length; i++) {	
-			scores[i] = (observed.get(i).getNumber() - simulated.get(i).getNumber()) / stdev;
+
+	public double getRMSE() {
+		double[] o = observed.toArray();
+		double[] p = new double[predicted.size()];
+
+		// use means
+		for (int i = 0; i < p.length; i++) {
+			p[i] = predicted.get(i).getMean();
 		}
-		return NumericValues.fromArray(scores);
+
+		// calculate
+		double total = 0d;
+		for (int i = 0; i < o.length; i++) {
+			total += Math.pow(o[i] - p[i], 2);
+		}
+		total = total / o.length;
+
+		return Math.sqrt(total);		
 	}
 	
-	public static NumericValues calculateStandardScores(NumericValues observed, MeanVarianceValues emulated) {
+	public NumericValues getStandardScores() {
 		double[] scores = new double[observed.size()];
+		
 		for (int i = 0; i < scores.length; i++) {
-			Numeric n = observed.get(i);
-			MeanVariance mc = emulated.get(i);
-			double stdev = Math.sqrt(Math.abs(mc.getVariance()));
-			double diff = n.getNumber() - mc.getMean();
+			// get observed and predicted
+			Numeric o = observed.get(i);
+			MeanVariance p = predicted.get(i);
+			
+			// calculate
+			double stdev = Math.sqrt(Math.abs(p.getVariance()));
+			double diff = o.getNumber() - p.getMean();
 			scores[i] = diff / stdev;
 		}
+		
 		return NumericValues.fromArray(scores);
 	}
 
-	private static double calculateMean(double[] values) {
-		double total = 0d;
-		for (double value : values) {
-			total += value;
-		}
-		return total / values.length;
-	}
+	//	public static NumericValues calculateStandardScores(NumericValues observed, NumericValues simulated) {
+	//		double[] scores = new double[observed.size()];
+	//		double stdev = Math.sqrt(Validator.calculateVariance(simulated.toArray()));
+	//		for (int i = 0; i < scores.length; i++) {	
+	//			scores[i] = (observed.get(i).getNumber() - simulated.get(i).getNumber()) / stdev;
+	//		}
+	//		return NumericValues.fromArray(scores);
+	//	}
+	//	
+	//	public static NumericValues calculateStandardScores(NumericValues observed, MeanVarianceValues predicted) {
+	//		double[] scores = new double[observed.size()];
+	//		for (int i = 0; i < scores.length; i++) {
+	//			Numeric n = observed.get(i);
+	//			MeanVariance mc = predicted.get(i);
+	//			double stdev = Math.sqrt(Math.abs(mc.getVariance()));
+	//			double diff = n.getNumber() - mc.getMean();
+	//			scores[i] = diff / stdev;
+	//		}
+	//		return NumericValues.fromArray(scores);
+	//	}
+	//
+	//	private static double calculateMean(double[] values) {
+	//		double total = 0d;
+	//		for (double value : values) {
+	//			total += value;
+	//		}
+	//		return total / values.length;
+	//	}
+	//
+	//	private static double calculateVariance(double[] values) {
+	//		double mean = calculateMean(values);
+	//		double var = 0d;
+	//		for (double value : values) {
+	//			var += Math.pow(value - mean, 2);
+	//		}
+	//		return var / values.length;
+	//	}
+	//	
 
-	private static double calculateVariance(double[] values) {
-		double mean = calculateMean(values);
-		double var = 0d;
-		for (double value : values) {
-			var += Math.pow(value - mean, 2);
-		}
-		return var / values.length;
-	}
-	
-	private static double calculateRMSE(NumericValues observed, MeanVarianceValues emulated) {
-		NumericValues means = new NumericValues();
-		for (MeanVariance value : emulated) {
-			means.add(value.getMean());
-		}
-		return calculateRMSE(observed, means);
-	}
-	
-	private static double calculateRMSE(NumericValues observed, NumericValues simulated) {
-		double sum = 0d;
-		for (int i = 0; i < observed.size(); i++) {
-			sum += Math.pow(observed.get(i).getNumber() - simulated.get(i).getNumber(), 2);
-		}
-		return Math.sqrt(sum);
-	}
 
 }

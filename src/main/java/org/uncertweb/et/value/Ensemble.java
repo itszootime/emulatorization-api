@@ -1,6 +1,6 @@
 package org.uncertweb.et.value;
 
-public class Ensemble extends Value {
+public class Ensemble implements Value {
 
 	private double[] members;
 	

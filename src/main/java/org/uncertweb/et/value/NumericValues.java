@@ -1,9 +1,37 @@
 package org.uncertweb.et.value;
 
-public class NumericValues extends Values<Numeric> {
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+
+public class NumericValues implements Values, Iterable<Numeric> {
+
+	private List<Numeric> list;
+	
+	public NumericValues() {
+		list = new ArrayList<Numeric>();
+	}
+	
 	public void add(double number) {
-		add(new Numeric(number));
+		list.add(new Numeric(number));
+	}
+	
+	public void add(Numeric numeric) {
+		list.add(numeric);
+	}
+	
+	public Numeric get(int index) {
+		return list.get(index);
+	}
+	
+	public int size() {
+		return list.size();
+	}
+	
+	@Override
+	public Iterator<Numeric> iterator() {
+		return list.iterator();
 	}
 	
 	/**
@@ -18,13 +46,13 @@ public class NumericValues extends Values<Numeric> {
 			v.add(new Numeric(array[i]));
 		}
 		return v;
-	}
+	}	
 	
 	public double[] toArray() {
 		double[] array = new double[size()];
 		for (int i = 0; i < size(); i++) {
-			Numeric n = get(i);
-			array[i] = n.getNumber();
+			Numeric numeric = get(i);
+			array[i] = numeric.getNumber();
 		}
 		return array;
 	}

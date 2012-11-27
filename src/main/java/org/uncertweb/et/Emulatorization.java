@@ -45,7 +45,6 @@ import org.uncertweb.et.sensitivity.AnalysisOutputResult;
 import org.uncertweb.et.sensitivity.fast.Fast;
 import org.uncertweb.et.sensitivity.sobol.Sobol;
 import org.uncertweb.et.validation.Validator;
-import org.uncertweb.et.validation.ValidatorResult;
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
@@ -122,20 +121,21 @@ public class Emulatorization {
 			else if (request instanceof ValidationRequest) {
 				ValidationRequest vRequest = (ValidationRequest) request;
 
-				ValidatorResult result;
+				Validator validator;
 				if (vRequest.getEmulator() == null) {
-					result = Validator.validate(vRequest.getObservedResult(), vRequest.getSimulatedResult());
+					//validator = new Validator(vRequest.getObserved(), vRequest.getPredicted());
+					validator = null;
 				}
 				else {
 					if (vRequest.getDesign() != null) {
-						result = Validator.validate(vRequest.getEmulator(), vRequest.getDesign(), vRequest.getEvaluationResult());
+						validator = Validator.usingPredictionsAndEmulator(vRequest.getDesign(), vRequest.getEvaluationResult(), vRequest.getEmulator());
 					}
 					else {
-						result = Validator.validate(vRequest.getServiceURL(), vRequest.getProcessIdentifier(), vRequest.getInputs(), vRequest.getOutputs(), vRequest.getEmulator(), vRequest.getDesignSize());
+						validator = Validator.usingSimulatorAndEmulator(vRequest.getServiceURL(), vRequest.getProcessIdentifier(), vRequest.getEmulator(), vRequest.getDesignSize());
 					}
 				}
 
-				return new ValidationResponse(result);
+				return ValidationResponse.fromValidator(validator);
 			}
 			else if (request instanceof EvaluateEmulatorRequest) {
 				EvaluateEmulatorRequest eRequest = (EvaluateEmulatorRequest) request;

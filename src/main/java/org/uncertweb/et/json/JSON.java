@@ -123,9 +123,13 @@ public class JSON {
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultDeserializer());	
 		gsonBuilder.registerTypeAdapter(AnalysisInputResult.class, new AnalysisInputResultSerializer());
 		
+		// for values
 		gsonBuilder.registerTypeAdapter(EnsembleValues.class, new EnsembleValuesDeserializer());
 		gsonBuilder.registerTypeAdapter(NumericValues.class, new NumericValuesDeserializer());
 		gsonBuilder.registerTypeAdapter(MeanVarianceValues.class, new MeanVarianceValuesDeserializer());
+		gsonBuilder.registerTypeAdapter(EnsembleValues.class, new EnsembleValuesSerializer());
+		gsonBuilder.registerTypeAdapter(NumericValues.class, new NumericValuesSerializer());
+		gsonBuilder.registerTypeAdapter(MeanVarianceValues.class, new MeanVarianceValuesSerializer());
 	}
 
 	private void registerInstanceCreators(GsonBuilder gsonBuilder) {

@@ -1,19 +1,43 @@
 package org.uncertweb.et;
 
 import org.junit.Test;
+import org.uncertweb.et.request.ValidationRequest;
+import org.uncertweb.et.response.Response;
+import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.test.TestData;
-import org.uncertweb.et.validation.Validator;
-import org.uncertweb.et.validation.ValidatorResult;
-import org.uncertweb.et.value.EnsembleValues;
-import org.uncertweb.et.value.NumericValues;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.*;
 
 public class EmulatorizationTest {
 	
 	@Test
-	public void validateObservedSimulated() {
-		NumericValues observed = TestData.getObservedValues();
-		EnsembleValues simulated = TestData.getSimulatedEnsembleValues();
-		ValidatorResult output = Validator.validate(observed, simulated);
+	public void validationEnsembles() throws Exception {
+		ValidationRequest request = TestData.getValidationRequestEnsembles();
+		Response response = Emulatorization.process(request);
+		
+		// check
+		assertThat(response, notNullValue());
+		assertThat(response, instanceOf(ValidationResponse.class));
+	}
+	
+	@Test
+	public void validationEmulatorSimulator() throws Exception {
+		ValidationRequest request = TestData.getValidationRequestEmulatorSimulator();
+		Response response = Emulatorization.process(request);
+		
+		// check
+		assertThat(response, notNullValue());
+		assertThat(response, instanceOf(ValidationResponse.class));
+	}
+	
+	@Test
+	public void validationEmulatorValues() throws Exception {
+		ValidationRequest request = TestData.getValidationRequestEmulatorValues();
+		Response response = Emulatorization.process(request);
+		
+		// check
+		assertThat(response, notNullValue());
+		assertThat(response, instanceOf(ValidationResponse.class));
 	}
 
 }

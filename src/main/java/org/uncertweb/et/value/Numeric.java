@@ -1,6 +1,6 @@
 package org.uncertweb.et.value;
 
-public class Numeric extends Value {
+public class Numeric implements Value {
 
 	private double number;
 	

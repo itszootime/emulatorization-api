@@ -1,6 +1,6 @@
 package org.uncertweb.et.value;
 
-public class MeanVariance extends Value {
+public class MeanVariance implements Value {
 
 	private double mean;
 	private double variance;

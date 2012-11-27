@@ -1,8 +1,11 @@
 package org.uncertweb.et.test;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
 import org.junit.Assert;
+import org.uncertweb.et.json.JSON;
 
 public class TestHelper {
 	
@@ -17,6 +20,12 @@ public class TestHelper {
 		for (int i = 0; i < expected.length; i++) {
 			Assert.assertEquals(expected[i], actual[i], delta);
 		}
+	}	
+	
+	public static <T> T parseJSON(String filename, Class<T> type) {
+		InputStream is = TestHelper.class.getClassLoader().getResourceAsStream(filename);
+		InputStreamReader reader = new InputStreamReader(is);
+		return new JSON().parse(reader, type);
 	}
 
 }
