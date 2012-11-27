@@ -18,16 +18,20 @@ import org.uncertweb.et.value.NumericValues;
  */
 public class TestData {
 	
-	public static MeanVarianceValues getEmulatedMeanVarianceValues() {
-		return TestHelper.parseJSON("emulated-mean-variance-values.json", MeanVarianceValues.class);
+	public static MeanVarianceValues getPfPredicted() {
+		return TestHelper.parseJSON("pf-predicted-mean-variance-values.json", MeanVarianceValues.class);
+	}
+	
+	public static NumericValues getPfObserved() {
+		return TestHelper.parseJSON("pf-observed-numeric-values.json", NumericValues.class);
+	}
+	
+	public static NumericValues getNuObserved() {
+		return TestHelper.parseJSON("nu-observed-numeric-values.json", NumericValues.class);
 	}
 
-	public static EnsembleValues getSimulatedEnsembleValues() {
-		return TestHelper.parseJSON("simulated-ensemble-values.json", EnsembleValues.class);
-	}
-
-	public static NumericValues getObservedValues() {
-		return TestHelper.parseJSON("observed-numeric-values.json", NumericValues.class);
+	public static EnsembleValues getNuPredicted() {
+		return TestHelper.parseJSON("nu-predicted-ensemble-values.json", EnsembleValues.class);
 	}
 
 	public static ValidationRequest getValidationRequestEnsembles() {

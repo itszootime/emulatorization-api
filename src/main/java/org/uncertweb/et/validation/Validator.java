@@ -1,6 +1,5 @@
 package org.uncertweb.et.validation;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -86,7 +85,7 @@ public class Validator {
 		// build values for now
 		NumericValues simulated = NumericValues.fromArray(ArrayUtils.toPrimitive(processResults));
 		MeanVarianceValues emulated = MeanVarianceValues.fromArrays(ArrayUtils.toPrimitive(meanResults), ArrayUtils.toPrimitive(covarianceResults));
-
+		
 		// return
 		return new Validator(simulated, emulated);
 	}
