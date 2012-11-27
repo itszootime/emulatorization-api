@@ -35,8 +35,8 @@ public class ValidatorTest {
 		
 		// check
 		assertThat(scores.size(), equalTo(observed.size()));
-		assertThat(scores.get(0).getNumber(), 1000.0, 0.0));
-		assertThat(scores.get(2).getNumber(), closeTo(1000.0, 0.0));
+		assertThat(scores.get(0).getNumber(), closeTo(0.0, 0.0));
+		assertThat(scores.get(2).getNumber(), closeTo(0.0, 0.0));
 	}
 	
 	@Test

@@ -137,7 +137,9 @@ public class Validator {
 				scores[i] = diff / stdev;
 			}
 			else if (predicted instanceof NumericValues) {
-				scores[i] = 
+				NumericValues values = (NumericValues)predicted;
+				double diff = o.getNumber() - values.get(i).getNumber();
+				scores[i] = diff / values.getStandardDeviation();
 			}
 			else {
 				// making this up
