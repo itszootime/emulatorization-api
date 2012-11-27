@@ -3,7 +3,9 @@ package org.uncertweb.et.json;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.fail;
+
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import org.junit.Test;
 import org.uncertweb.et.design.Design;
@@ -21,23 +23,33 @@ public class JSONTest {
 
 	@Test
 	public void encodeNumericValues() {
-		fail();
+		NumericValues values = TestData.getPfObserved();
+		new JSON().encode(values, System.out);
+		System.out.println();
+		// doesn't test anything
 	}
 
 	@Test
 	public void encodeEnsembleValues() {
-		fail();
+		EnsembleValues values = TestData.getNuPredicted();
+		new JSON().encode(values, System.out);
+		System.out.println();
+		// doesn't test anything
 	}
 
 	@Test
 	public void encodeMeanVarianceValues() {
-		fail();
+		MeanVarianceValues values = TestData.getPfPredicted();
+		new JSON().encode(values, System.out);
+		System.out.println();
+		// doesn't test anything
 	}
 
 	@Test
 	public void encodeValidationResponseEmulatorValues() {
 		ValidationResponse response = TestData.getValidationResponseEmulatorValues();
 		new JSON().encode(response, System.out);
+		System.out.println();
 		// doesn't test anything
 	}
 

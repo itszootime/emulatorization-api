@@ -1,18 +1,19 @@
 package org.uncertweb.et.response;
 
 import org.uncertweb.et.validation.Validator;
-import org.uncertweb.et.value.MeanVarianceValues;
 import org.uncertweb.et.value.NumericValues;
+import org.uncertweb.et.value.Values;
 
 public class ValidationResponse extends Response {
 	
 	private double rmse;
 	private NumericValues standardScores;
+	
 	private NumericValues observed;
-	private MeanVarianceValues predicted;
+	private Values predicted;
 	
 	public ValidationResponse(double rmse, NumericValues standardScores,
-			NumericValues observed, MeanVarianceValues predicted) {
+			NumericValues observed, Values predicted) {
 		super();
 		this.rmse = rmse;
 		this.standardScores = standardScores;
@@ -32,7 +33,7 @@ public class ValidationResponse extends Response {
 		return observed;
 	}
 
-	public MeanVarianceValues getPredicted() {
+	public Values getPredicted() {
 		return predicted;
 	}
 	

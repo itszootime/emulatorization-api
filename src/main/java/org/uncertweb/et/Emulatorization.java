@@ -123,8 +123,7 @@ public class Emulatorization {
 
 				Validator validator;
 				if (vRequest.getEmulator() == null) {
-					//validator = new Validator(vRequest.getObserved(), vRequest.getPredicted());
-					validator = null;
+					validator = new Validator(vRequest.getObserved(), vRequest.getPredicted());
 				}
 				else {
 					if (vRequest.getDesign() != null) {
