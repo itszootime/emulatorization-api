@@ -1,9 +1,8 @@
 package org.uncertweb.et.validation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uncertweb.et.design.Design;
@@ -18,9 +17,11 @@ import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
-import org.uncertweb.et.value.Ensemble;
-import org.uncertweb.et.value.MeanCovariance;
+import org.uncertweb.et.value.EnsembleValues;
+import org.uncertweb.et.value.MeanVariance;
+import org.uncertweb.et.value.MeanVarianceValues;
 import org.uncertweb.et.value.Numeric;
+import org.uncertweb.et.value.NumericValues;
 import org.uncertweb.et.value.Values;
 
 public class Validator {
@@ -37,19 +38,20 @@ public class Validator {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Validator.class);
 	
-	public static ValidatorResult validate(Values<Numeric> observed, Values<Ensemble> simulated) {
+	public static ValidatorResult validate(NumericValues observed, EnsembleValues simulated) {
 		// calculate
-		Double[] zScores = Validator.calculateZScores(observed, simulated);
-		Double rmse = Validator.calculateRMSE(measurements.getResults(outputIdentifier), processResults.getResults(outputIdentifier));
-			
-			// add to result
-			ValidatorOutputResult outputResult = new ValidatorOutputResult(outputIdentifier, zScores, null, null, null, rmse);
-			outputResults.add(outputResult);
-		}
-		
-		// construct result
-		ValidatorResult result = new ValidatorResult(Arrays.asList(new ValidationOutputResult[] { result }));
-		return result;
+//		double[] standardScores = Validator.calculateStandardScores(observed, simulated);
+//		Double rmse = Validator.calculateRMSE(measurements.getResults(outputIdentifier), processResults.getResults(outputIdentifier));
+//			
+//			// add to result
+//			ValidatorOutputResult outputResult = new ValidatorOutputResult(outputIdentifier, zScores, null, null, null, rmse);
+//			outputResults.add(outputResult);
+//		}
+//		
+//		// construct result
+//		ValidatorResult result = new ValidatorResult(Arrays.asList(new ValidationOutputResult[] { result }));
+//		return result;
+		return null;
 	}
 
 	public static ValidatorResult validate(String serviceURL, String processIdentifier, List<Input> inputs, List<Output> outputs, Emulator emulator, int designSize) throws DesignException, ProcessEvaluatorException, EmulatorEvaluatorException {
@@ -88,74 +90,70 @@ public class Validator {
 //			System.out.println(processResults[i] - meanResults[i] + " difference");
 //		}
 		
-		logger.info("Calculating Z-scores and RMSE...");
-		Double[] zScores = Validator.calculateZScores(processResults, meanResults, covarianceResults);
-		Double rmse = Validator.calculateRMSE(processResults, meanResults);
+		// build values for now
+		NumericValues simulated = NumericValues.fromArray(ArrayUtils.toPrimitive(processResults));
+		MeanVarianceValues emulated = MeanVarianceValues.fromArrays(ArrayUtils.toPrimitive(meanResults), ArrayUtils.toPrimitive(covarianceResults));
 		
-//		System.out.println(Arrays.toString(processResults));
-//		System.out.println(Arrays.toString(meanResults));
-//		System.out.println(Arrays.toString(covarianceResults));		
-//		System.out.println(Arrays.toString(scores));
-//		System.out.println(rmse);
+		// calculate
+		logger.info("Calculating standard scores and RMSE...");
+		Values<Numeric> standardScores = Validator.calculateStandardScores(simulated, emulated);
+		double rmse = Validator.calculateRMSE(simulated, emulated);
 		
 		// construct result		
-		List<ValidatorOutputResult> outputResults = new ArrayList<ValidatorOutputResult>();
-		ValidatorOutputResult outputResult = new ValidatorOutputResult(outputId, zScores, processResults, meanResults, covarianceResults, rmse);
-		outputResults.add(outputResult);
-		ValidatorResult result = new ValidatorResult(outputResults);
-		
+		ValidatorResult result = new ValidatorResult(standardScores, rmse);
 		return result;
 	}
-
-	/**
-	 * Two cases for validation:
-	 * 
-	 *   observed (real measured) vs. samples (from model)
-	 *   observed (from model)    vs. mean/covariance (from emulator)
-	 */
-	public static Double[] calculateZScores(Double[] observed, Double[] predicted) {
-		Double[] scores = new Double[observed.length];
-		Double stdev = Math.sqrt(Validator.calculateVariance(predicted));
-		for (int i = 0; i < observed.length; i++) {
-			// for each result			
-			scores[i] = (observed[i] - predicted[i]) / stdev;
+	
+	public static NumericValues calculateStandardScores(NumericValues observed, NumericValues simulated) {
+		double[] scores = new double[observed.size()];
+		double stdev = Math.sqrt(Validator.calculateVariance(simulated.toArray()));
+		for (int i = 0; i < scores.length; i++) {	
+			scores[i] = (observed.get(i).getNumber() - simulated.get(i).getNumber()) / stdev;
 		}
-		return scores;
+		return NumericValues.fromArray(scores);
 	}
 	
-	public static Values<Numeric> calculateStandardScores(Values<Numeric> observed, Values<MeanCovariance> simulated) {
+	public static NumericValues calculateStandardScores(NumericValues observed, MeanVarianceValues emulated) {
 		double[] scores = new double[observed.size()];
 		for (int i = 0; i < scores.length; i++) {
 			Numeric n = observed.get(i);
-			MeanCovariance mc = simulated.get(i);
-			double stdev = Math.sqrt(Math.abs(mc.getCovariance()));
+			MeanVariance mc = emulated.get(i);
+			double stdev = Math.sqrt(Math.abs(mc.getVariance()));
 			double diff = n.getNumber() - mc.getMean();
 			scores[i] = diff / stdev;
 		}
-		return Values.fromNumericArray(scores);
+		return NumericValues.fromArray(scores);
 	}
 
-	private static Double calculateMean(Double[] values) {
-		Double total = 0d;
-		for (Double value : values) {
+	private static double calculateMean(double[] values) {
+		double total = 0d;
+		for (double value : values) {
 			total += value;
 		}
 		return total / values.length;
 	}
 
-	private static Double calculateVariance(Double[] values) {
-		Double mean = calculateMean(values);
-		Double var = 0d;
-		for (Double value : values) {
+	private static double calculateVariance(double[] values) {
+		double mean = calculateMean(values);
+		double var = 0d;
+		for (double value : values) {
 			var += Math.pow(value - mean, 2);
 		}
 		return var / values.length;
 	}
 	
-	private static Double calculateRMSE(Double[] observed, Double[] predicted) {
-		Double sum = 0d;
-		for (int i = 0; i < observed.length; i++) {
-			sum += Math.pow(observed[i] - predicted[i], 2);
+	private static double calculateRMSE(NumericValues observed, MeanVarianceValues emulated) {
+		NumericValues means = new NumericValues();
+		for (MeanVariance value : emulated) {
+			means.add(value.getMean());
+		}
+		return calculateRMSE(observed, means);
+	}
+	
+	private static double calculateRMSE(NumericValues observed, NumericValues simulated) {
+		double sum = 0d;
+		for (int i = 0; i < observed.size(); i++) {
+			sum += Math.pow(observed.get(i).getNumber() - simulated.get(i).getNumber(), 2);
 		}
 		return Math.sqrt(sum);
 	}

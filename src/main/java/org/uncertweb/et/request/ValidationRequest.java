@@ -1,12 +1,10 @@
 package org.uncertweb.et.request;
 
-import java.util.List;
-
 import org.uncertweb.et.design.Design;
 import org.uncertweb.et.emulator.Emulator;
-import org.uncertweb.et.parameter.Input;
-import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.process.ProcessEvaluationResult;
+import org.uncertweb.et.value.EnsembleValues;
+import org.uncertweb.et.value.NumericValues;
 
 public class ValidationRequest extends Request {
 	
@@ -19,8 +17,6 @@ public class ValidationRequest extends Request {
 	// can have this
 	private String serviceURL;
 	private String processIdentifier;
-	private List<Input> inputs;
-	private List<Output> outputs;
 	private int designSize;
 	
 	// or these
@@ -28,19 +24,19 @@ public class ValidationRequest extends Request {
 	private ProcessEvaluationResult evaluationResult;
 	
 	// or these
-	private ProcessEvaluationResult observedResult;
-	private ProcessEvaluationResult simulatedResult;
+	private NumericValues observedValues;
+	private EnsembleValues simulatedValues;
 	
 	public ValidationRequest() {
 		
 	}
 	
-	public ProcessEvaluationResult getObservedResult() {
-		return observedResult;
+	public NumericValues getObservedValues() {
+		return observedValues;
 	}
 	
-	public ProcessEvaluationResult getSimulatedResult() {
-		return simulatedResult;
+	public EnsembleValues getSimulatedValues() {
+		return simulatedValues;
 	}
 
 	public String getServiceURL() {
@@ -49,14 +45,6 @@ public class ValidationRequest extends Request {
 
 	public String getProcessIdentifier() {
 		return processIdentifier;
-	}
-
-	public List<Input> getInputs() {
-		return inputs;
-	}
-
-	public List<Output> getOutputs() {
-		return outputs;
 	}
 
 	public Emulator getEmulator() {

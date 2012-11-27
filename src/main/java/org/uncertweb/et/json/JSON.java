@@ -14,6 +14,9 @@ import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.response.Response;
 import org.uncertweb.et.sensitivity.AnalysisInputResult;
+import org.uncertweb.et.value.EnsembleValues;
+import org.uncertweb.et.value.MeanVarianceValues;
+import org.uncertweb.et.value.NumericValues;
 import org.uncertweb.imagestorage.Base64ImageStorage;
 import org.uncertweb.imagestorage.ImageStorage;
 import org.uncertweb.imagestorage.ImageStorageException;
@@ -119,6 +122,10 @@ public class JSON {
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultSerializer());
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultDeserializer());	
 		gsonBuilder.registerTypeAdapter(AnalysisInputResult.class, new AnalysisInputResultSerializer());
+		
+		gsonBuilder.registerTypeAdapter(EnsembleValues.class, new EnsembleValuesDeserializer());
+		gsonBuilder.registerTypeAdapter(NumericValues.class, new NumericValuesDeserializer());
+		gsonBuilder.registerTypeAdapter(MeanVarianceValues.class, new MeanVarianceValuesDeserializer());
 	}
 
 	private void registerInstanceCreators(GsonBuilder gsonBuilder) {
