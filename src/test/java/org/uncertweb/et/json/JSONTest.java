@@ -4,9 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-
 import org.junit.Test;
 import org.uncertweb.et.design.Design;
 import org.uncertweb.et.emulator.Emulator;
