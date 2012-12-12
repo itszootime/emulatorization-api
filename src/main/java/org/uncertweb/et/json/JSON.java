@@ -51,6 +51,7 @@ public class JSON {
 	public JSON(ImageStorage is) {
 		// setup gson builder
 		gsonBuilder = new GsonBuilder();
+		gsonBuilder.serializeSpecialFloatingPointValues();
 		registerSerializers(gsonBuilder);
 		registerAlizers(gsonBuilder);
 		registerInstanceCreators(gsonBuilder);
