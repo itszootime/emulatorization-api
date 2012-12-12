@@ -14,9 +14,9 @@ import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.response.Response;
 import org.uncertweb.et.sensitivity.AnalysisInputResult;
-import org.uncertweb.et.value.EnsembleValues;
-import org.uncertweb.et.value.MeanVarianceValues;
-import org.uncertweb.et.value.NumericValues;
+import org.uncertweb.et.value.SampleValues;
+import org.uncertweb.et.value.DistributionValues;
+import org.uncertweb.et.value.ScalarValues;
 import org.uncertweb.imagestorage.Base64ImageStorage;
 import org.uncertweb.imagestorage.ImageStorage;
 import org.uncertweb.imagestorage.ImageStorageException;
@@ -125,12 +125,12 @@ public class JSON {
 		gsonBuilder.registerTypeAdapter(AnalysisInputResult.class, new AnalysisInputResultSerializer());
 		
 		// for values
-		gsonBuilder.registerTypeAdapter(EnsembleValues.class, new EnsembleValuesDeserializer());
-		gsonBuilder.registerTypeAdapter(NumericValues.class, new NumericValuesDeserializer());
-		gsonBuilder.registerTypeAdapter(MeanVarianceValues.class, new MeanVarianceValuesDeserializer());
-		gsonBuilder.registerTypeAdapter(EnsembleValues.class, new EnsembleValuesSerializer());
-		gsonBuilder.registerTypeAdapter(NumericValues.class, new NumericValuesSerializer());
-		gsonBuilder.registerTypeAdapter(MeanVarianceValues.class, new MeanVarianceValuesSerializer());
+		gsonBuilder.registerTypeAdapter(SampleValues.class, new SampleValuesDeserializer());
+		gsonBuilder.registerTypeAdapter(ScalarValues.class, new ScalarValuesDeserializer());
+		gsonBuilder.registerTypeAdapter(DistributionValues.class, new DistributionValuesDeserializer());
+		gsonBuilder.registerTypeAdapter(SampleValues.class, new SampleValuesSerializer());
+		gsonBuilder.registerTypeAdapter(ScalarValues.class, new ScalarValuesSerializer());
+		gsonBuilder.registerTypeAdapter(DistributionValues.class, new DistributionValuesSerializer());
 	}
 
 	private void registerInstanceCreators(GsonBuilder gsonBuilder) {

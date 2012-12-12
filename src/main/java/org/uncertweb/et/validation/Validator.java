@@ -21,12 +21,12 @@ import org.uncertweb.et.plot.PlotData;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
-import org.uncertweb.et.value.Ensemble;
-import org.uncertweb.et.value.EnsembleValues;
-import org.uncertweb.et.value.MeanVariance;
-import org.uncertweb.et.value.MeanVarianceValues;
-import org.uncertweb.et.value.Numeric;
-import org.uncertweb.et.value.NumericValues;
+import org.uncertweb.et.value.Sample;
+import org.uncertweb.et.value.SampleValues;
+import org.uncertweb.et.value.Distribution;
+import org.uncertweb.et.value.DistributionValues;
+import org.uncertweb.et.value.Scalar;
+import org.uncertweb.et.value.ScalarValues;
 import org.uncertweb.et.value.Values;
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
@@ -39,7 +39,7 @@ public class Validator {
 
 	private static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
-	private NumericValues observed;
+	private ScalarValues observed;
 	private Values predicted;
 	
 	private double rmse;
@@ -47,7 +47,7 @@ public class Validator {
 	private PlotData medianResidualHistogram;
 	private PlotData reliabilityDiagram;
 	
-	public Validator(NumericValues observed, Values predicted) throws ValidatorException {
+	public Validator(ScalarValues observed, Values predicted) throws ValidatorException {
 		this.observed = observed;
 		this.predicted = predicted;
 		calculateMetrics();
@@ -121,7 +121,7 @@ public class Validator {
 		}
 	}
 
-	public NumericValues getObserved() {
+	public ScalarValues getObserved() {
 		return observed;
 	}
 
@@ -170,39 +170,39 @@ public class Validator {
 		//		}
 
 		// build values for now
-		NumericValues simulated = NumericValues.fromArray(ArrayUtils.toPrimitive(processResults));
-		MeanVarianceValues emulated = MeanVarianceValues.fromArrays(ArrayUtils.toPrimitive(meanResults), ArrayUtils.toPrimitive(covarianceResults));
+		ScalarValues simulated = ScalarValues.fromArray(ArrayUtils.toPrimitive(processResults));
+		DistributionValues emulated = DistributionValues.fromArrays(ArrayUtils.toPrimitive(meanResults), ArrayUtils.toPrimitive(covarianceResults));
 
 		// return
 		return new Validator(simulated, emulated);
 	}
 
-	public NumericValues getStandardScores() {
+	public ScalarValues getStandardScores() {
 		double[] scores = new double[observed.size()];
 
 		for (int i = 0; i < scores.length; i++) {
 			// get observed and predicted
-			Numeric o = observed.get(i);
+			Scalar o = observed.get(i);
 
-			if (predicted instanceof MeanVarianceValues) {
-				MeanVariance p = ((MeanVarianceValues)predicted).get(i);
-				double diff = o.getNumber() - p.getMean();
+			if (predicted instanceof DistributionValues) {
+				Distribution p = ((DistributionValues)predicted).get(i);
+				double diff = o.getScalar() - p.getMean();
 				scores[i] = diff / p.getStandardDeviation();
 			}
-			else if (predicted instanceof NumericValues) {
-				NumericValues values = (NumericValues)predicted;
-				double diff = o.getNumber() - values.get(i).getNumber();
+			else if (predicted instanceof ScalarValues) {
+				ScalarValues values = (ScalarValues)predicted;
+				double diff = o.getScalar() - values.get(i).getScalar();
 				scores[i] = diff / values.getStandardDeviation();
 			}
 			else {
-				// not sure yet! using ensemble members mean and variance
-				Ensemble p = ((EnsembleValues)predicted).get(i);
-				double diff = o.getNumber() - p.getMean();
+				// not sure yet! using sample members mean and variance
+				Sample p = ((SampleValues)predicted).get(i);
+				double diff = o.getScalar() - p.getMean();
 				scores[i] = diff / p.getStandardDeviation();
 			}
 		}
 
-		return NumericValues.fromArray(scores);
+		return ScalarValues.fromArray(scores);
 	}
 	
 	public double getRMSE() {

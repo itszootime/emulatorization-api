@@ -2,25 +2,25 @@ package org.uncertweb.et.response;
 
 import org.uncertweb.et.plot.PlotData;
 import org.uncertweb.et.validation.Validator;
-import org.uncertweb.et.value.NumericValues;
+import org.uncertweb.et.value.ScalarValues;
 import org.uncertweb.et.value.Values;
 
 public class ValidationResponse extends Response {
 	
 	private double rmse;
-	private NumericValues standardScores;
+	private ScalarValues standardScores;
 	private PlotData meanResidualHistogram;
 	private PlotData medianResidualHistogram;
 	private PlotData reliabilityDiagram;
 
-	private NumericValues observed;
+	private ScalarValues observed;
 	private Values predicted;
 	
 	public ValidationResponse() {
 		super();
 	}
 	
-	public void setObserved(NumericValues observed) {
+	public void setObserved(ScalarValues observed) {
 		this.observed = observed;
 	}
 
@@ -28,7 +28,7 @@ public class ValidationResponse extends Response {
 		this.predicted = predicted;
 	}	
 	
-	public NumericValues getObserved() {
+	public ScalarValues getObserved() {
 		return observed;
 	}
 
@@ -40,7 +40,7 @@ public class ValidationResponse extends Response {
 		this.rmse = rmse;
 	}
 
-	public void setStandardScores(NumericValues standardScores) {
+	public void setStandardScores(ScalarValues standardScores) {
 		this.standardScores = standardScores;
 	}
 
@@ -60,7 +60,7 @@ public class ValidationResponse extends Response {
 		return rmse;
 	}
 
-	public NumericValues getStandardScores() {
+	public ScalarValues getStandardScores() {
 		return standardScores;
 	}
 

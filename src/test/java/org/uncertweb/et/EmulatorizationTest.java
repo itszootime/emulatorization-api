@@ -11,8 +11,8 @@ import static org.hamcrest.MatcherAssert.*;
 public class EmulatorizationTest {
 	
 	@Test
-	public void validationEnsembles() throws Exception {
-		ValidationRequest request = TestData.getValidationRequestEnsembles();
+	public void validationSamples() throws Exception {
+		ValidationRequest request = TestData.getValidationRequestSamples();
 		Response response = Emulatorization.process(request);
 		
 		// check

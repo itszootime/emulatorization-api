@@ -6,9 +6,9 @@ import org.uncertweb.et.request.ValidationRequest;
 import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.validation.Validator;
 import org.uncertweb.et.validation.ValidatorException;
-import org.uncertweb.et.value.EnsembleValues;
-import org.uncertweb.et.value.MeanVarianceValues;
-import org.uncertweb.et.value.NumericValues;
+import org.uncertweb.et.value.SampleValues;
+import org.uncertweb.et.value.DistributionValues;
+import org.uncertweb.et.value.ScalarValues;
 
 /**
  * This class shouldn't really do any JSON parsing or use other functions to derive data, but it's
@@ -19,32 +19,32 @@ import org.uncertweb.et.value.NumericValues;
  */
 public class TestData {
 	
-	public static MeanVarianceValues getCbPredicted() {
-		return TestHelper.parseJSON("cb-predicted-mean-variance-values.json", MeanVarianceValues.class);
+	public static DistributionValues getCbPredicted() {
+		return TestHelper.parseJSON("cb-predicted-distribution-values.json", DistributionValues.class);
 	}
 	
-	public static NumericValues getCbObserved() {
-		return TestHelper.parseJSON("cb-observed-numeric-values.json", NumericValues.class);
+	public static ScalarValues getCbObserved() {
+		return TestHelper.parseJSON("cb-observed-scalar-values.json", ScalarValues.class);
 	}
 	
-	public static MeanVarianceValues getPfPredicted() {
-		return TestHelper.parseJSON("pf-predicted-mean-variance-values.json", MeanVarianceValues.class);
+	public static DistributionValues getPfPredicted() {
+		return TestHelper.parseJSON("pf-predicted-distribution-values.json", DistributionValues.class);
 	}
 	
-	public static NumericValues getPfObserved() {
-		return TestHelper.parseJSON("pf-observed-numeric-values.json", NumericValues.class);
+	public static ScalarValues getPfObserved() {
+		return TestHelper.parseJSON("pf-observed-scalar-values.json", ScalarValues.class);
 	}
 	
-	public static NumericValues getNuObserved() {
-		return TestHelper.parseJSON("nu-observed-numeric-values.json", NumericValues.class);
+	public static ScalarValues getNuObserved() {
+		return TestHelper.parseJSON("nu-observed-scalar-values.json", ScalarValues.class);
 	}
 
-	public static EnsembleValues getNuPredicted() {
-		return TestHelper.parseJSON("nu-predicted-ensemble-values.json", EnsembleValues.class);
+	public static SampleValues getNuPredicted() {
+		return TestHelper.parseJSON("nu-predicted-sample-values.json", SampleValues.class);
 	}
 
-	public static ValidationRequest getValidationRequestEnsembles() {
-		return TestHelper.parseJSON("validation-request-ensembles.json", ValidationRequest.class);
+	public static ValidationRequest getValidationRequestSamples() {
+		return TestHelper.parseJSON("validation-request-samples.json", ValidationRequest.class);
 	}
 
 	public static ValidationRequest getValidationRequestEmulatorSimulator() {

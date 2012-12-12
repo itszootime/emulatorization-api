@@ -3,8 +3,8 @@ package org.uncertweb.et.request;
 import org.uncertweb.et.design.Design;
 import org.uncertweb.et.emulator.Emulator;
 import org.uncertweb.et.process.ProcessEvaluationResult;
-import org.uncertweb.et.value.EnsembleValues;
-import org.uncertweb.et.value.NumericValues;
+import org.uncertweb.et.value.SampleValues;
+import org.uncertweb.et.value.ScalarValues;
 
 public class ValidationRequest extends Request {
 	
@@ -24,18 +24,18 @@ public class ValidationRequest extends Request {
 	private ProcessEvaluationResult evaluationResult;
 	
 	// or these
-	private NumericValues observed;
-	private EnsembleValues predicted;
+	private ScalarValues observed;
+	private SampleValues predicted;
 	
 	public ValidationRequest() {
 		
 	}
 	
-	public NumericValues getObserved() {
+	public ScalarValues getObserved() {
 		return observed;
 	}
 	
-	public EnsembleValues getPredicted() {
+	public SampleValues getPredicted() {
 		return predicted;
 	}
 
