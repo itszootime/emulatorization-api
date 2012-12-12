@@ -33,6 +33,16 @@ public class MeanVarianceValues implements Values, Iterable<MeanVariance> {
 		return list.iterator();
 	}
 	
+	public double[][] toMatrix() {
+		double[][] matrix = new double[size()][2];
+		for (int i = 0; i < matrix.length; i++) {
+			MeanVariance mv = this.get(i);
+			matrix[i][0] = mv.getMean();
+			matrix[i][1] = mv.getVariance();
+		}
+		return matrix;
+	}
+	
 	/**
 	 * Each row should contain a mean and variance.
 	 * 

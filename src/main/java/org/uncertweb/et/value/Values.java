@@ -4,4 +4,6 @@ public interface Values {
 
 	public int size();
 	
+	public double[][] toMatrix();
+	
 }

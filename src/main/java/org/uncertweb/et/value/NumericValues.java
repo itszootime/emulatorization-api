@@ -29,6 +29,16 @@ public class NumericValues implements Values, Iterable<Numeric> {
 		return list.size();
 	}
 	
+	public double[][] toMatrix() {
+		double variance = getVariance();
+		double[][] matrix = new double[size()][2];
+		for (int i = 0; i < matrix.length; i++) {
+			matrix[i][0] = get(i).getNumber();
+			matrix[i][1] = variance;
+		}
+		return matrix;
+	}
+	
 	@Override
 	public Iterator<Numeric> iterator() {
 		return list.iterator();

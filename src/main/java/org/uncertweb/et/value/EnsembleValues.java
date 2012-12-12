@@ -33,6 +33,15 @@ public class EnsembleValues implements Values, Iterable<Ensemble> {
 		return list.size();
 	}
 	
+	public double[][] toMatrix() {
+		double[][] matrix = new double[size()][];
+		for (int i = 0; i < matrix.length; i++) {
+			Ensemble e = get(i);
+			matrix[i] = e.getMembers();
+		}
+		return matrix;
+	}
+	
 	/**
 	 * Each row should contain an ensemble.
 	 * 

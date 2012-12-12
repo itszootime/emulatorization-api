@@ -5,6 +5,7 @@ import org.uncertweb.et.process.ProcessEvaluatorException;
 import org.uncertweb.et.request.ValidationRequest;
 import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.validation.Validator;
+import org.uncertweb.et.validation.ValidatorException;
 import org.uncertweb.et.value.EnsembleValues;
 import org.uncertweb.et.value.MeanVarianceValues;
 import org.uncertweb.et.value.NumericValues;
@@ -17,6 +18,14 @@ import org.uncertweb.et.value.NumericValues;
  *
  */
 public class TestData {
+	
+	public static MeanVarianceValues getCbPredicted() {
+		return TestHelper.parseJSON("cb-predicted-mean-variance-values.json", MeanVarianceValues.class);
+	}
+	
+	public static NumericValues getCbObserved() {
+		return TestHelper.parseJSON("cb-observed-numeric-values.json", NumericValues.class);
+	}
 	
 	public static MeanVarianceValues getPfPredicted() {
 		return TestHelper.parseJSON("pf-predicted-mean-variance-values.json", MeanVarianceValues.class);
@@ -52,8 +61,9 @@ public class TestData {
 		try {
 			validator = Validator.usingPredictionsAndEmulator(request.getDesign(), request.getEvaluationResult(), request.getEmulator());
 		}
-		catch (EmulatorEvaluatorException e) {	}
-		catch (ProcessEvaluatorException e) {	}
+		catch (EmulatorEvaluatorException e) { }
+		catch (ProcessEvaluatorException e) { }
+		catch (ValidatorException e) { }
 		return ValidationResponse.fromValidator(validator);
 	}
 
