@@ -97,7 +97,7 @@
     <dependency>
       <groupId>org.uncertweb</groupId>
       <artifactId>matlab-connector</artifactId>
-      <version>0.4-SNAPSHOT</version>
+      <version>0.4</version>
     </dependency>
     <dependency>
       <groupId>org.nuiton.thirdparty</groupId>
@@ -185,12 +185,6 @@
                 </configuration>
               </execution>
             </executions>
-          </plugin>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
           </plugin>
         </plugins>
       </build>

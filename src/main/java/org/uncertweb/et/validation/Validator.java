@@ -43,9 +43,9 @@ public class Validator {
 	private Values predicted;
 	
 	private double rmse;
-	private PlotData meanResidualHistogram;
-	private PlotData medianResidualHistogram;
-	private PlotData reliabilityDiagram;
+	private PlotData meanResidualData;
+	private PlotData medianResidualData;
+	private PlotData reliabilityData;
 	
 	public Validator(ScalarValues observed, Values predicted) throws ValidatorException {
 		this.observed = observed;
@@ -76,9 +76,9 @@ public class Validator {
 			
 			// rmse
 			rmse = getMetric(metrics, "mean.rmse");
-			meanResidualHistogram = getPlotData(metrics, "meanresidual.histogram");						
-			medianResidualHistogram = getPlotData(metrics, "medianresidual.histogram");
-			reliabilityDiagram = getPlotData(metrics, "reliability");
+			meanResidualData = getPlotData(metrics, "meanresidual.histogram");						
+			medianResidualData = getPlotData(metrics, "medianresidual.histogram");
+			reliabilityData = getPlotData(metrics, "reliability");
 		}
 		catch (IOException e) {
 			throw new ValidatorException("Couldn't perform validation.", e);
@@ -176,11 +176,19 @@ public class Validator {
 		// return
 		return new Validator(simulated, emulated);
 	}
+	
+	public double getRMSE() {
+		return rmse;
+	}
 
-	public ScalarValues getStandardScores() {
+	public PlotData getStandardScoreData() {
+		double[] x = new double[observed.size()];
 		double[] scores = new double[observed.size()];
 
 		for (int i = 0; i < scores.length; i++) {
+			// set index
+			x[i] = i;
+			
 			// get observed and predicted
 			Scalar o = observed.get(i);
 
@@ -202,23 +210,19 @@ public class Validator {
 			}
 		}
 
-		return ScalarValues.fromArray(scores);
-	}
-	
-	public double getRMSE() {
-		return rmse;
+		return new PlotData(x, scores);
 	}
 
-	public PlotData getMeanResidualHistogram() {
-		return meanResidualHistogram;
+	public PlotData getMeanResidualData() {
+		return meanResidualData;
 	}
 
-	public PlotData getMedianResidualHistogram() {
-		return medianResidualHistogram;
+	public PlotData getMedianResidualData() {
+		return medianResidualData;
 	}
 	
-	public PlotData getReliabilityDiagram() {
-		return reliabilityDiagram;
+	public PlotData getReliabilityData() {
+		return reliabilityData;
 	}
 
 //	public double getRMSE() {
