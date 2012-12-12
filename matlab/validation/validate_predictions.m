@@ -11,7 +11,8 @@ nsamp = 100; % what value here - let's default to 100, although this does imply 
 if nvar == 2
     predr = repmat(pred(:,1),1,nsamp)+repmat(sqrt(pred(:,2)),1,nsamp).*randn(nobs,nsamp);
 else
-    nsamp = nvar; % assume that we have at least two realisations! 
+    nsamp = nvar; % assume that we have at least two realisations!
+    predr = pred;
 end
 
 [q] = prctile(predr,[1:1:99],2); % Compute all the precentiles of the predictive realisations
