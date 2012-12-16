@@ -1,7 +1,7 @@
 package org.uncertweb.et.json;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.Test;
@@ -12,42 +12,47 @@ import org.uncertweb.et.request.ValidationRequest;
 import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.test.TestData;
 import org.uncertweb.et.test.TestHelper;
-import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.DistributionValues;
+import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.ScalarValues;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class JSONTest {
 
 	@Test
 	public void encodeScalarValues() {
 		ScalarValues values = TestData.getPfObserved();
-		new JSON().encode(values, System.out);
-		System.out.println();
-		// doesn't test anything
+		JsonObject json = encodeJsonObject(values);
 	}
 
 	@Test
 	public void encodeSampleValues() {
 		SampleValues values = TestData.getNuPredicted();
-		new JSON().encode(values, System.out);
-		System.out.println();
-		// doesn't test anything
+		JsonObject json = encodeJsonObject(values);
 	}
 
 	@Test
 	public void encodeDistributionValues() {
 		DistributionValues values = TestData.getPfPredicted();
-		new JSON().encode(values, System.out);
-		System.out.println();
-		// doesn't test anything
+		JsonObject json = encodeJsonObject(values);
 	}
 
 	@Test
-	public void encodeValidationResponseEmulatorValues() {
+	public void encodeValidationResponse() {
 		ValidationResponse response = TestData.getValidationResponseEmulatorValues();
-		new JSON().encode(response, System.out);
-		System.out.println();
-		// doesn't test anything
+		JsonObject json = encodeJsonObject(response);
+		assertThat(json.has("standardScorePlotData"), equalTo(true));
+		assertThat(json.has("meanResidualHistogramData"), equalTo(true));
+		assertThat(json.has("meanResidualQQPlotData"), equalTo(true));
+		assertThat(json.has("medianResidualHistogramData"), equalTo(true));
+		assertThat(json.has("medianResidualQQPlotData"), equalTo(true));
+		assertThat(json.has("reliabilityDiagramData"), equalTo(true));
+	}
+	
+	private JsonObject encodeJsonObject(Object object) {
+		return (JsonObject)new JsonParser().parse(new JSON().encode(object));
 	}
 
 	@Test

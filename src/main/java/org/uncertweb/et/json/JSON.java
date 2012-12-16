@@ -1,6 +1,8 @@
 package org.uncertweb.et.json;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
@@ -14,8 +16,8 @@ import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.response.Response;
 import org.uncertweb.et.sensitivity.AnalysisInputResult;
-import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.DistributionValues;
+import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.ScalarValues;
 import org.uncertweb.imagestorage.Base64ImageStorage;
 import org.uncertweb.imagestorage.ImageStorage;
@@ -66,6 +68,13 @@ public class JSON {
 	public <T> T parse(Reader reader, Class<T> classOfT) {
 		// FIXME: this should throw parse exceptions
 		return gson.fromJson(reader, classOfT);
+	}
+	
+	public String encode(Object obj) {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		OutputStreamWriter osw = new OutputStreamWriter(os);
+		encode(obj, osw);
+		return os.toString(); // no need to close byte array output stream
 	}
 
 	public void encode(Object obj, Appendable appendable) {

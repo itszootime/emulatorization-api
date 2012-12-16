@@ -8,10 +8,12 @@ import org.uncertweb.et.value.Values;
 public class ValidationResponse extends Response {
 	
 	private double rmse;
-	private PlotData standardScoreData;
-	private PlotData meanResidualData;
-	private PlotData medianResidualData;
-	private PlotData reliabilityData;
+	private PlotData standardScorePlotData;
+	private PlotData meanResidualHistogramData;
+	private PlotData meanResidualQQPlotData;
+	private PlotData medianResidualHistogramData;
+	private PlotData medianResidualQQPlotData;
+	private PlotData reliabilityDiagramData;
 
 	private ScalarValues observed;
 	private Values predicted;
@@ -40,40 +42,56 @@ public class ValidationResponse extends Response {
 		this.rmse = rmse;
 	}
 
-	public void setStandardScoreData(PlotData standardScoreData) {
-		this.standardScoreData = standardScoreData;
+	public void setStandardScorePlotData(PlotData data) {
+		this.standardScorePlotData = data;
 	}
 
-	public void setMeanResidualData(PlotData meanResidualData) {
-		this.meanResidualData = meanResidualData;
+	public void setMeanResidualHistogramData(PlotData data) {
+		this.meanResidualHistogramData = data;
+	}
+	
+	public void setMeanResidualQQPlotData(PlotData data) {
+		this.meanResidualQQPlotData = data;
 	}
 
-	public void setMedianResidualData(PlotData medianResidualData) {
-		this.medianResidualData = medianResidualData;
+	public void setMedianResidualHistogramData(PlotData data) {
+		this.medianResidualHistogramData = data;
+	}
+	
+	public void setMedianResidualQQPlotData(PlotData data) {
+		this.medianResidualQQPlotData = data;
 	}
 
-	public void setReliabilityData(PlotData reliabilityData) {
-		this.reliabilityData = reliabilityData;
+	public void setReliabilityDiagramData(PlotData data) {
+		this.reliabilityDiagramData = data;
 	}
 	
 	public double getRMSE() {
 		return rmse;
 	}
 
-	public PlotData getStandardScoreData() {
-		return standardScoreData;
+	public PlotData getStandardScorePlotData() {
+		return standardScorePlotData;
 	}
 
-	public PlotData getMeanResidualData() {
-		return meanResidualData;
+	public PlotData getMeanResidualHistogramData() {
+		return meanResidualHistogramData;
+	}
+	
+	public PlotData getMeanResidualQQPlotData() {
+		return meanResidualQQPlotData;
 	}
 
-	public PlotData getMedianResidualData() {
-		return medianResidualData;
+	public PlotData getMedianResidualHistogramData() {
+		return medianResidualHistogramData;
+	}
+	
+	public PlotData getMedianResidualQQPlotData() {
+		return medianResidualQQPlotData;
 	}
 
-	public PlotData getReliabilityData() {
-		return reliabilityData;
+	public PlotData getReliabilityDiagramData() {
+		return reliabilityDiagramData;
 	}
 
 	public static ValidationResponse fromValidator(Validator validator) {
@@ -81,10 +99,12 @@ public class ValidationResponse extends Response {
 		response.setObserved(validator.getObserved());
 		response.setPredicted(validator.getPredicted());
 		response.setRMSE(validator.getRMSE());
-		response.setStandardScoreData(validator.getStandardScoreData());
-		response.setMeanResidualData(validator.getMeanResidualData());
-		response.setMedianResidualData(validator.getMedianResidualData());
-		response.setReliabilityData(validator.getReliabilityData());
+		response.setStandardScorePlotData(validator.getStandardScorePlotData());
+		response.setMeanResidualHistogramData(validator.getMeanResidualHistogramData());
+		response.setMeanResidualQQPlotData(validator.getMeanResidualQQPlotData());
+		response.setMedianResidualHistogramData(validator.getMedianResidualHistogramData());
+		response.setMedianResidualQQPlotData(validator.getMedianResidualQQPlotData());
+		response.setReliabilityDiagramData(validator.getReliabilityDiagramData());
 		return response;
 	}
 	

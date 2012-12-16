@@ -43,9 +43,11 @@ public class Validator {
 	private Values predicted;
 	
 	private double rmse;
-	private PlotData meanResidualData;
-	private PlotData medianResidualData;
-	private PlotData reliabilityData;
+	private PlotData meanResidualHistogramData;
+	private PlotData meanResidualQQPlotData;
+	private PlotData medianResidualHistogramData;
+	private PlotData medianResidualQQPlotData;
+	private PlotData reliabilityDiagramData;
 	
 	public Validator(ScalarValues observed, Values predicted) throws ValidatorException {
 		this.observed = observed;
@@ -76,9 +78,11 @@ public class Validator {
 			
 			// rmse
 			rmse = getMetric(metrics, "mean.rmse");
-			meanResidualData = getPlotData(metrics, "meanresidual.histogram");						
-			medianResidualData = getPlotData(metrics, "medianresidual.histogram");
-			reliabilityData = getPlotData(metrics, "reliability");
+			meanResidualHistogramData = getPlotData(metrics, "meanresidual.histogram");
+			meanResidualQQPlotData = getPlotData(metrics, "meanresidqq");
+			medianResidualHistogramData = getPlotData(metrics, "medianresidual.histogram");
+			medianResidualQQPlotData = getPlotData(metrics, "medianresidqq");
+			reliabilityDiagramData = getPlotData(metrics, "reliability");
 		}
 		catch (IOException e) {
 			throw new ValidatorException("Couldn't perform validation.", e);
@@ -181,7 +185,7 @@ public class Validator {
 		return rmse;
 	}
 
-	public PlotData getStandardScoreData() {
+	public PlotData getStandardScorePlotData() {
 		double[] x = new double[observed.size()];
 		double[] scores = new double[observed.size()];
 
@@ -213,16 +217,24 @@ public class Validator {
 		return new PlotData(x, scores);
 	}
 
-	public PlotData getMeanResidualData() {
-		return meanResidualData;
-	}
-
-	public PlotData getMedianResidualData() {
-		return medianResidualData;
+	public PlotData getMeanResidualHistogramData() {
+		return meanResidualHistogramData;
 	}
 	
-	public PlotData getReliabilityData() {
-		return reliabilityData;
+	public PlotData getMeanResidualQQPlotData() {
+		return meanResidualQQPlotData;
+	}
+
+	public PlotData getMedianResidualHistogramData() {
+		return medianResidualHistogramData;
+	}
+	
+	public PlotData getMedianResidualQQPlotData() {
+		return medianResidualQQPlotData;
+	}
+	
+	public PlotData getReliabilityDiagramData() {
+		return reliabilityDiagramData;
 	}
 
 //	public double getRMSE() {
