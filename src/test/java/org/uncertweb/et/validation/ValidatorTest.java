@@ -33,8 +33,6 @@ public class ValidatorTest {
 		testArrayCloseTo(data.getX(), expectedX, 0.0001);
 		testArrayCloseTo(data.getY(), expectedY, 0.0001);
 	}
-	
-
 
 	@Test
 	public void meanResidualQQPlot() {

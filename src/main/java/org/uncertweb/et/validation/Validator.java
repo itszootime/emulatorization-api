@@ -63,6 +63,15 @@ public class Validator {
 		}
 		return transpose;
 	}
+	
+	private double[] transposeMatrix(double[][] matrix) {
+		// transpose matrix to array
+		double[] transpose = new double[matrix.length];
+		for (int i = 0; i < transpose.length; i++) {
+			transpose[i] = matrix[i][0];
+		}
+		return transpose;
+	}
 
 	private void calculateMetrics() throws ValidatorException {
 		// build matlab request
@@ -114,15 +123,26 @@ public class Validator {
 		}
 		
 		// build
-		double[] x = current.getField("x").getAsArray().getArray();
-		double[] y = current.getField("y").getAsArray().getArray();
+		double[] x = getValueAsArray(current.getField("x"));
+		double[] y = getValueAsArray(current.getField("y"));
 		MLValue n = current.getField("n");
 		if (n != null) {
-			return new PlotData(x, y, n.getAsArray().getArray());
+			return new PlotData(x, y, getValueAsArray(n));
 		}
 		else {
 			return new PlotData(x, y);
 		}
+	}
+	
+	private double[] getValueAsArray(MLValue field) {
+		double[] array;
+		if (field.isMatrix()) {
+			array = transposeMatrix(field.getAsMatrix().getMatrix());
+		}
+		else {
+			array = field.getAsArray().getArray();
+		}
+		return array;
 	}
 
 	public ScalarValues getObserved() {
