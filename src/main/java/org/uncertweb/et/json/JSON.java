@@ -19,6 +19,7 @@ import org.uncertweb.et.sensitivity.AnalysisInputResult;
 import org.uncertweb.et.value.DistributionValues;
 import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.ScalarValues;
+import org.uncertweb.et.value.Values;
 import org.uncertweb.imagestorage.Base64ImageStorage;
 import org.uncertweb.imagestorage.ImageStorage;
 import org.uncertweb.imagestorage.ImageStorageException;
@@ -134,6 +135,7 @@ public class JSON {
 		gsonBuilder.registerTypeAdapter(AnalysisInputResult.class, new AnalysisInputResultSerializer());
 		
 		// for values
+		gsonBuilder.registerTypeAdapter(Values.class, new ValuesDeserializer());
 		gsonBuilder.registerTypeAdapter(SampleValues.class, new SampleValuesDeserializer());
 		gsonBuilder.registerTypeAdapter(ScalarValues.class, new ScalarValuesDeserializer());
 		gsonBuilder.registerTypeAdapter(DistributionValues.class, new DistributionValuesDeserializer());

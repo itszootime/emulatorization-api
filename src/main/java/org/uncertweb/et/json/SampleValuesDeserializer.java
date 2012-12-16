@@ -14,8 +14,7 @@ import com.google.gson.JsonParseException;
 public class SampleValuesDeserializer implements JsonDeserializer<SampleValues> {
 
 	@Override
-	public SampleValues deserialize(JsonElement json, Type typeOfT,
-			JsonDeserializationContext context) throws JsonParseException {
+	public SampleValues deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 		JsonArray array = json.getAsJsonArray();
 		SampleValues values = new SampleValues();
 		for (JsonElement element : array) {
@@ -28,7 +27,5 @@ public class SampleValuesDeserializer implements JsonDeserializer<SampleValues> 
 		}
 		return values;
 	}
-
-	
 	
 }
