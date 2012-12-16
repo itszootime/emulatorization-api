@@ -1,7 +1,7 @@
 package org.uncertweb.et.json;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.Test;
@@ -15,6 +15,7 @@ import org.uncertweb.et.test.TestHelper;
 import org.uncertweb.et.value.DistributionValues;
 import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.ScalarValues;
+import org.uncertweb.et.value.Values;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -88,7 +89,7 @@ public class JSONTest {
 
 		// check
 		ScalarValues observed = request.getObserved();
-		SampleValues simulated = request.getPredicted();
+		Values simulated = request.getPredicted();
 		assertThat(observed, notNullValue());
 		assertThat(simulated, notNullValue());
 		assertThat(observed.size(), equalTo(simulated.size()));
