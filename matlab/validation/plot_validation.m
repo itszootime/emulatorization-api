@@ -15,6 +15,26 @@ xlabel('Observed')
 ylabel('Predicted mean')
 axis equal
 
+% Zscores plot
+% This plot can be made a lot wider ... that is OK ...
+figure()
+ymin = min([metrics.zscores.y]);
+ymax = max([metrics.zscores.y]);
+xmin = min([metrics.zscores.x]);
+xmax = max([metrics.zscores.x]);
+plot([xmin,xmax],[2,2],'r')
+hold on
+plot([xmin,xmax],[-2,-2],'r')
+plot([xmin,xmax],[0,0],'b')
+plot(metrics.zscores.x,metrics.zscores.y,'k+')
+hold off
+title('Z-score plot (predicted-observed)/predictedStandardDeviation, 95% should fall within the two red lines')
+xlabel('Index of observation in data set')
+ylabel('z-score')
+absmaxmin = max(abs(ymax),abs(ymin))+0.1;
+ylim([-absmaxmin absmaxmin]);
+
+
 %Obs vs median
 figure()
 xymin = min([metrics.scattermedian.x; metrics.scattermedian.y]);

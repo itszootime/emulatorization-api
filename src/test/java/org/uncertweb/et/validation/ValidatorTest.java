@@ -1,9 +1,10 @@
 package org.uncertweb.et.validation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,6 +12,8 @@ import org.uncertweb.et.plot.PlotData;
 import org.uncertweb.et.test.TestData;
 
 public class ValidatorTest {
+	
+	// tests will fail until we can set a seed
 	
 	private static Validator validator;
 	
@@ -124,104 +127,5 @@ public class ValidatorTest {
 			assertThat(a, anyOf(closeTo(e, error), equalTo(e)));
 		}
 	}
-	
-//	@Test
-//	public void standardScoresMeanVariance() throws ProcessEvaluatorException, EmulatorEvaluatorException, ValidatorException {
-//		NumericValues observed = TestData.getPfObserved();
-//		Validator validator = new Validator(observed, TestData.getPfPredicted());
-//		
-//		// get scores
-//		NumericValues scores = validator.getStandardScores();
-//		
-//		// check		
-//		assertThat(scores.size(), equalTo(observed.size()));
-//		assertThat(scores.get(0).getNumber(), closeTo(0.097, 0.0001));
-//		assertThat(scores.get(2).getNumber(), closeTo(-0.6012, 0.0001));
-//	}
-	
-//	@Test
-//	public void rmseEnsembles() {
-//		Validator validator = new Validator(TestData.getNuObserved(), TestData.getNuPredicted());
-//				
-//		// check
-//		assertThat(validator.getRMSE(), closeTo(20.7213, 0.0001));
-//	}
-//	
-//	@Test
-//	public void standardScoresEnsembles() {
-//		NumericValues observed = TestData.getNuObserved();
-//		Validator validator = new Validator(observed, TestData.getNuPredicted());
-//		
-//		// get scores
-//		NumericValues scores = validator.getStandardScores();
-//		
-//		// check
-//		assertThat(scores.size(), equalTo(observed.size()));
-//		assertThat(scores.get(0).getNumber(), closeTo(-8.3571, 0.0001));
-//		assertThat(scores.get(2).getNumber(), closeTo(-2.783, 0.0001));
-//	}
-//	
-//	@Test
-//	public void rmseNumeric() {
-//		NumericValues observed = TestData.getNuObserved();
-//		Validator validator = new Validator(observed, TestData.getNuObserved());
-//		
-//		// check
-//		assertThat(validator.getRMSE(), equalTo(0.0));
-//	}
-//	
-//	@Test
-//	public void standardScoresNumeric() {
-//		NumericValues observed = TestData.getNuObserved();
-//		Validator validator = new Validator(observed, TestData.getNuObserved());
-//		
-//		// get scores
-//		NumericValues scores = validator.getStandardScores();
-//		
-//		// check
-//		assertThat(scores.size(), equalTo(observed.size()));
-//		assertThat(scores.get(0).getNumber(), equalTo(0.0));
-//		assertThat(scores.get(2).getNumber(), equalTo(0.0));
-//	}
-	
-//	@Test
-//	public void usingSimulatorAndEmulatorObserved() throws DesignException, ProcessEvaluatorException, EmulatorEvaluatorException, ValidatorException {
-//		ValidationRequest request = TestData.getValidationRequestEmulatorSimulator();
-//		Validator validator = Validator.usingSimulatorAndEmulator(request.getServiceURL(), request.getProcessIdentifier(), request.getEmulator(), request.getDesignSize());
-//		
-//		// check
-//		assertThat(validator.getObserved(), notNullValue());
-//		assertThat(validator.getObserved().size(), equalTo(request.getDesignSize()));
-//	}
-//	
-//	@Test
-//	public void usingSimulatorAndEmulatorPredicted() throws DesignException, ProcessEvaluatorException, EmulatorEvaluatorException, ValidatorException {
-//		ValidationRequest request = TestData.getValidationRequestEmulatorSimulator();
-//		Validator validator = Validator.usingSimulatorAndEmulator(request.getServiceURL(), request.getProcessIdentifier(), request.getEmulator(), request.getDesignSize());
-//		
-//		// check
-//		assertThat(validator.getPredicted(), notNullValue());
-//		assertThat(validator.getPredicted().size(), equalTo(request.getDesignSize()));
-//	}
-//	
-//	@Test
-//	public void usingPredictionsAndEmulatorObserved() throws ProcessEvaluatorException, EmulatorEvaluatorException, ValidatorException {
-//		ValidationRequest request = TestData.getValidationRequestEmulatorValues();
-//		Validator validator = Validator.usingPredictionsAndEmulator(request.getDesign(), request.getEvaluationResult(), request.getEmulator());
-//		
-//		// check
-//		assertThat(validator.getObserved(), notNullValue());
-//		assertThat(validator.getObserved().size(), equalTo(request.getEvaluationResult().getSize()));
-//	}
-//	
-//	@Test
-//	public void usingPredictionsAndEmulatorPredicted() throws ProcessEvaluatorException, EmulatorEvaluatorException, ValidatorException {
-//		ValidationRequest request = TestData.getValidationRequestEmulatorValues();
-//		Validator validator = Validator.usingPredictionsAndEmulator(request.getDesign(), request.getEvaluationResult(), request.getEmulator());
-//		
-//		// check
-//		assertThat(validator.getPredicted(), notNullValue());
-//		assertThat(validator.getPredicted().size(), equalTo(request.getEvaluationResult().getSize()));
-//	}
 	
 }

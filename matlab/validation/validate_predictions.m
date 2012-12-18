@@ -2,17 +2,14 @@ function [metrics] = validate_predictions(obs,pred)
 % This function computes a number of validation metrics, from either
 % realisations or from a Gaussian predictive distribution.
 
-% Reset seed
-randn('seed',0)
-
 % Check if mean and variance ... if so take samples
 nsamp = 100; % what value here - let's default to 100, although this does imply rather large sampling error!
 [nobs,nvar] = size(pred);
 if nvar == 2
     predr = repmat(pred(:,1),1,nsamp)+repmat(sqrt(pred(:,2)),1,nsamp).*randn(nobs,nsamp);
 else
-    nsamp = nvar; % assume that we have at least two realisations!
-    predr = pred;
+    nsamp = nvar; % assume that we have at least two realisations! 
+    predr=pred;
 end
 
 [q] = prctile(predr,[1:1:99],2); % Compute all the precentiles of the predictive realisations
@@ -46,6 +43,10 @@ metrics.scattermedian.yrange75 = q(:,75);
 mu = mean(predr,2);
 resid = (mu-obs);
 predresid = predr-repmat(mu,1,nsamp);
+
+% Compute the z-scores
+metrics.zscores.x = [1:1:nobs];
+metrics.zscores.y = resid./metrics.scattermean.ysd;
 
 % Common univariate metrics
 metrics.mean.bias = sum(resid)./nobs;

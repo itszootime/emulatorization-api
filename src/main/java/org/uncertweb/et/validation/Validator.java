@@ -21,13 +21,9 @@ import org.uncertweb.et.plot.PlotData;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
-import org.uncertweb.et.response.Respondable;
 import org.uncertweb.et.response.Include;
-import org.uncertweb.et.value.Distribution;
+import org.uncertweb.et.response.Respondable;
 import org.uncertweb.et.value.DistributionValues;
-import org.uncertweb.et.value.Sample;
-import org.uncertweb.et.value.SampleValues;
-import org.uncertweb.et.value.Scalar;
 import org.uncertweb.et.value.ScalarValues;
 import org.uncertweb.et.value.Values;
 import org.uncertweb.matlab.MLException;
@@ -97,7 +93,7 @@ public class Validator implements Respondable {
 			rmse = getMetric(metrics, "mean.rmse");
 			vsPredictedMeanPlotData = getPlotData(metrics, "scattermean"); // scattermean: x, y, ysd
 			vsPredictedMedianPlotData = getPlotData(metrics, "scattermedian"); // scattermedian: x, y, yrange25, yrange75
-			calculateStandardScore();
+			standardScorePlotData = getPlotData(metrics, "zscores");
 			meanResidualHistogramData = getPlotData(metrics, "meanresidual.histogram");
 			meanResidualQQPlotData = getPlotData(metrics, "meanresidqq");
 			medianResidualHistogramData = getPlotData(metrics, "medianresidual.histogram");
@@ -115,38 +111,6 @@ public class Validator implements Respondable {
 		catch (ConfigException e) {
 			throw new ValidatorException("Couldn't perform validation.", e);
 		}
-	}
-	
-	private void calculateStandardScore() {
-		double[] x = new double[observed.size()];
-		double[] scores = new double[observed.size()];
-
-		for (int i = 0; i < scores.length; i++) {
-			// set index
-			x[i] = i;
-			
-			// get observed and predicted
-			Scalar o = observed.get(i);
-
-			if (predicted instanceof DistributionValues) {
-				Distribution p = ((DistributionValues)predicted).get(i);
-				double diff = o.getScalar() - p.getMean();
-				scores[i] = diff / p.getStandardDeviation();
-			}
-			else if (predicted instanceof ScalarValues) {
-				ScalarValues values = (ScalarValues)predicted;
-				double diff = o.getScalar() - values.get(i).getScalar();
-				scores[i] = diff / values.getStandardDeviation();
-			}
-			else {
-				// not sure yet! using sample members mean and variance
-				Sample p = ((SampleValues)predicted).get(i);
-				double diff = o.getScalar() - p.getMean();
-				scores[i] = diff / p.getStandardDeviation();
-			}
-		}
-
-		this.standardScorePlotData = new PlotData(x, scores);
 	}
 	
 	private double getMetric(MLStruct metrics, String path) {
@@ -192,14 +156,6 @@ public class Validator implements Respondable {
 			array = field.getAsArray().getArray();
 		}
 		return array;
-	}
-
-	public ScalarValues getObserved() {
-		return observed;
-	}
-
-	public Values getPredicted() {
-		return predicted;
 	}
 
 	public static Validator usingSimulatorAndEmulator(String serviceURL, String processIdentifier, Emulator emulator, int designSize) throws DesignException, ProcessEvaluatorException, EmulatorEvaluatorException, ValidatorException {
@@ -250,6 +206,14 @@ public class Validator implements Respondable {
 		return new Validator(simulated, emulated);
 	}
 	
+	public ScalarValues getObserved() {
+		return observed;
+	}
+
+	public Values getPredicted() {
+		return predicted;
+	}
+	
 	public double getRMSE() {
 		return rmse;
 	}
@@ -298,37 +262,5 @@ public class Validator implements Respondable {
 	public String getResponseName() {
 		return "Validation";
 	}
-
-//	public double getRMSE() {
-//		double[] o = observed.toArray();
-//		double[] p = new double[predicted.size()];
-//
-//		// means, numeric, or ensembles?
-//		if (predicted instanceof MeanVarianceValues) {
-//			for (int i = 0; i < p.length; i++) {
-//				p[i] = ((MeanVarianceValues)predicted).get(i).getMean();
-//			}
-//		}
-//		else if (predicted instanceof NumericValues) {
-//			p = ((NumericValues)predicted).toArray();
-//		}
-//		else {
-//			// not sure yet! using mean of ensemble members
-//			for (int i = 0; i < p.length; i++) {
-//				p[i] = ((EnsembleValues)predicted).get(i).getMean();
-//			}
-//		}
-//
-//		// calculate
-//		double total = 0d;
-//		for (int i = 0; i < o.length; i++) {
-//			total += Math.pow(o[i] - p[i], 2);
-//		}
-//		total = total / o.length;
-//
-//		return Math.sqrt(total);		
-//	}
-
-
 
 }
