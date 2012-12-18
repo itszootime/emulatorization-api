@@ -1,7 +1,7 @@
 package org.uncertweb.et.validation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -25,6 +25,18 @@ public class ValidatorTest {
 	}
 	
 	@Test
+	public void vsPredictedMeanPlot() {
+		PlotData data = validator.getVsPredictedMeanPlotData();
+		assertThat(data, notNullValue());
+	}
+	
+	@Test
+	public void vsPredictedMedianPlot() {
+		PlotData data = validator.getVsPredictedMedianPlotData();
+		assertThat(data, notNullValue());
+	}
+	
+	@Test
 	public void meanResidualHistogram() {
 		PlotData data = validator.getMeanResidualHistogramData();
 		double[] expectedX = new double[] { -0.556475038049856,-0.514864577028613,-0.473254116007369,-0.431643654986126,-0.390033193964883,-0.348422732943639,-0.306812271922396,-0.265201810901153,-0.223591349879909,-0.181980888858666,-0.140370427837422,-0.0987599668161791,-0.0571495057949358,-0.0155390447736924,0.0260714162475510,0.0676818772687944,0.109292338290038,0.150902799311281,0.192513260332525,0.234123721353768,0.275734182375011,0.317344643396255,0.358955104417498,0.400565565438741,0.442176026459985,0.483786487481228,0.525396948502471,0.567007409523715,0.608617870544958,0.650228331566201 };
@@ -34,15 +46,17 @@ public class ValidatorTest {
 		testArrayCloseTo(data.getY(), expectedY, 0.0001);
 	}
 
-//	@Test
-//	public void meanResidualQQPlot() {
-//		PlotData data = validator.getMeanResidualQQPlotData();
+	@Test
+	public void meanResidualQQPlot() {
+		PlotData data = validator.getMeanResidualQQPlotData();
+		assertThat(data, notNullValue());
+		
 //		double[] expectedX = new double[] { };
 //		double[] expectedY = new double[] { };
-//		
+		
 //		testArrayCloseTo(data.getX(), expectedX, 0.0001);
 //		testArrayCloseTo(data.getY(), expectedY, 0.0001);
-//	}
+	}
 	
 	@Test
 	public void medianResidualHistogram() {
@@ -54,25 +68,29 @@ public class ValidatorTest {
 		testArrayCloseTo(data.getY(), expectedY, 0.0001);
 	}
 	
-//	@Test
-//	public void medianResidualQQPlot() {
-//		PlotData data = validator.getMedianResidualQQPlotData();
+	@Test
+	public void medianResidualQQPlot() {
+		PlotData data = validator.getMedianResidualQQPlotData();
+		assertThat(data, notNullValue());
+		
 //		double[] expectedX = new double[] { };
 //		double[] expectedY = new double[] { };
-//		
+		
 //		testArrayCloseTo(data.getX(), expectedX, 0.0001);
 //		testArrayCloseTo(data.getY(), expectedY, 0.0001);
-//	}
+	}
 	
-//	@Test
-//	public void rankHistogram() {
-//		PlotData data = validator.getRankHistogramData();
+	@Test
+	public void rankHistogram() {
+		PlotData data = validator.getRankHistogramData();
+		assertThat(data, notNullValue());
+		
 //		double[] expectedX = new double[] { };
 //		double[] expectedY = new double[] { };
-//		
+		
 //		testArrayCloseTo(data.getX(), expectedX, 0.0001);
 //		testArrayCloseTo(data.getY(), expectedY, 0.0001);
-//	}
+	}
 	
 	@Test
 	public void reliabilityDiagram() {
@@ -86,6 +104,18 @@ public class ValidatorTest {
 		assertThat(data.getN(), equalTo(expectedN));
 	}
 	
+	@Test
+	public void coveragePlot() {
+		PlotData data = validator.getCoveragePlotData();
+		assertThat(data, notNullValue());
+		
+//		double[] expectedX = new double[] { };
+//		double[] expectedY = new double[] { };
+		
+//		testArrayCloseTo(data.getX(), expectedX, 0.0001);
+//		testArrayCloseTo(data.getY(), expectedY, 0.0001);
+	}
+	
 	private void testArrayCloseTo(double[] actual, double[] expected, double error) {
 		// should go in a matcher
 		for (int i = 0; i < actual.length; i++) {
@@ -93,11 +123,6 @@ public class ValidatorTest {
 			double e = expected[i];
 			assertThat(a, anyOf(closeTo(e, error), equalTo(e)));
 		}
-	}
-	
-	private void testPlotData(PlotData data, double[] expectedX, double[] expectedY) {
-		testArrayCloseTo(data.getX(), expectedX, 0.0001);
-		testArrayCloseTo(data.getY(), expectedY, 0.0001);
 	}
 	
 //	@Test

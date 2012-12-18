@@ -45,6 +45,9 @@ public class Validator implements Respondable {
 	@Include private Values predicted;
 	
 	@Include private double rmse;
+	
+	@Include private PlotData vsPredictedMeanPlotData;
+	@Include private PlotData vsPredictedMedianPlotData;
 	@Include private PlotData standardScorePlotData;
 	@Include private PlotData meanResidualHistogramData;	
 	@Include private PlotData meanResidualQQPlotData;
@@ -52,6 +55,7 @@ public class Validator implements Respondable {
 	@Include private PlotData medianResidualQQPlotData;
 	@Include private PlotData rankHistogramData;
 	@Include private PlotData reliabilityDiagramData;
+	@Include private PlotData coveragePlotData;
 	
 	public Validator(ScalarValues observed, Values predicted) throws ValidatorException {
 		this.observed = observed;
@@ -91,6 +95,8 @@ public class Validator implements Respondable {
 			
 			// rmse
 			rmse = getMetric(metrics, "mean.rmse");
+			vsPredictedMeanPlotData = getPlotData(metrics, "scattermean"); // scattermean: x, y, ysd
+			vsPredictedMedianPlotData = getPlotData(metrics, "scattermedian"); // scattermedian: x, y, yrange25, yrange75
 			calculateStandardScore();
 			meanResidualHistogramData = getPlotData(metrics, "meanresidual.histogram");
 			meanResidualQQPlotData = getPlotData(metrics, "meanresidqq");
@@ -98,6 +104,7 @@ public class Validator implements Respondable {
 			medianResidualQQPlotData = getPlotData(metrics, "medianresidqq");
 			rankHistogramData = getPlotData(metrics, "rankhist");
 			reliabilityDiagramData = getPlotData(metrics, "reliability");
+			coveragePlotData = getPlotData(metrics, "percent", "level", "value");
 		}
 		catch (IOException e) {
 			throw new ValidatorException("Couldn't perform validation.", e);
@@ -154,6 +161,10 @@ public class Validator implements Respondable {
 	}
 	
 	private PlotData getPlotData(MLStruct metrics, String path) {
+		return getPlotData(metrics, path, "x", "y");
+	}
+	
+	private PlotData getPlotData(MLStruct metrics, String path, String xFieldName, String yFieldName) {
 		// navigate
 		MLStruct current = metrics;
 		for (String p : path.split("\\.")) {
@@ -161,8 +172,8 @@ public class Validator implements Respondable {
 		}
 		
 		// build
-		double[] x = getValueAsArray(current.getField("x"));
-		double[] y = getValueAsArray(current.getField("y"));
+		double[] x = getValueAsArray(current.getField(xFieldName));
+		double[] y = getValueAsArray(current.getField(yFieldName));
 		MLValue n = current.getField("n");
 		if (n != null) {
 			return new PlotData(x, y, getValueAsArray(n));
@@ -242,6 +253,14 @@ public class Validator implements Respondable {
 	public double getRMSE() {
 		return rmse;
 	}
+	
+	public PlotData getVsPredictedMeanPlotData() {
+		return vsPredictedMeanPlotData;
+	}
+	
+	public PlotData getVsPredictedMedianPlotData() {
+		return vsPredictedMedianPlotData;
+	}
 
 	public PlotData getStandardScorePlotData() {
 		return standardScorePlotData;
@@ -269,6 +288,10 @@ public class Validator implements Respondable {
 	
 	public PlotData getReliabilityDiagramData() {
 		return reliabilityDiagramData;
+	}
+	
+	public PlotData getCoveragePlotData() {
+		return coveragePlotData;
 	}
 
 	@Override
