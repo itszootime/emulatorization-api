@@ -50,6 +50,7 @@ public class Validator implements Respondable {
 	@Include private PlotData meanResidualQQPlotData;
 	@Include private PlotData medianResidualHistogramData;
 	@Include private PlotData medianResidualQQPlotData;
+	@Include private PlotData rankHistogramData;
 	@Include private PlotData reliabilityDiagramData;
 	
 	public Validator(ScalarValues observed, Values predicted) throws ValidatorException {
@@ -95,6 +96,7 @@ public class Validator implements Respondable {
 			meanResidualQQPlotData = getPlotData(metrics, "meanresidqq");
 			medianResidualHistogramData = getPlotData(metrics, "medianresidual.histogram");
 			medianResidualQQPlotData = getPlotData(metrics, "medianresidqq");
+			rankHistogramData = getPlotData(metrics, "rankhist");
 			reliabilityDiagramData = getPlotData(metrics, "reliability");
 		}
 		catch (IOException e) {
@@ -259,6 +261,10 @@ public class Validator implements Respondable {
 	
 	public PlotData getMedianResidualQQPlotData() {
 		return medianResidualQQPlotData;
+	}
+	
+	public PlotData getRankHistogramData() {
+		return rankHistogramData;
 	}
 	
 	public PlotData getReliabilityDiagramData() {

@@ -64,6 +64,16 @@ public class ValidatorTest {
 //		testArrayCloseTo(data.getY(), expectedY, 0.0001);
 //	}
 	
+//	@Test
+//	public void rankHistogram() {
+//		PlotData data = validator.getRankHistogramData();
+//		double[] expectedX = new double[] { };
+//		double[] expectedY = new double[] { };
+//		
+//		testArrayCloseTo(data.getX(), expectedX, 0.0001);
+//		testArrayCloseTo(data.getY(), expectedY, 0.0001);
+//	}
+	
 	@Test
 	public void reliabilityDiagram() {
 		PlotData data = validator.getReliabilityDiagramData();
