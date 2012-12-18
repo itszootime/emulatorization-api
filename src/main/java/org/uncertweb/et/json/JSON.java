@@ -2,6 +2,7 @@ package org.uncertweb.et.json;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.lang.reflect.Type;
@@ -16,6 +17,7 @@ import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.response.Response;
 import org.uncertweb.et.sensitivity.AnalysisInputResult;
+import org.uncertweb.et.validation.Validator;
 import org.uncertweb.et.value.DistributionValues;
 import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.ScalarValues;
@@ -74,6 +76,10 @@ public class JSON {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		OutputStreamWriter osw = new OutputStreamWriter(os);
 		encode(obj, osw);
+		try {
+			osw.close();
+		}
+		catch (IOException e) {	}
 		return os.toString(); // no need to close byte array output stream
 	}
 
@@ -132,6 +138,9 @@ public class JSON {
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultSerializer());
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultDeserializer());	
 		gsonBuilder.registerTypeAdapter(AnalysisInputResult.class, new AnalysisInputResultSerializer());
+		
+		// for respondables
+		gsonBuilder.registerTypeAdapter(Validator.class, new RespondableSerializer());
 		
 		// for values
 		gsonBuilder.registerTypeAdapter(Values.class, new ValuesDeserializer());

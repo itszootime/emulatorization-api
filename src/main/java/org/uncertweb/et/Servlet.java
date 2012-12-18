@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uncertweb.et.json.JSON;
 import org.uncertweb.et.request.Request;
-import org.uncertweb.et.response.Response;
 import org.uncertweb.imagestorage.FileImageStorage;
 import org.uncertweb.imagestorage.ImageStorage;
 import org.uncertweb.imagestorage.ImageStorageException;
@@ -56,11 +55,11 @@ public class Servlet extends HttpServlet {
 			Request request = json.parse(httpRequest.getReader(), Request.class);
 //			json.encode(request, System.out); // debug code
 			logger.info("Processing " + request.getClass().getSimpleName() + " from " + httpRequest.getRemoteAddr() + "...");
-			Response response = Emulatorization.process(request);
+			Object object = Emulatorization.process(request);
 
 			// send our response
 			logger.info("Processing completed successfully.");
-			json.encode(response, writer);
+			json.encode(object, writer);
 //			StringWriter w = new StringWriter();			
 //			json.encode(response, w); // debug code
 //			logger.debug(w.toString());

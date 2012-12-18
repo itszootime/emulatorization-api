@@ -3,11 +3,10 @@ package org.uncertweb.et.test;
 import org.uncertweb.et.emulator.EmulatorEvaluatorException;
 import org.uncertweb.et.process.ProcessEvaluatorException;
 import org.uncertweb.et.request.ValidationRequest;
-import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.validation.Validator;
 import org.uncertweb.et.validation.ValidatorException;
-import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.DistributionValues;
+import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.ScalarValues;
 
 /**
@@ -55,7 +54,7 @@ public class TestData {
 		return TestHelper.parseJSON("validation-request-emulator-values.json", ValidationRequest.class);
 	}
 	
-	public static ValidationResponse getValidationResponseEmulatorValues() {
+	public static Validator getValidatorEmulatorValues() {
 		ValidationRequest request = getValidationRequestEmulatorValues();
 		Validator validator = null;
 		try {
@@ -64,7 +63,7 @@ public class TestData {
 		catch (EmulatorEvaluatorException e) { }
 		catch (ProcessEvaluatorException e) { }
 		catch (ValidatorException e) { }
-		return ValidationResponse.fromValidator(validator);
+		return validator;
 	}
 
 }

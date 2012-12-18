@@ -35,11 +35,9 @@ import org.uncertweb.et.response.EvaluateProcessResponse;
 import org.uncertweb.et.response.GetProcessDescriptionResponse;
 import org.uncertweb.et.response.GetProcessIdentifiersResponse;
 import org.uncertweb.et.response.LearningResponse;
-import org.uncertweb.et.response.Response;
 import org.uncertweb.et.response.ScreeningResponse;
 import org.uncertweb.et.response.SensitivityResponse;
 import org.uncertweb.et.response.StatusResponse;
-import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.screening.Screening;
 import org.uncertweb.et.sensitivity.AnalysisOutputResult;
 import org.uncertweb.et.sensitivity.fast.Fast;
@@ -60,16 +58,15 @@ public class Emulatorization {
 	// TODO: request object validation.
 	// TODO: if no outputs are passed to screening you get null pointer
 	// handler: pass request objects -> delegates to correct classes -> returns response
-	public static Response process(Request request) throws Exception {
+	public static Object process(Request request) throws Exception {
 		try {
-			Response response;
 			if (request instanceof GetProcessIdentifiersRequest) {
 				GetProcessIdentifiersRequest gpiRequest = (GetProcessIdentifiersRequest) request;
 
 				ServiceDescription description = ServiceDescriptionParser.parse(gpiRequest.getServiceURL());
 				List<String> processIdentifiers = description.getProcessIdentifiers();
 
-				response = new GetProcessIdentifiersResponse(processIdentifiers);
+				return new GetProcessIdentifiersResponse(processIdentifiers);
 			}
 			else if (request instanceof GetProcessDescriptionRequest) {
 				GetProcessDescriptionRequest gpdRequest = (GetProcessDescriptionRequest) request;
@@ -79,7 +76,7 @@ public class Emulatorization {
 
 				// FIXME: will return blank response if unsupported data type, should be an exception
 
-				response = new GetProcessDescriptionResponse(processDescription);
+				return new GetProcessDescriptionResponse(processDescription);
 			}
 			else if (request instanceof ScreeningRequest) {				
 				ScreeningRequest sRequest = (ScreeningRequest) request;
@@ -95,14 +92,14 @@ public class Emulatorization {
 					screening = new Screening(sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.getInputs(), sRequest.getOutputs(), numTraj, discretisationLevel);
 				}
 
-				response = new ScreeningResponse(screening.run());
+				return new ScreeningResponse(screening.run());
 			}
 			else if (request instanceof DesignRequest) {
 				DesignRequest dRequest = (DesignRequest) request;
 
 				Design design = LHSDesign.create(dRequest.getInputs(), dRequest.getSize());
 
-				response = new DesignResponse(design);
+				return new DesignResponse(design);
 			}
 			else if (request instanceof EvaluateProcessRequest) {
 				EvaluateProcessRequest eRequest = (EvaluateProcessRequest) request;
@@ -134,7 +131,7 @@ public class Emulatorization {
 					}
 				}
 
-				return ValidationResponse.fromValidator(validator);
+				return validator;
 			}
 			else if (request instanceof EvaluateEmulatorRequest) {
 				EvaluateEmulatorRequest eRequest = (EvaluateEmulatorRequest) request;
@@ -205,10 +202,8 @@ public class Emulatorization {
 			}
 			else {
 				// shouldn't ever happen
-				response = null;
+				return null;
 			}
-
-			return response;
 		}
 		catch (Exception e) {
 			// log it first

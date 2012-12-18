@@ -21,10 +21,12 @@ import org.uncertweb.et.plot.PlotData;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
-import org.uncertweb.et.value.Sample;
-import org.uncertweb.et.value.SampleValues;
+import org.uncertweb.et.response.Respondable;
+import org.uncertweb.et.response.Include;
 import org.uncertweb.et.value.Distribution;
 import org.uncertweb.et.value.DistributionValues;
+import org.uncertweb.et.value.Sample;
+import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.Scalar;
 import org.uncertweb.et.value.ScalarValues;
 import org.uncertweb.et.value.Values;
@@ -35,19 +37,20 @@ import org.uncertweb.matlab.value.MLMatrix;
 import org.uncertweb.matlab.value.MLStruct;
 import org.uncertweb.matlab.value.MLValue;
 
-public class Validator {
+public class Validator implements Respondable {
 
 	private static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
-	private ScalarValues observed;
-	private Values predicted;
+	@Include private ScalarValues observed;
+	@Include private Values predicted;
 	
-	private double rmse;
-	private PlotData meanResidualHistogramData;
-	private PlotData meanResidualQQPlotData;
-	private PlotData medianResidualHistogramData;
-	private PlotData medianResidualQQPlotData;
-	private PlotData reliabilityDiagramData;
+	@Include private double rmse;
+	@Include private PlotData standardScorePlotData;
+	@Include private PlotData meanResidualHistogramData;	
+	@Include private PlotData meanResidualQQPlotData;
+	@Include private PlotData medianResidualHistogramData;
+	@Include private PlotData medianResidualQQPlotData;
+	@Include private PlotData reliabilityDiagramData;
 	
 	public Validator(ScalarValues observed, Values predicted) throws ValidatorException {
 		this.observed = observed;
@@ -87,6 +90,7 @@ public class Validator {
 			
 			// rmse
 			rmse = getMetric(metrics, "mean.rmse");
+			calculateStandardScore();
 			meanResidualHistogramData = getPlotData(metrics, "meanresidual.histogram");
 			meanResidualQQPlotData = getPlotData(metrics, "meanresidqq");
 			medianResidualHistogramData = getPlotData(metrics, "medianresidual.histogram");
@@ -102,6 +106,38 @@ public class Validator {
 		catch (ConfigException e) {
 			throw new ValidatorException("Couldn't perform validation.", e);
 		}
+	}
+	
+	private void calculateStandardScore() {
+		double[] x = new double[observed.size()];
+		double[] scores = new double[observed.size()];
+
+		for (int i = 0; i < scores.length; i++) {
+			// set index
+			x[i] = i;
+			
+			// get observed and predicted
+			Scalar o = observed.get(i);
+
+			if (predicted instanceof DistributionValues) {
+				Distribution p = ((DistributionValues)predicted).get(i);
+				double diff = o.getScalar() - p.getMean();
+				scores[i] = diff / p.getStandardDeviation();
+			}
+			else if (predicted instanceof ScalarValues) {
+				ScalarValues values = (ScalarValues)predicted;
+				double diff = o.getScalar() - values.get(i).getScalar();
+				scores[i] = diff / values.getStandardDeviation();
+			}
+			else {
+				// not sure yet! using sample members mean and variance
+				Sample p = ((SampleValues)predicted).get(i);
+				double diff = o.getScalar() - p.getMean();
+				scores[i] = diff / p.getStandardDeviation();
+			}
+		}
+
+		this.standardScorePlotData = new PlotData(x, scores);
 	}
 	
 	private double getMetric(MLStruct metrics, String path) {
@@ -206,35 +242,7 @@ public class Validator {
 	}
 
 	public PlotData getStandardScorePlotData() {
-		double[] x = new double[observed.size()];
-		double[] scores = new double[observed.size()];
-
-		for (int i = 0; i < scores.length; i++) {
-			// set index
-			x[i] = i;
-			
-			// get observed and predicted
-			Scalar o = observed.get(i);
-
-			if (predicted instanceof DistributionValues) {
-				Distribution p = ((DistributionValues)predicted).get(i);
-				double diff = o.getScalar() - p.getMean();
-				scores[i] = diff / p.getStandardDeviation();
-			}
-			else if (predicted instanceof ScalarValues) {
-				ScalarValues values = (ScalarValues)predicted;
-				double diff = o.getScalar() - values.get(i).getScalar();
-				scores[i] = diff / values.getStandardDeviation();
-			}
-			else {
-				// not sure yet! using sample members mean and variance
-				Sample p = ((SampleValues)predicted).get(i);
-				double diff = o.getScalar() - p.getMean();
-				scores[i] = diff / p.getStandardDeviation();
-			}
-		}
-
-		return new PlotData(x, scores);
+		return standardScorePlotData;
 	}
 
 	public PlotData getMeanResidualHistogramData() {
@@ -255,6 +263,11 @@ public class Validator {
 	
 	public PlotData getReliabilityDiagramData() {
 		return reliabilityDiagramData;
+	}
+
+	@Override
+	public String getResponseName() {
+		return "Validation";
 	}
 
 //	public double getRMSE() {

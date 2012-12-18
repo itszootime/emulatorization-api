@@ -4,56 +4,107 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.uncertweb.et.design.Design;
 import org.uncertweb.et.emulator.Emulator;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.request.ValidationRequest;
-import org.uncertweb.et.response.ValidationResponse;
 import org.uncertweb.et.test.TestData;
 import org.uncertweb.et.test.TestHelper;
+import org.uncertweb.et.validation.Validator;
 import org.uncertweb.et.value.DistributionValues;
 import org.uncertweb.et.value.SampleValues;
 import org.uncertweb.et.value.ScalarValues;
 import org.uncertweb.et.value.Values;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class JSONTest {
+	
+	private static Validator validator;
+	private JsonObject validatorJson;
+	
+	@BeforeClass
+	public static void beforeClass() {
+		validator = TestData.getValidatorEmulatorValues();
+	}
+	
+	@Before
+	public void before() {
+		validatorJson = encodeJson(validator).getAsJsonObject();
+	}
 
 	@Test
 	public void encodeScalarValues() {
 		ScalarValues values = TestData.getPfObserved();
-		JsonObject json = encodeJsonObject(values);
+		encodeJson(values).getAsJsonArray();
 	}
 
 	@Test
 	public void encodeSampleValues() {
 		SampleValues values = TestData.getNuPredicted();
-		JsonObject json = encodeJsonObject(values);
+		encodeJson(values).getAsJsonArray();
 	}
 
 	@Test
 	public void encodeDistributionValues() {
 		DistributionValues values = TestData.getPfPredicted();
-		JsonObject json = encodeJsonObject(values);
+		encodeJson(values).getAsJsonArray();
 	}
 
 	@Test
-	public void encodeValidationResponse() {
-		ValidationResponse response = TestData.getValidationResponseEmulatorValues();
-		JsonObject json = encodeJsonObject(response);
-		assertThat(json.has("standardScorePlotData"), equalTo(true));
-		assertThat(json.has("meanResidualHistogramData"), equalTo(true));
-		assertThat(json.has("meanResidualQQPlotData"), equalTo(true));
-		assertThat(json.has("medianResidualHistogramData"), equalTo(true));
-		assertThat(json.has("medianResidualQQPlotData"), equalTo(true));
-		assertThat(json.has("reliabilityDiagramData"), equalTo(true));
+	public void encodeValidatorType() {
+		assertThat(validatorJson.has("type"), equalTo(true));
+		assertThat(validatorJson.get("type").getAsString(), equalTo("ValidationResponse"));
 	}
 	
-	private JsonObject encodeJsonObject(Object object) {
-		return (JsonObject)new JsonParser().parse(new JSON().encode(object));
+	@Test
+	public void encodeValidatorObserved() {
+		assertThat(validatorJson.has("observed"), equalTo(true));
+	}
+	
+	@Test
+	public void encodeValidatorPredicted() {
+		assertThat(validatorJson.has("predicted"), equalTo(true));
+	}
+	
+	@Test
+	public void encodeValidatorRMSE() {
+		assertThat(validatorJson.has("rmse"), equalTo(true));
+	}
+	
+	@Test
+	public void encodeValidatorStandardScorePlotData() {
+		assertThat(validatorJson.has("standardScorePlotData"), equalTo(true));
+	}
+	
+	@Test
+	public void encodeValidatorMeanResidualHistogramData() {
+		assertThat(validatorJson.has("meanResidualHistogramData"), equalTo(true));
+	}
+	
+	@Test
+	public void encodeValidatorMeanResidualQQPlotData() {
+		assertThat(validatorJson.has("meanResidualQQPlotData"), equalTo(true));
+	}
+	
+	@Test
+	public void encodeValidatorMedianResidualHistogramData() {
+		assertThat(validatorJson.has("medianResidualHistogramData"), equalTo(true));
+	}
+	
+	@Test
+	public void encodeValidatorMedianResidualQQPlotData() {
+		assertThat(validatorJson.has("medianResidualQQPlotData"), equalTo(true));
+	}
+	
+	@Test
+	public void encodeValidatorReliabilityDiagramData() {
+		assertThat(validatorJson.has("reliabilityDiagramData"), equalTo(true));
 	}
 
 	@Test
@@ -122,6 +173,9 @@ public class JSONTest {
 		assertThat(design, notNullValue());
 		assertThat(result, notNullValue());
 	}
-
+	
+	private JsonElement encodeJson(Object object) {
+		return new JsonParser().parse(new JSON().encode(object));
+	}
 
 }
