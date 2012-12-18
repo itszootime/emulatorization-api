@@ -34,15 +34,15 @@ public class ValidatorTest {
 		testArrayCloseTo(data.getY(), expectedY, 0.0001);
 	}
 
-	@Test
-	public void meanResidualQQPlot() {
-		PlotData data = validator.getMeanResidualQQPlotData();
-		double[] expectedX = new double[] { };
-		double[] expectedY = new double[] { };
-		
-		testArrayCloseTo(data.getX(), expectedX, 0.0001);
-		testArrayCloseTo(data.getY(), expectedY, 0.0001);
-	}
+//	@Test
+//	public void meanResidualQQPlot() {
+//		PlotData data = validator.getMeanResidualQQPlotData();
+//		double[] expectedX = new double[] { };
+//		double[] expectedY = new double[] { };
+//		
+//		testArrayCloseTo(data.getX(), expectedX, 0.0001);
+//		testArrayCloseTo(data.getY(), expectedY, 0.0001);
+//	}
 	
 	@Test
 	public void medianResidualHistogram() {
@@ -54,22 +54,22 @@ public class ValidatorTest {
 		testArrayCloseTo(data.getY(), expectedY, 0.0001);
 	}
 	
-	@Test
-	public void medianResidualQQPlot() {
-		PlotData data = validator.getMedianResidualQQPlotData();
-		double[] expectedX = new double[] { };
-		double[] expectedY = new double[] { };
-		
-		testArrayCloseTo(data.getX(), expectedX, 0.0001);
-		testArrayCloseTo(data.getY(), expectedY, 0.0001);
-	}
+//	@Test
+//	public void medianResidualQQPlot() {
+//		PlotData data = validator.getMedianResidualQQPlotData();
+//		double[] expectedX = new double[] { };
+//		double[] expectedY = new double[] { };
+//		
+//		testArrayCloseTo(data.getX(), expectedX, 0.0001);
+//		testArrayCloseTo(data.getY(), expectedY, 0.0001);
+//	}
 	
 	@Test
 	public void reliabilityDiagram() {
 		PlotData data = validator.getReliabilityDiagramData();
-		double[] expectedX = new double[] { 0,0.0338219895287959,0.147575757575758,0.249044117647059,0.348518518518519,0.453274336283186,0.548526315789474,0.640701754385965,0.728000000000000,Double.NaN,Double.NaN };
-		double[] expectedY = new double[] { 0,0.0471204188481675,0.131313131313131,0.301470588235294,0.348148148148148,0.469026548672566,0.505263157894737,0.614035087719298,0.400000000000000,Double.NaN,Double.NaN };
-		double[] expectedN = new double[] { 0,573,198,136,135,113,190,114,10,0,0 };
+		double[] expectedX = new double[] { 0,0.0338219895287959,0.147575757575758,0.249044117647059,0.348518518518519,0.453274336283186,0.548526315789474,0.640701754385965,0.728000000000000 };
+		double[] expectedY = new double[] { 0,0.0471204188481675,0.131313131313131,0.301470588235294,0.348148148148148,0.469026548672566,0.505263157894737,0.614035087719298,0.400000000000000 };
+		double[] expectedN = new double[] { 0,573,198,136,135,113,190,114,10 };
 		
 		testArrayCloseTo(data.getX(), expectedX, 0.0001);
 		testArrayCloseTo(data.getY(), expectedY, 0.0001);

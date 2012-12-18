@@ -5,8 +5,10 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.uncertweb.et.json.JSON;
 
+@Ignore
 public class TestHelper {
 	
 	private static final DecimalFormat FORMAT = new DecimalFormat("#.####");

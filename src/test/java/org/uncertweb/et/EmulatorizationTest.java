@@ -1,6 +1,8 @@
 package org.uncertweb.et;
 
+import org.junit.Ignore;
 
+@Ignore
 public class EmulatorizationTest {
 	
 //	@Test

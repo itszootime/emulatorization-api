@@ -1,5 +1,6 @@
 package org.uncertweb.et.test;
 
+import org.junit.Ignore;
 import org.uncertweb.et.emulator.EmulatorEvaluatorException;
 import org.uncertweb.et.process.ProcessEvaluatorException;
 import org.uncertweb.et.request.ValidationRequest;
@@ -16,6 +17,7 @@ import org.uncertweb.et.value.ScalarValues;
  * @author Richard Jones
  *
  */
+@Ignore
 public class TestData {
 	
 	public static DistributionValues getCbPredicted() {
