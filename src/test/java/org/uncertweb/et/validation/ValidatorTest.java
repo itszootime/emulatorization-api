@@ -31,12 +31,14 @@ public class ValidatorTest {
 	public void vsPredictedMeanPlot() {
 		PlotData data = validator.getVsPredictedMeanPlotData();
 		assertThat(data, notNullValue());
+		assertThat(data.getYRange(), notNullValue());
 	}
 	
 	@Test
 	public void vsPredictedMedianPlot() {
 		PlotData data = validator.getVsPredictedMedianPlotData();
 		assertThat(data, notNullValue());
+		assertThat(data.getYRange(), notNullValue());
 	}
 	
 	@Test
