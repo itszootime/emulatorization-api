@@ -40,7 +40,21 @@ public class Validator implements Respondable {
 	@Include private ScalarValues observed;
 	@Include private Values predicted;
 	
-	@Include private double rmse;
+	@Include private double meanBias;
+	@Include private double meanMAE;
+	@Include private double meanRMSE;
+	@Include private double meanCorrelation;
+	@Include private double medianBias;
+	@Include private double medianMAE;
+	@Include private double medianRMSE;
+	@Include private double medianCorrelation;
+	@Include private double brierScore;
+	@Include private double crpsReliability;
+	@Include private double crpsResolution;
+	@Include private double crpsUncertainty;
+	@Include private double ignReliability;
+	@Include private double ignResolution;
+	@Include private double ignUncertainty;
 	
 	@Include private PlotData vsPredictedMeanPlotData;
 	@Include private PlotData vsPredictedMedianPlotData;
@@ -89,8 +103,22 @@ public class Validator implements Respondable {
 			MLResult result = MATLAB.sendRequest(request);
 			MLStruct metrics = result.getResult(0).getAsStruct();
 			
-			// rmse
-			rmse = getMetric(metrics, "mean.rmse");
+			meanBias = getMetric(metrics, "mean.bias");
+			meanMAE = getMetric(metrics, "mean.mae");
+			meanRMSE = getMetric(metrics, "mean.rmse");
+			meanCorrelation = getMetric(metrics, "mean.correl");
+			medianBias = getMetric(metrics, "median.bias");
+			medianMAE = getMetric(metrics, "median.mae");
+			medianRMSE = getMetric(metrics, "median.rmse");
+			medianCorrelation = getMetric(metrics, "median.correl");
+			brierScore = getMetric(metrics, "bs");
+			crpsReliability = getMetric(metrics, "crps.rel");
+			crpsResolution = getMetric(metrics, "crps.res");
+			crpsUncertainty = getMetric(metrics, "crps.unc");
+			ignReliability = getMetric(metrics, "ign.rel");
+			ignResolution = getMetric(metrics, "ign.res");
+			ignUncertainty = getMetric(metrics, "ign.unc");
+			
 			vsPredictedMeanPlotData = getPlotDataWithSD(metrics, "scattermean", "x", "y", "ysd");
 			vsPredictedMedianPlotData = getPlotDataWithRange(metrics, "scattermedian", "x", "y", "yrange25", "yrange75");
 			standardScorePlotData = getPlotData(metrics, "zscores");
@@ -266,10 +294,66 @@ public class Validator implements Respondable {
 		return predicted;
 	}
 	
-	public double getRMSE() {
-		return rmse;
+	public double getMeanBias() {
+		return meanBias;
 	}
-	
+
+	public double getMeanMAE() {
+		return meanMAE;
+	}
+
+	public double getMeanRMSE() {
+		return meanRMSE;
+	}
+
+	public double getMeanCorrelation() {
+		return meanCorrelation;
+	}
+
+	public double getMedianBias() {
+		return medianBias;
+	}
+
+	public double getMedianMAE() {
+		return medianMAE;
+	}
+
+	public double getMedianRMSE() {
+		return medianRMSE;
+	}
+
+	public double getMedianCorrelation() {
+		return medianCorrelation;
+	}
+
+	public double getBrierScore() {
+		return brierScore;
+	}
+
+	public double getCRPSReliability() {
+		return crpsReliability;
+	}
+
+	public double getCRPSResolution() {
+		return crpsResolution;
+	}
+
+	public double getCRPSUncertainty() {
+		return crpsUncertainty;
+	}
+
+	public double getIGNReliability() {
+		return ignReliability;
+	}
+
+	public double getIGNResolution() {
+		return ignResolution;
+	}
+
+	public double getIGNUncertainty() {
+		return ignUncertainty;
+	}
+
 	public PlotData getVsPredictedMeanPlotData() {
 		return vsPredictedMeanPlotData;
 	}

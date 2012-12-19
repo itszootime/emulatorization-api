@@ -73,9 +73,11 @@ public class JSONTest {
 	}
 	
 	@Test
-	public void encodeValidatorRMSE() {
-		assertThat(validatorJson.has("rmse"), equalTo(true));
+	public void encodeValidatorMeanRMSE() {
+		assertThat(validatorJson.has("meanRMSE"), equalTo(true));
 	}
+	
+	// FIXME: more stats
 	
 	@Test
 	public void encodeValidatorStandardScorePlotData() {

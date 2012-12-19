@@ -13,8 +13,7 @@ import org.uncertweb.et.test.TestData;
 
 public class ValidatorTest {
 	
-	// tests will fail until we can set a seed
-	
+	// FIXME: tests will fail until we can set a seed
 	private static Validator validator;
 	
 	@BeforeClass
@@ -23,8 +22,78 @@ public class ValidatorTest {
 	}
 	
 	@Test
-	public void rmse() {
-		assertThat(validator.getRMSE(), closeTo(0.2079, 0.0001));
+	public void meanBias() {
+		assertThat(validator.getMeanBias(), notNullValue());
+	}
+	
+	@Test
+	public void meanMAE() {
+		assertThat(validator.getMeanMAE(), notNullValue());
+	}
+	
+	@Test
+	public void meanRMSE() {
+		assertThat(validator.getMeanRMSE(), closeTo(0.2079, 0.0001));
+	}
+	
+	@Test
+	public void meanCorrelation() {
+		assertThat(validator.getMeanCorrelation(), notNullValue());
+	}
+	
+	@Test
+	public void medianBias() {
+		assertThat(validator.getMedianBias(), notNullValue());
+	}
+	
+	@Test
+	public void medianMAE() {
+		assertThat(validator.getMedianMAE(), notNullValue());
+	}
+	
+	@Test
+	public void medianRMSE() {
+		assertThat(validator.getMedianRMSE(), notNullValue());
+	}
+	
+	@Test
+	public void medianCorrelation() {
+		assertThat(validator.getMedianCorrelation(), notNullValue());
+	}
+	
+	@Test
+	public void brierScore() {
+		assertThat(validator.getBrierScore(), notNullValue());
+	}
+	
+	@Test
+	public void crpsReliability() {
+		assertThat(validator.getCRPSReliability(), notNullValue());
+	}
+	
+	@Test
+	public void crpsResolution() {
+		assertThat(validator.getCRPSResolution(), notNullValue());
+	}
+	
+	@Test
+	public void crpsUncertainty() {
+		assertThat(validator.getCRPSUncertainty(), notNullValue());
+	}
+	
+	@Test
+	public void ignReliability() {
+		assertThat(validator.getIGNReliability(), notNullValue());
+	}
+	
+	@Test
+	public void ignResolution() {
+		assertThat(validator.getIGNResolution(), notNullValue());
+	}
+	
+	@Test
+	public void ignUncertainty() {
+		assertThat(validator.getIGNUncertainty(), notNullValue());
 	}
 	
 	@Test
