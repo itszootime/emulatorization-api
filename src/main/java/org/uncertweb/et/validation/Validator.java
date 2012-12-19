@@ -91,8 +91,8 @@ public class Validator implements Respondable {
 			
 			// rmse
 			rmse = getMetric(metrics, "mean.rmse");
-			vsPredictedMeanPlotData = getPlotData(metrics, "scattermean"); // scattermean: x, y, ysd
-			vsPredictedMedianPlotData = getPlotData(metrics, "scattermedian"); // scattermedian: x, y, yrange25, yrange75
+			vsPredictedMeanPlotData = getPlotDataWithSD(metrics, "scattermean", "x", "y", "ysd");
+			vsPredictedMedianPlotData = getPlotDataWithRange(metrics, "scattermedian", "x", "y", "yrange25", "yrange75");
 			standardScorePlotData = getPlotData(metrics, "zscores");
 			meanResidualHistogramData = getPlotData(metrics, "meanresidual.histogram");
 			meanResidualQQPlotData = getPlotData(metrics, "meanresidqq");
@@ -127,7 +127,7 @@ public class Validator implements Respondable {
 	private PlotData getPlotData(MLStruct metrics, String path) {
 		return getPlotData(metrics, path, "x", "y");
 	}
-	
+
 	private PlotData getPlotData(MLStruct metrics, String path, String xFieldName, String yFieldName) {
 		// navigate
 		MLStruct current = metrics;
@@ -139,11 +139,63 @@ public class Validator implements Respondable {
 		double[] x = getValueAsArray(current.getField(xFieldName));
 		double[] y = getValueAsArray(current.getField(yFieldName));
 		MLValue n = current.getField("n");
+		
 		if (n != null) {
 			return new PlotData(x, y, getValueAsArray(n));
 		}
 		else {
 			return new PlotData(x, y);
+		}
+	}
+	
+	private PlotData getPlotDataWithSD(MLStruct metrics, String path, String xFieldName, String yFieldName, String ySDFieldName) {
+		// navigate
+		MLStruct current = metrics;
+		for (String p : path.split("\\.")) {
+			current = current.getField(p).getAsStruct();
+		}
+		
+		// build
+		double[] x = getValueAsArray(current.getField(xFieldName));
+		double[] y = getValueAsArray(current.getField(yFieldName));
+		double[] ySD = getValueAsArray(current.getField(ySDFieldName));
+		MLValue n = current.getField("n");
+		
+		double[][] yRange = new double[ySD.length][2];
+		for (int i = 0; i < yRange.length; i++) {
+			yRange[i] = new double[] { y[i] - ySD[i], y[i] + ySD[i] };
+		}
+		if (n != null) {
+			return new PlotData(x, y, yRange, getValueAsArray(n));
+		}
+		else {
+			return new PlotData(x, y, yRange);
+		}
+	}
+	
+	private PlotData getPlotDataWithRange(MLStruct metrics, String path, String xFieldName, String yFieldName, String yRangeMinName, String yRangeMaxName) {
+		// navigate
+		MLStruct current = metrics;
+		for (String p : path.split("\\.")) {
+			current = current.getField(p).getAsStruct();
+		}
+		
+		// build
+		double[] x = getValueAsArray(current.getField(xFieldName));
+		double[] y = getValueAsArray(current.getField(yFieldName));
+		double[] yRangeMin = getValueAsArray(current.getField(yRangeMinName));
+		double[] yRangeMax = getValueAsArray(current.getField(yRangeMaxName));
+		MLValue n = current.getField("n");
+		
+		double[][] yRange = new double[yRangeMin.length][2];
+		for (int i = 0; i < yRange.length; i++) {
+			yRange[i] = new double[] { yRangeMin[i], yRangeMax[i] };
+		}
+		if (n != null) {
+			return new PlotData(x, y, yRange, getValueAsArray(n));
+		}
+		else {
+			return new PlotData(x, y, yRange);
 		}
 	}
 	
