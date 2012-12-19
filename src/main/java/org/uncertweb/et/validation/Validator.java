@@ -49,9 +49,11 @@ public class Validator implements Respondable {
 	@Include private double medianRMSE;
 	@Include private double medianCorrelation;
 	@Include private double brierScore;
+	@Include private double crps;
 	@Include private double crpsReliability;
 	@Include private double crpsResolution;
 	@Include private double crpsUncertainty;
+	@Include private double ignScore;
 	@Include private double ignReliability;
 	@Include private double ignResolution;
 	@Include private double ignUncertainty;
@@ -112,9 +114,11 @@ public class Validator implements Respondable {
 			medianRMSE = getMetric(metrics, "median.rmse");
 			medianCorrelation = getMetric(metrics, "median.correl");
 			brierScore = getMetric(metrics, "bs");
+			crps = getMetric(metrics, "crps.score");
 			crpsReliability = getMetric(metrics, "crps.rel");
 			crpsResolution = getMetric(metrics, "crps.res");
 			crpsUncertainty = getMetric(metrics, "crps.unc");
+			ignScore = getMetric(metrics, "ign.score");
 			ignReliability = getMetric(metrics, "ign.rel");
 			ignResolution = getMetric(metrics, "ign.res");
 			ignUncertainty = getMetric(metrics, "ign.unc");
@@ -329,6 +333,10 @@ public class Validator implements Respondable {
 	public double getBrierScore() {
 		return brierScore;
 	}
+	
+	public double getCRPS() {
+		return crps;
+	}
 
 	public double getCRPSReliability() {
 		return crpsReliability;
@@ -340,6 +348,10 @@ public class Validator implements Respondable {
 
 	public double getCRPSUncertainty() {
 		return crpsUncertainty;
+	}
+	
+	public double getIGNScore() {
+		return ignScore;
 	}
 
 	public double getIGNReliability() {

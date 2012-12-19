@@ -67,6 +67,11 @@ public class ValidatorTest {
 	}
 	
 	@Test
+	public void crps() {
+		assertThat(validator.getCRPS(), notNullValue());
+	}
+	
+	@Test
 	public void crpsReliability() {
 		assertThat(validator.getCRPSReliability(), notNullValue());
 	}
@@ -79,6 +84,11 @@ public class ValidatorTest {
 	@Test
 	public void crpsUncertainty() {
 		assertThat(validator.getCRPSUncertainty(), notNullValue());
+	}
+	
+	@Test
+	public void ignScore() {
+		assertThat(validator.getIGNScore(), notNullValue());
 	}
 	
 	@Test
