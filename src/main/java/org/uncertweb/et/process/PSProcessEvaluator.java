@@ -128,6 +128,7 @@ public class PSProcessEvaluator extends AbstractProcessEvaluator {
 						// detail
 						Element detail = faultElement.getChild("detail");
 						// FIXME: should never be null?
+						logger.debug("Failed at run " + (run + 1) + ".");
 						if (detail != null) {
 							logger.debug("Exception detail is: " + detail.getChildText("exception", Namespaces.PS));
 						}
