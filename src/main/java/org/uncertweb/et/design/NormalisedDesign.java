@@ -27,7 +27,7 @@ public class NormalisedDesign extends Design {
 		stdDevMap.put(inputIdentifier, stdDev);
 	}
 
-	private NormalisedDesign(Design original, double[] mean, double[] stdDev) {
+	private NormalisedDesign(Design original, Map<String, Double> means, Map<String, Double> stdDevs) {
 		// construct
 		this(original.getSize());
 
@@ -36,17 +36,24 @@ public class NormalisedDesign extends Design {
 
 		// normalise
 		for (int i = 0; i < identifiers.size(); i++) {
-			String current = identifiers.get(i);
-			Double currentMean = mean[i];
-			this.meanMap.put(current, currentMean);
-			Double currentStdDev = stdDev[i];
-			this.stdDevMap.put(current, currentStdDev);
-			Double[] points = original.getPoints(current);
+			// current input identifier
+			String currentIdentifier = identifiers.get(i);
+			
+			// get mean and std dev, store in map
+			Double currentMean = means.get(currentIdentifier);
+			Double currentStdDev = stdDevs.get(currentIdentifier);
+			this.meanMap.put(currentIdentifier, currentMean);			
+			this.stdDevMap.put(currentIdentifier, currentStdDev);
+			
+			// get points
+			Double[] points = original.getPoints(currentIdentifier);
+			
+			// normalise and add
 			Double[] normalised = new Double[points.length];
 			for (int j = 0; j < normalised.length; j++) {
 				normalised[j] = (points[j] - currentMean) / currentStdDev;
 			}
-			this.addPoints(current, normalised);
+			this.addPoints(currentIdentifier, normalised);
 		}
 	}
 
@@ -54,20 +61,21 @@ public class NormalisedDesign extends Design {
 		List<String> identifiers = design.getInputIdentifiers();
 
 		// compute mean and stddev
-		double[] mean = new double[design.getSize()];
-		double[] stdDev = new double[design.getSize()];
+		Map<String, Double> means = new HashMap<String, Double>();
+		Map<String, Double> stdDevs = new HashMap<String, Double>();
 		for (int i = 0; i < identifiers.size(); i++) {
+			String identifier = identifiers.get(i);
 			DescriptiveStatistics stats = new DescriptiveStatistics(ArrayUtils.toPrimitive(design.getPoints(identifiers.get(i))));
-			mean[i] = stats.getMean();
-			stdDev[i] = stats.getStandardDeviation();
+			means.put(identifier, stats.getMean());
+			stdDevs.put(identifier, stats.getStandardDeviation());
 		}
 
 		// return
-		return new NormalisedDesign(design, mean, stdDev);
+		return new NormalisedDesign(design, means, stdDevs);
 	}
 
-	public static NormalisedDesign fromDesign(Design design, double[] mean, double[] stdDev) {
-		return new NormalisedDesign(design, mean, stdDev);
+	public static NormalisedDesign fromDesign(Design design, Map<String, Double> means, Map<String, Double> stdDevs) {
+		return new NormalisedDesign(design, means, stdDevs);
 	}
 
 	public double getMean(String inputIdentifier) {
@@ -101,20 +109,12 @@ public class NormalisedDesign extends Design {
 		return design;
 	}
 	
-	public double[] getMeans() {
-		double[] means = new double[inputIdentifierList.size()];
-		for (int i = 0; i < inputIdentifierList.size(); i++) {
-			means[i] = meanMap.get(inputIdentifierList.get(i));
-		}
-		return means;
+	public Map<String, Double> getMeans() {
+		return meanMap;
 	}
 	
-	public double[] getStdDevs() {
-		double[] stdDevs = new double[inputIdentifierList.size()];
-		for (int i = 0; i < inputIdentifierList.size(); i++) {
-			stdDevs[i] = stdDevMap.get(inputIdentifierList.get(i));
-		}
-		return stdDevs;
+	public Map<String, Double> getStdDevs() {
+		return stdDevMap;
 	}
 
 }

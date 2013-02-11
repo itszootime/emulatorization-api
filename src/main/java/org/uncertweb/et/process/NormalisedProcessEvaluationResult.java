@@ -34,7 +34,7 @@ public class NormalisedProcessEvaluationResult extends ProcessEvaluationResult {
 		stdDevMap.put(outputIdentifier, stdDev);
 	}
 
-	private NormalisedProcessEvaluationResult(ProcessEvaluationResult original, double[] mean, double[] stdDev) {
+	private NormalisedProcessEvaluationResult(ProcessEvaluationResult original, Map<String, Double> means, Map<String, Double> stdDevs) {
 		// construct
 		this();
 
@@ -43,17 +43,22 @@ public class NormalisedProcessEvaluationResult extends ProcessEvaluationResult {
 
 		// normalise
 		for (int i = 0; i < identifiers.size(); i++) {
-			String current = identifiers.get(i);
-			Double currentMean = mean[i];
-			this.meanMap.put(current, currentMean);
-			Double currentStdDev = stdDev[i];
-			this.stdDevMap.put(current, currentStdDev);
-			Double[] results = original.getResults(current);
+			// current input identifier
+			String currentIdentifier = identifiers.get(i);
+			
+			// get mean and std dev, store in map
+			Double currentMean = means.get(currentIdentifier);
+			Double currentStdDev = stdDevs.get(currentIdentifier);
+			this.meanMap.put(currentIdentifier, currentMean);			
+			this.stdDevMap.put(currentIdentifier, currentStdDev);
+			
+			// normalise and add
+			Double[] results = original.getResults(currentIdentifier);
 			Double[] normalised = new Double[results.length];
 			for (int j = 0; j < normalised.length; j++) {
 				normalised[j] = (results[j] - currentMean) / currentStdDev;
 			}
-			this.addResults(current, normalised);
+			this.addResults(currentIdentifier, normalised);
 		}
 	}
 
@@ -61,20 +66,21 @@ public class NormalisedProcessEvaluationResult extends ProcessEvaluationResult {
 		List<String> identifiers = result.getOutputIdentifiers();
 
 		// compute mean and stddev
-		double[] mean = new double[result.getSize()];
-		double[] stdDev = new double[result.getSize()];
+		Map<String, Double> means = new HashMap<String, Double>();
+		Map<String, Double> stdDevs = new HashMap<String, Double>();
 		for (int i = 0; i < identifiers.size(); i++) {
+			String identifier = identifiers.get(i);
 			DescriptiveStatistics stats = new DescriptiveStatistics(ArrayUtils.toPrimitive(result.getResults(identifiers.get(i))));
-			mean[i] = stats.getMean();
-			stdDev[i] = stats.getStandardDeviation();
+			means.put(identifier, stats.getMean());
+			stdDevs.put(identifier, stats.getStandardDeviation());
 		}
 
 		// return
-		return new NormalisedProcessEvaluationResult(result, mean, stdDev);
+		return new NormalisedProcessEvaluationResult(result, means, stdDevs);
 	}
 
-	public static NormalisedProcessEvaluationResult fromProcessEvaluationResult(ProcessEvaluationResult result, double[] mean, double[] stdDev) {
-		return new NormalisedProcessEvaluationResult(result, mean, stdDev);
+	public static NormalisedProcessEvaluationResult fromProcessEvaluationResult(ProcessEvaluationResult result, Map<String, Double> means, Map<String, Double> stdDevs) {
+		return new NormalisedProcessEvaluationResult(result, means, stdDevs);
 	}
 
 	public double getMean(String outputIdentifier) {
@@ -108,20 +114,12 @@ public class NormalisedProcessEvaluationResult extends ProcessEvaluationResult {
 		return result;
 	}
 	
-	public double[] getMeans() {
-		double[] means = new double[outputIdentifiers.size()];
-		for (int i = 0; i < outputIdentifiers.size(); i++) {
-			means[i] = meanMap.get(outputIdentifiers.get(i));
-		}
-		return means;
+	public Map<String, Double> getMeans() {
+		return meanMap;
 	}
 	
-	public double[] getStdDevs() {
-		double[] stdDevs = new double[outputIdentifiers.size()];
-		for (int i = 0; i < outputIdentifiers.size(); i++) {
-			stdDevs[i] = stdDevMap.get(outputIdentifiers.get(i));
-		}
-		return stdDevs;
+	public Map<String, Double> getStdDevs() {
+		return stdDevMap;
 	}
 
 }

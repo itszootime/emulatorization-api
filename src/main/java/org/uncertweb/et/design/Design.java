@@ -74,6 +74,19 @@ public class Design {
 		return pointsMatrix;
 	}
 	
+	public Double[][] getPoints(List<String> identifiers) {
+		Double[][] pointsMatrix = new Double[getSize()][identifiers.size()];
+		for (int i = 0; i < pointsMatrix.length; i++) {
+			// get point for each input
+			for (int j = 0; j < identifiers.size(); j++) {
+				String inputIdentifier = identifiers.get(j);
+				Double[] points = getPoints(inputIdentifier);
+				pointsMatrix[i][j] = points[i];
+			}
+		}
+		return pointsMatrix;
+	}
+	
 	public boolean hasMultiplePoints(String inputIdentifier) {
 		return map.get(inputIdentifier) instanceof MultiplePoint;
 	}

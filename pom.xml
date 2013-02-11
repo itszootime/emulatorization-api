@@ -3,7 +3,6 @@
   <groupId>org.uncertweb</groupId>
   <artifactId>emulatorization-api</artifactId>
   <version>0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
   <name>emulatorization-api</name>
   <url>http://www.uncertweb.org</url>
 
@@ -191,4 +190,5 @@
     </profile>
   </profiles>
 
+  <packaging>war</packaging>
 </project>

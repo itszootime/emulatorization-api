@@ -45,7 +45,7 @@ public class EmulatorEvaluator {
 			request.addParameter(new MLString((String)Config.getInstance().get("matlab", "gpml_path")));
 
 			// add points to evaluate against		
-			request.addParameter(new MLMatrix(runDesign.getPoints()));
+			request.addParameter(new MLMatrix(runDesign.getPoints(emulator.getDesign().getInputIdentifiers())));
 
 			// training data
 			Double[][] xtrn = emulator.getDesign().getPoints();
