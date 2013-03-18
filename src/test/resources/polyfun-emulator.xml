@@ -10,15 +10,14 @@
       <e:min>100.0</e:min>
       <e:max>1000.0</e:max>
     </e:VariableInput>
-    <e:VariableInput>
+    <e:FixedInput>
       <e:identifier>B</e:identifier>
       <e:description>
         <e:dataType>Numeric</e:dataType>
         <e:encodingType>double</e:encodingType>
       </e:description>
-      <e:min>10.0</e:min>
-      <e:max>15.0</e:max>
-    </e:VariableInput>
+      <e:value>10.0</e:value>
+    </e:FixedInput>
   </e:inputs>
   <e:outputs>
     <e:Output>
