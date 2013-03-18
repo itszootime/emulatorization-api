@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<e:Emulator xmlns:e="http://uncertws.aston.ac.uk/emulatorization" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://uncertws.aston.ac.uk/emulatorization ../../main/resources/emulator.xsd ">
+  <e:inputs>
+    <e:VariableInput>
+      <e:identifier>A</e:identifier>
+      <e:description>
+        <e:dataType>Numeric</e:dataType>
+        <e:encodingType>double</e:encodingType>
+      </e:description>
+      <e:min>100.0</e:min>
+      <e:max>1000.0</e:max>
+    </e:VariableInput>
+    <e:VariableInput>
+      <e:identifier>B</e:identifier>
+      <e:description>
+        <e:dataType>Numeric</e:dataType>
+        <e:encodingType>double</e:encodingType>
+      </e:description>
+      <e:min>10.0</e:min>
+      <e:max>15.0</e:max>
+    </e:VariableInput>
+  </e:inputs>
+  <e:outputs>
+    <e:Output>
+      <e:identifier>Result</e:identifier>
+      <e:description>
+        <e:dataType>Numeric</e:dataType>
+        <e:encodingType>double</e:encodingType>
+      </e:description>
+    </e:Output>
+  </e:outputs>
+  <e:design>
+    <e:size>19</e:size>
+    <e:DesignInput>
+      <e:identifier>A</e:identifier>
+      <e:points>0.044105134037608434 1.0862515960189283 0.17036079398722329 -0.25811798858893437 1.4097711676147802 -0.3718586232890861 -1.0803630416479106 1.3535234401245368 -0.5344533659869191 -1.682585422528318 -0.7863240463477349 -1.5223139944387862 1.032957387960308 0.4947070204403414 1.2856161310505856 0.29430247509314544 -1.4128194955782534 -0.19952584946178428 0.676766681540267</e:points>
+      <e:mean>609.2421260105268</e:mean>
+      <e:stdDev>255.94192335091222</e:stdDev>
+    </e:DesignInput>
+    <e:DesignInput>
+      <e:identifier>B</e:identifier>
+      <e:points>-1.3885041165825702 -0.3121968140052109 0.5153221968724334 -0.8681205762352282 -0.12341973605086237 0.2618209024627499 1.2586597325720505 1.7045490548717706 -0.48901571999394144 -1.5376974764593037 -0.774248197521005 -0.4308905294231598 1.6780839427782452 -0.07230604394425845 0.17248462723062516 -1.126776354121118 1.4240914796907254 -0.5934797330402614 0.7016433608983205</e:points>
+      <e:mean>12.321443774563392</e:mean>
+      <e:stdDev>1.4743670710115735</e:stdDev>
+    </e:DesignInput>
+  </e:design>
+  <e:evaluationResult>
+    <e:EvaluationOutput>
+      <e:identifier>Result</e:identifier>
+      <e:results>-0.018569090941013357 1.0547483917392582 0.19023153298458378 -0.29572874490227724 1.3825165359451983 -0.35710774101344017 -1.0053482990068185 1.4204337905968438 -0.552100154872308 -1.7278697652969737 -0.8129056858511955 -1.524160428174668 1.1026773693955993 0.4820714327663267 1.2738798359802035 0.23865587032453897 -1.3243874566565597 -0.22622129890450146 0.6991839058872024</e:results>
+      <e:mean>1981.6037046519125</e:mean>
+      <e:stdDev>778.2534230469081</e:stdDev>
+    </e:EvaluationOutput>
+  </e:evaluationResult>
+  <e:meanFunction>linear</e:meanFunction>
+  <e:covarianceFunction>matern</e:covarianceFunction>
+  <e:lengthScales>9.716755721742073 3.2527577743261773</e:lengthScales>
+</e:Emulator>

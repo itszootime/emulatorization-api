@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://uncertws.aston.ac.uk/emulatorization"
+	xmlns:e="http://uncertws.aston.ac.uk/emulatorization" elementFormDefault="qualified">
+
+	<element name="Emulator" type="e:EmulatorType"/>
+
+	<complexType name="EmulatorType">
+		<sequence>
+      <element name="inputs">
+        <complexType>
+          <choice maxOccurs="unbounded">
+            <element name="FixedInput" type="e:FixedInputType" />
+            <element name="VariableInput" type="e:VariableInputType" />
+          </choice>
+        </complexType>
+      </element>
+      <element name="outputs">
+        <complexType>
+          <sequence>
+            <element name="Output" type="e:OutputType" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+			<element name="design">
+				<complexType>
+					<sequence>
+					  <element name="size" type="integer" />
+						<element name="DesignInput"
+							type="e:DesignInputType" maxOccurs="unbounded" />
+					</sequence>
+				</complexType>
+			</element>
+			<element name="evaluationResult">
+				<complexType>
+					<sequence>
+						<element name="EvaluationOutput" type="e:EvaluationOutputType" maxOccurs="unbounded" />
+					</sequence>
+				</complexType>
+			</element>
+			<element name="meanFunction">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="zero" />
+						<enumeration value="constant" />
+						<enumeration value="linear" />
+						<enumeration value="quadratic" />
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="covarianceFunction">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="squared_exponential" />
+						<enumeration value="matern" />
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="lengthScales">
+				<simpleType>
+					<list itemType="double" />
+				</simpleType>
+			</element>
+			<element name="nuggetVariance" type="double" maxOccurs="1" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+    <complexType name="EvaluationOutputType">
+    	<sequence>
+    		<element name="identifier" type="string"></element>
+    		<element name="results">
+    			<simpleType>
+    				<list itemType="double" />
+    			</simpleType>
+    		</element>
+    		<element name="mean" type="double" maxOccurs="1" minOccurs="0"></element>
+    		<element name="stdDev" type="double" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="DesignInputType">
+      <sequence>
+        <element name="identifier" type="string"></element>
+        <element name="points">
+          <simpleType>
+            <list itemType="double" />
+          </simpleType>
+        </element>
+        <element name="mean" type="double" maxOccurs="1" minOccurs="0"></element>
+        <element name="stdDev" type="double" maxOccurs="1" minOccurs="0"></element>
+      </sequence>
+    </complexType>
+
+    <complexType name="InputType">
+    	<sequence>
+    		<element name="identifier" type="string"></element>
+    		<element name="description" type="e:DescriptionType"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="OutputType">
+    	<sequence>
+    		<element name="identifier" type="string"></element>
+    		<element name="description" type="e:DescriptionType"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="DescriptionType">
+    	<sequence>
+    		<element name="dataType">
+    			<simpleType>
+    				<restriction base="string">
+    					<enumeration value="Numeric" />
+    				</restriction>
+    			</simpleType>
+    		</element>
+    		<element name="encodingType">
+    			<simpleType>
+    				<restriction base="string">
+    					<enumeration value="double" />
+    				</restriction>
+    			</simpleType>
+    		</element>
+    		<element name="detail" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="uom" type="string" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="FixedInputType">
+    	<complexContent>
+    		<extension base="e:InputType">
+    			<sequence>
+    				<element name="value" type="double"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="VariableInputType">
+    	<complexContent>
+    		<extension base="e:InputType">
+    			<sequence>
+    				<element name="min" type="double"></element>
+    				<element name="max" type="double"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+</schema>
