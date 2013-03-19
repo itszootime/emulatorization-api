@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
 import org.uncertweb.et.design.Design;
+import org.uncertweb.et.emulator.Emulator;
 import org.uncertweb.et.emulator.EmulatorEvaluationResult;
 import org.uncertweb.et.parameter.Input;
 import org.uncertweb.et.parameter.Output;
@@ -28,6 +29,7 @@ import org.uncertweb.imagestorage.ImageStorageException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -135,6 +137,12 @@ public class JSON {
 		gsonBuilder.registerTypeAdapter(Design.class, new DesignDeserializer());		
 		gsonBuilder.registerTypeAdapter(ProcessEvaluationResult.class, new ProcessEvaluationResultSerializer());
 		gsonBuilder.registerTypeAdapter(ProcessEvaluationResult.class, new ProcessEvaluationResultDeserializer());		
+		gsonBuilder.registerTypeAdapter(Emulator.class, new InstanceCreator<Emulator>() {
+			@Override
+			public Emulator createInstance(Type type) {
+				return new Emulator(null, null, null, null, null, null, null);
+			}			
+		});
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultSerializer());
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultDeserializer());	
 		gsonBuilder.registerTypeAdapter(AnalysisInputResult.class, new AnalysisInputResultSerializer());

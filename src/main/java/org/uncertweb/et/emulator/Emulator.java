@@ -21,7 +21,13 @@ public class Emulator {
 	private String meanFunction; // "zero", "constant", "linear", "quadratic"
 	private String covarianceFunction; // "squared_exponential", "matern" -> all isotropic for now
 	private double[] lengthScales;
-	private Double nuggetVariance;	
+	private Double nuggetVariance;
+	
+	public Emulator(List<Input> inputs, List<Output> outputs, Design design,
+			ProcessEvaluationResult evaluationResult, String meanFunction,
+			String covarianceFunction, double[] lengthScales) {
+		this(inputs, outputs, design, evaluationResult, meanFunction, covarianceFunction, lengthScales, null);
+	}
 	
 	public Emulator(List<Input> inputs, List<Output> outputs, Design design,
 			ProcessEvaluationResult evaluationResult, String meanFunction,
