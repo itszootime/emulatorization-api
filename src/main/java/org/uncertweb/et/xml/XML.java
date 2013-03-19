@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.xmlbeans.XmlException;
 import org.uncertweb.et.design.Design;
 import org.uncertweb.et.design.NormalisedDesign;
@@ -59,10 +60,13 @@ public class XML {
 		List<Output> outputs = parseOutputs(emulator.getOutputs());
 		Design design = parseDesign(emulator.getDesign());
 		ProcessEvaluationResult evaluationResult = parseEvaluationResult(emulator.getEvaluationResult());
-		String meanFunction = null;
-		String covarianceFunction = null;
-		double[] lengthScales = new double[0];
+		String meanFunction = emulator.getMeanFunction().toString();
+		String covarianceFunction = emulator.getCovarianceFunction().toString();
+		double[] lengthScales = ArrayUtils.toPrimitive(parseDoubleList(emulator.getLengthScales()));
 		Double nuggetVariance = null;
+		if (emulator.isSetNuggetVariance()) {
+			nuggetVariance = emulator.getNuggetVariance();
+		}
 		
 		// create and return
 		return new Emulator(inputs, outputs, design, evaluationResult, meanFunction, covarianceFunction, lengthScales, nuggetVariance);
