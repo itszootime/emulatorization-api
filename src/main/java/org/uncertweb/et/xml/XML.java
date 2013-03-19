@@ -15,15 +15,18 @@ import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.parameter.ParameterDescription;
 import org.uncertweb.et.parameter.ParameterDescription.DataType;
 import org.uncertweb.et.parameter.VariableInput;
+import org.uncertweb.et.process.NormalisedProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 
 import uk.ac.aston.uncertws.emulatorization.DescriptionType;
 import uk.ac.aston.uncertws.emulatorization.DescriptionType.EncodingType;
 import uk.ac.aston.uncertws.emulatorization.EmulatorDocument;
 import uk.ac.aston.uncertws.emulatorization.EmulatorType;
+import uk.ac.aston.uncertws.emulatorization.EmulatorType.EvaluationResult;
 import uk.ac.aston.uncertws.emulatorization.EmulatorType.Inputs;
 import uk.ac.aston.uncertws.emulatorization.EmulatorType.Outputs;
 import uk.ac.aston.uncertws.emulatorization.DesignInputType;
+import uk.ac.aston.uncertws.emulatorization.EvaluationOutputType;
 import uk.ac.aston.uncertws.emulatorization.FixedInputType;
 import uk.ac.aston.uncertws.emulatorization.OutputType;
 import uk.ac.aston.uncertws.emulatorization.VariableInputType;
@@ -54,7 +57,7 @@ public class XML {
 		List<Input> inputs = parseInputs(emulator.getInputs());
 		List<Output> outputs = parseOutputs(emulator.getOutputs());
 		Design design = parseDesign(emulator.getDesign());
-		ProcessEvaluationResult evaluationResult = null;
+		ProcessEvaluationResult evaluationResult = parseEvaluationResult(emulator.getEvaluationResult());
 		String meanFunction = null;
 		String covarianceFunction = null;
 		double[] lengthScales = new double[0];
@@ -62,6 +65,37 @@ public class XML {
 		
 		// create and return
 		return new Emulator(inputs, outputs, design, evaluationResult, meanFunction, covarianceFunction, lengthScales, nuggetVariance);
+	}
+
+	private ProcessEvaluationResult parseEvaluationResult(EvaluationResult evaluationResult) {
+		// check eval result type
+		ProcessEvaluationResult parsedResult;
+		if (evaluationResult.getEvaluationOutputArray(0).isSetMean()) {
+			// normalised
+			parsedResult = new NormalisedProcessEvaluationResult();
+			
+			// parse each
+			for (EvaluationOutputType eo : evaluationResult.getEvaluationOutputArray()) {
+				String identifier = eo.getIdentifier();
+				Double[] results = parseDoubleList(eo.getResults());
+				Double mean = eo.getMean();
+				Double stdDev = eo.getStdDev();
+				((NormalisedProcessEvaluationResult)parsedResult).addResults(identifier, results, mean, stdDev);
+			}
+		}
+		else {
+			// non-normalised
+			parsedResult = new ProcessEvaluationResult();
+			
+			// parse each
+			for (EvaluationOutputType eo : evaluationResult.getEvaluationOutputArray()) {
+				String identifier = eo.getIdentifier();
+				Double[] results = parseDoubleList(eo.getResults());
+				parsedResult.addResults(identifier, results);
+			}
+		}
+		
+		return parsedResult;
 	}
 
 	private Design parseDesign(uk.ac.aston.uncertws.emulatorization.EmulatorType.Design design) {
@@ -77,7 +111,7 @@ public class XML {
 			// parse each
 			for (DesignInputType di : design.getDesignInputArray()) {
 				String identifier = di.getIdentifier();
-				Double[] points = parsePointsList(di.getPoints());
+				Double[] points = parseDoubleList(di.getPoints());
 				Double mean = di.getMean();
 				Double stdDev = di.getStdDev();
 				((NormalisedDesign)parsedDesign).addPoints(identifier, points, mean, stdDev);
@@ -90,7 +124,7 @@ public class XML {
 			// parse each
 			for (DesignInputType di : design.getDesignInputArray()) {
 				String identifier = di.getIdentifier();
-				Double[] points = parsePointsList(di.getPoints());
+				Double[] points = parseDoubleList(di.getPoints());
 				parsedDesign.addPoints(identifier, points);
 			}
 		}
@@ -98,7 +132,7 @@ public class XML {
 		return parsedDesign;
 	}
 
-	private Double[] parsePointsList(List<?> points) {
+	private Double[] parseDoubleList(List<?> points) {
 		Double[] parsedPoints = new Double[points.size()];
 		for (int i = 0; i < points.size(); i++) {
 			parsedPoints[i] = (Double)points.get(i);
