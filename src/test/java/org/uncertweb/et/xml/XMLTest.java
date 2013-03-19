@@ -21,6 +21,8 @@ import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.parameter.ParameterDescription;
 import org.uncertweb.et.parameter.ParameterDescription.DataType;
 import org.uncertweb.et.parameter.VariableInput;
+import org.uncertweb.et.process.NormalisedProcessEvaluationResult;
+import org.uncertweb.et.process.ProcessEvaluationResult;
 
 public class XMLTest {
 
@@ -137,6 +139,37 @@ public class XMLTest {
 		NormalisedDesign norm = (NormalisedDesign)design;
 		assertThat(norm.getMean("A"), equalTo(609.2421260105268));
 		assertThat(norm.getStdDev("A"), equalTo(255.94192335091222));
+	}
+	
+	@Test
+	public void parseEvalResultNotNull() {
+		ProcessEvaluationResult result = parsedEmulator.getEvaluationResult();
+		assertThat(result, notNullValue());
+	}
+	
+	@Test
+	public void parseEvalResultOutputs() {
+		ProcessEvaluationResult result = parsedEmulator.getEvaluationResult();
+		List<String> identifiers = result.getOutputIdentifiers();
+		assertThat(identifiers.size(), equalTo(1));
+	}
+	
+	@Test
+	public void parseEvalResultResults() {
+		ProcessEvaluationResult result = parsedEmulator.getEvaluationResult();
+		Double[] results = result.getResults("Result");
+		assertThat(results.length, equalTo(19));
+		assertThat(results[0], equalTo(-0.018569090941013357));
+		assertThat(results[18], equalTo(0.6991839058872024));
+	}
+	
+	@Test
+	public void parseEvalResultNormalised() {
+		ProcessEvaluationResult result = parsedEmulator.getEvaluationResult();
+		assertThat(result, instanceOf(NormalisedProcessEvaluationResult.class));
+		NormalisedProcessEvaluationResult norm = (NormalisedProcessEvaluationResult)result;
+		assertThat(norm.getMean("Result"), equalTo(1981.6037046519125));
+		assertThat(norm.getStdDev("Result"), equalTo(778.2534230469081));
 	}
 	
 	private Emulator parseEmulator() {
