@@ -102,7 +102,9 @@ public class Validator implements Respondable {
 		
 		// send
 		try {
+			logger.debug("Sending validation request to MATLAB...");
 			MLResult result = MATLAB.sendRequest(request);
+			logger.debug("Finished validating in MATLAB.");
 			MLStruct metrics = result.getResult(0).getAsStruct();
 			
 			meanBias = getMetric(metrics, "mean.bias");
