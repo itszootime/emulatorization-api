@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.uncertweb.et.design.Design;
+import org.uncertweb.et.design.NormalisedDesign;
 import org.uncertweb.et.emulator.Emulator;
 import org.uncertweb.et.parameter.ConstantInput;
 import org.uncertweb.et.parameter.Input;
@@ -23,69 +25,118 @@ import org.uncertweb.et.parameter.VariableInput;
 public class XMLTest {
 
 	private XML xml;
+	private Emulator parsedEmulator;
 	
 	@Before
 	public void before() {
-		xml = new XML(); 
+		xml = new XML();
+		parsedEmulator = parseEmulator();
 	}
 	
 	@Test
 	public void parseEmulatorNotNull() {
-		Emulator emulator = parseEmulator();
-		assertThat(emulator, notNullValue());
+		assertThat(parsedEmulator, notNullValue());
 	}
 	
 	@Test
 	public void parseEmulatorInputCount() {
-		Emulator emulator = parseEmulator();
-		List<Input> inputs = emulator.getInputs();
+		List<Input> inputs = parsedEmulator.getInputs();
 		assertThat(inputs.size(), equalTo(2));
 	}
 	
 	@Test
 	public void parseEmulatorInput() {
-		Emulator emulator = parseEmulator();
-		Input input = emulator.getInputs().get(0);
-		assertThat(input.getIdentifier(), equalTo("A"));
-		ParameterDescription desc = input.getDescription();
-		assertThat(desc.getDataType(), equalTo(DataType.Numeric));
-		assertThat(desc.getEncodingType(), equalTo("double"));
+		List<Input> inputs = parsedEmulator.getInputs();
+		for (Input input : inputs) {
+			if (input.getIdentifier().equals("A")) {
+				ParameterDescription desc = input.getDescription();
+				assertThat(desc.getDataType(), equalTo(DataType.Numeric));
+				assertThat(desc.getEncodingType(), equalTo("double"));
+				break;
+			}
+		}
 	}
 	
 	@Test
 	public void parseEmulatorInputVariable() {
-		Emulator emulator = parseEmulator();
-		Input input = emulator.getInputs().get(0);
-		assertThat(input, instanceOf(VariableInput.class));
-		VariableInput variableInput = (VariableInput)input;
-		assertThat(variableInput.getMin(), equalTo(100.0));
-		assertThat(variableInput.getMax(), equalTo(1000.0));
+		List<Input> inputs = parsedEmulator.getInputs();
+		for (Input input : inputs) {
+			if (input.getIdentifier().equals("A")) {
+				assertThat(input, instanceOf(VariableInput.class));
+				VariableInput variableInput = (VariableInput)input;
+				assertThat(variableInput.getMin(), equalTo(100.0));
+				assertThat(variableInput.getMax(), equalTo(1000.0));
+				break;
+			}
+		}
 	}
 	
 	@Test
 	public void parseEmulatorInputFixed() {
-		Emulator emulator = parseEmulator();
-		Input input = emulator.getInputs().get(0);
-		assertThat(input, instanceOf(ConstantInput.class));
-		ConstantInput fixedInput = (ConstantInput)input;
-		assertThat(fixedInput.getValue(), equalTo(10.0));
+		List<Input> inputs = parsedEmulator.getInputs();
+		for (Input input : inputs) {
+			if (input.getIdentifier().equals("B")) {
+				assertThat(input, instanceOf(ConstantInput.class));
+				ConstantInput fixedInput = (ConstantInput)input;
+				assertThat(fixedInput.getValue(), equalTo(10.0));
+				break;
+			}
+		}
 	}
 	
 	@Test
 	public void parseEmulatorOutputCount() {
-		Emulator emulator = parseEmulator();
-		List<Output> outputs = emulator.getOutputs();
+		List<Output> outputs = parsedEmulator.getOutputs();
 		assertThat(outputs.size(), equalTo(1));
 	}
 	
 	@Test
 	public void parseEmulatorOutput() {
-		Emulator emulator = parseEmulator();
-		Output output = emulator.getOutputs().get(0);
-		assertThat(output.getIdentifier(), equalTo("Result"));
-		ParameterDescription desc = output.getDescription();
-		assertThat(desc.getDataType(), equalTo(DataType.Numeric));
-		assertThat(desc.getEncodingType(), equalTo("double"));
+		List<Output> outputs = parsedEmulator.getOutputs();
+		for (Output output : outputs) {
+			if (output.getIdentifier().equals("Result")) {
+				ParameterDescription desc = output.getDescription();
+				assertThat(desc.getDataType(), equalTo(DataType.Numeric));
+				assertThat(desc.getEncodingType(), equalTo("double"));
+				break;
+			}
+		}
+	}
+	
+	@Test
+	public void parseDesignNotNull() {
+		assertThat(parsedEmulator.getDesign(), notNullValue());
+	}
+	
+	@Test
+	public void parseDesignSize() {
+		Design design = parsedEmulator.getDesign();
+		assertThat(design.getSize(), equalTo(19));
+	}
+	
+	@Test
+	public void parseDesignInputs() {
+		Design design = parsedEmulator.getDesign();
+		List<String> identifiers = design.getInputIdentifiers();
+		assertThat(identifiers.size(), equalTo(2));
+	}
+	
+	@Test
+	public void parseDesignPoints() {
+		Design design = parsedEmulator.getDesign();
+		Double[] points = design.getPoints("A");
+		assertThat(points.length, equalTo(19));
+		assertThat(points[0], equalTo(0.044105134037608434));
+		assertThat(points[18], equalTo(0.676766681540267));
+	}
+	
+	@Test
+	public void parseDesignNormalised() {
+		Design design = parsedEmulator.getDesign();
+		assertThat(design, instanceOf(NormalisedDesign.class));
+		NormalisedDesign norm = (NormalisedDesign)design;
+		assertThat(norm.getMean("A"), equalTo(609.2421260105268));
+		assertThat(norm.getStdDev("A"), equalTo(255.94192335091222));
 	}
 	
 	private Emulator parseEmulator() {
