@@ -54,4 +54,5 @@
   <e:meanFunction>linear</e:meanFunction>
   <e:covarianceFunction>matern</e:covarianceFunction>
   <e:lengthScales>9.716755721742073 3.2527577743261773</e:lengthScales>
+  <e:nuggetVariance>0.0001</e:nuggetVariance>
 </e:Emulator>

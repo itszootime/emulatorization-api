@@ -35,6 +35,7 @@ public class XML {
 
 	public <T> T parse(Reader reader, Class<T> type) {
 		// TODO: obviously need to handle exceptions, but at the moment we mimic
+		// TODO: xml is not validated before, meaning we could get invalid types/function names
 		// the lack of exceptions in JSON class
 		try {
 			if (type.equals(Emulator.class)) {

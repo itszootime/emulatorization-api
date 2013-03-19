@@ -172,6 +172,36 @@ public class XMLTest {
 		assertThat(norm.getStdDev("Result"), equalTo(778.2534230469081));
 	}
 	
+	@Test
+	public void parseMeanFunction() {
+		assertThat(parsedEmulator.getMeanFunction(), equalTo("linear"));
+	}
+	
+	@Test
+	public void parseCovarianceFunction() {
+		assertThat(parsedEmulator.getCovarianceFunction(), equalTo("matern"));
+	}
+
+	@Test
+	public void parseLengthScalesCount() {
+		double[] lengthScales = parsedEmulator.getLengthScales();
+		assertThat(lengthScales.length, equalTo(2));
+		assertThat(lengthScales[0], equalTo(9.716755721742073));
+		assertThat(lengthScales[1], equalTo(3.2527577743261773));
+	}
+	
+	@Test
+	public void parseLengthScales() {
+		double[] lengthScales = parsedEmulator.getLengthScales();
+		assertThat(lengthScales[0], equalTo(9.716755721742073));
+		assertThat(lengthScales[1], equalTo(3.2527577743261773));
+	}
+	
+	@Test
+	public void parseNuggetVariance() {
+		assertThat(parsedEmulator.getNuggetVariance(), equalTo(0.0001));
+	}
+		
 	private Emulator parseEmulator() {
 		Reader reader = new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("polyfun-emulator.xml"));
 		Emulator emulator = xml.parse(reader, Emulator.class);
