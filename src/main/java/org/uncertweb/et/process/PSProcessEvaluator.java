@@ -82,6 +82,11 @@ public class PSProcessEvaluator extends AbstractProcessEvaluator {
 							}
 						}
 						
+						// safety
+						if (input == null) {
+							throw new ProcessEvaluatorException("Required input " + inputIdentifier + " not found!");
+						}
+						
 						// create element
 						Element inputElement = new Element(input.getIdentifier(), Namespaces.PS);
 						request.addContent(inputElement);
