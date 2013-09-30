@@ -14,8 +14,6 @@ import org.uncertweb.et.design.Design;
 import org.uncertweb.et.design.LHSDesign;
 import org.uncertweb.et.emulator.EmulatorEvaluationResult;
 import org.uncertweb.et.emulator.EmulatorEvaluator;
-import org.uncertweb.et.learning.Learning;
-import org.uncertweb.et.learning.LearningResult;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.request.DesignRequest;
@@ -23,7 +21,7 @@ import org.uncertweb.et.request.EvaluateEmulatorRequest;
 import org.uncertweb.et.request.EvaluateProcessRequest;
 import org.uncertweb.et.request.GetProcessDescriptionRequest;
 import org.uncertweb.et.request.GetProcessIdentifiersRequest;
-import org.uncertweb.et.request.LearningRequest;
+import org.uncertweb.et.request.TrainEmulatorRequest;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.request.ScreeningRequest;
 import org.uncertweb.et.request.SensitivityRequest;
@@ -34,7 +32,7 @@ import org.uncertweb.et.response.EvaluateEmulatorResponse;
 import org.uncertweb.et.response.EvaluateProcessResponse;
 import org.uncertweb.et.response.GetProcessDescriptionResponse;
 import org.uncertweb.et.response.GetProcessIdentifiersResponse;
-import org.uncertweb.et.response.LearningResponse;
+import org.uncertweb.et.response.TrainEmulatorResponse;
 import org.uncertweb.et.response.ScreeningResponse;
 import org.uncertweb.et.response.SensitivityResponse;
 import org.uncertweb.et.response.StatusResponse;
@@ -42,6 +40,8 @@ import org.uncertweb.et.screening.Screening;
 import org.uncertweb.et.sensitivity.AnalysisOutputResult;
 import org.uncertweb.et.sensitivity.fast.Fast;
 import org.uncertweb.et.sensitivity.sobol.Sobol;
+import org.uncertweb.et.training.Training;
+import org.uncertweb.et.training.TrainingResult;
 import org.uncertweb.et.validation.Validator;
 import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
@@ -108,12 +108,12 @@ public class Emulatorization {
 
 				return new EvaluateProcessResponse(result);
 			}
-			else if (request instanceof LearningRequest) {
-				LearningRequest lRequest = (LearningRequest) request;
+			else if (request instanceof TrainEmulatorRequest) {
+				TrainEmulatorRequest lRequest = (TrainEmulatorRequest) request;
 
-				LearningResult result = Learning.learn(lRequest.getDesign(), lRequest.getEvaluationResult(), lRequest.getSelectedOutputIdentifier(), lRequest.getCovarianceFunction(), lRequest.getLengthScaleMultiplier(), lRequest.getNuggetVariance(), lRequest.getMeanFunction(), lRequest.isNormalisation());
+				TrainingResult result = Training.learn(lRequest.getDesign(), lRequest.getEvaluationResult(), lRequest.getSelectedOutputIdentifier(), lRequest.getCovarianceFunction(), lRequest.getLengthScaleMultiplier(), lRequest.getNuggetVariance(), lRequest.getMeanFunction(), lRequest.isNormalisation());
 
-				return new LearningResponse(result);
+				return new TrainEmulatorResponse(result);
 			}
 			else if (request instanceof ValidationRequest) {
 				ValidationRequest vRequest = (ValidationRequest) request;
