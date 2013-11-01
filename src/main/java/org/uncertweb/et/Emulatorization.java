@@ -78,7 +78,7 @@ public class Emulatorization {
 
 				return new GetProcessDescriptionResponse(processDescription);
 			}
-			else if (request instanceof ScreeningRequest) {				
+			else if (request instanceof ScreeningRequest) {
 				ScreeningRequest sRequest = (ScreeningRequest) request;
 
 				int numTraj = sRequest.getNumTrajectories();
@@ -120,7 +120,12 @@ public class Emulatorization {
 
 				Validator validator;
 				if (vRequest.getEmulator() == null) {
-					validator = new Validator(vRequest.getObserved(), vRequest.getPredicted());
+					if (vRequest.getComputeQualityIndicators() != null) {
+						validator = new Validator(vRequest.getComputeQualityIndicators(), vRequest.getObserved(), vRequest.getPredicted());
+					}
+					else {
+						validator = new Validator(vRequest.getObserved(), vRequest.getPredicted());
+					}
 				}
 				else {
 					if (vRequest.getDesign() != null) {
@@ -158,7 +163,7 @@ public class Emulatorization {
 					}
 					else {
 						results = Fast.run(sRequest.getInputs(), sRequest.getOutputs(), sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.isPlot(), sRequest.getDesignSize());
-					}	
+					}
 				}
 
 				return new SensitivityResponse(results);
