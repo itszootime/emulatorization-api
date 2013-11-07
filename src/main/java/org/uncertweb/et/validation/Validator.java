@@ -83,9 +83,9 @@ public class Validator implements Respondable {
 		double percentage = (computeQualityIndicators.containsKey("learningPercentage") ? Double.parseDouble(computeQualityIndicators.get("learningPercentage")) : 80.0);
 		double modifier = (percentage / 100);
 
-		// TODO: for the observed and predicted arrays, do they first have to be randomized?
-		double[] observedArray = observed.toArray();
-		double[] predictedArray = ((ScalarValues) predicted).toArray();
+		// convert to primitive arrays that have been randomised
+		double[] observedArray = observed.toShuffledArray();
+		double[] predictedArray = ((ScalarValues) predicted).toShuffledArray();
 
 		// splice the observed values to be used for learning and validation into separate arrays
 		int observedIndex = (int) Math.round(observedArray.length * modifier);
