@@ -23,6 +23,7 @@ import org.uncertweb.et.plot.PlotData;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
+import org.uncertweb.et.quality.QualityIndicators;
 import org.uncertweb.et.response.Include;
 import org.uncertweb.et.response.Respondable;
 import org.uncertweb.et.value.DistributionValues;
@@ -72,6 +73,8 @@ public class Validator implements Respondable {
 	@Include private PlotData reliabilityDiagramData;
 	@Include private PlotData coveragePlotData;
 
+	@Include private QualityIndicators qualityIndicators;
+
 	public Validator(ScalarValues observed, Values predicted) throws ValidatorException {
 		this.observed = observed;
 		this.predicted = predicted;
@@ -119,13 +122,12 @@ public class Validator implements Respondable {
 
 			// get the computed mean and variance from the returned struct
 			qi = result.getResult(0).getAsStruct();
-			double mean = getMetric(qi, "distribution.normal.mean");
-			double variance = getMetric(qi, "distribution.normal.variance");
+			qualityIndicators = new QualityIndicators(getMetric(qi, "distribution.normal.mean"), getMetric(qi, "distribution.normal.variance"));
 
 			// create a distribution from the predicted values that will be used for validation
 			DistributionValues predictedDistribution = new DistributionValues();
 			for (Double value : predictedValidation) {
-				predictedDistribution.add((value - mean), variance);
+				predictedDistribution.add((value - qualityIndicators.getMean()), qualityIndicators.getVariance());
 			}
 
 			this.observed = ScalarValues.fromArray(observedValidation);
