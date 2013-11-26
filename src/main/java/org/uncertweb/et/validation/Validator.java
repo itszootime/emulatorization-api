@@ -1,8 +1,6 @@
 package org.uncertweb.et.validation;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -23,7 +21,6 @@ import org.uncertweb.et.plot.PlotData;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
 import org.uncertweb.et.process.ProcessEvaluatorException;
-import org.uncertweb.et.quality.QualityIndicators;
 import org.uncertweb.et.response.Include;
 import org.uncertweb.et.response.Respondable;
 import org.uncertweb.et.value.DistributionValues;
@@ -33,7 +30,6 @@ import org.uncertweb.matlab.MLException;
 import org.uncertweb.matlab.MLRequest;
 import org.uncertweb.matlab.MLResult;
 import org.uncertweb.matlab.value.MLMatrix;
-import org.uncertweb.matlab.value.MLScalar;
 import org.uncertweb.matlab.value.MLStruct;
 import org.uncertweb.matlab.value.MLValue;
 
@@ -73,77 +69,9 @@ public class Validator implements Respondable {
 	@Include private PlotData reliabilityDiagramData;
 	@Include private PlotData coveragePlotData;
 
-	@Include private QualityIndicators qualityIndicators;
-
 	public Validator(ScalarValues observed, Values predicted) throws ValidatorException {
 		this.observed = observed;
 		this.predicted = predicted;
-		calculateMetrics();
-	}
-
-	public Validator(HashMap<String, String> computeQualityIndicators, ScalarValues observed, Values predicted) throws ValidatorException {
-		// fraction of data to be used for learning: expressed as a percentage
-		double percentage = (computeQualityIndicators.containsKey("learningPercentage") ? Double.parseDouble(computeQualityIndicators.get("learningPercentage")) : 80.0);
-		double modifier = (percentage / 100);
-
-		// convert to primitive arrays that have been randomised
-		double[] observedArray = observed.toShuffledArray();
-		double[] predictedArray = ((ScalarValues) predicted).toShuffledArray();
-
-		// splice the observed values to be used for learning and validation into separate arrays
-		int observedIndex = (int) Math.round(observedArray.length * modifier);
-		double[] observedLearning = Arrays.copyOfRange(observedArray, 0, observedIndex);
-		double[] observedValidation = Arrays.copyOfRange(observedArray, observedIndex, observedArray.length);
-
-		// splice the predicted values to be used for learning and validation into separate arrays
-		int predictedIndex = (int) Math.round(predictedArray.length * modifier);
-		double[] predictedLearning = Arrays.copyOfRange(predictedArray, 0, predictedIndex);
-		double[] predictedValidation = Arrays.copyOfRange(predictedArray, predictedIndex, predictedArray.length);
-
-		// create a new struct that the mean and variance will be returned in
-		MLStruct qi = new MLStruct();
-		MLStruct distribution = new MLStruct();
-		MLStruct normal = new MLStruct();
-		normal.setField("compute", new MLScalar(1));
-		distribution.setField("normal", normal);
-		qi.setField("distribution", distribution);
-
-		// construct a request to call the function that will compute the quality indicators
-		MLRequest request = new MLRequest("compute_quality_indicators", 1);
-		request.addParameter(new MLMatrix(transposeArray(observedLearning)));
-		request.addParameter(new MLMatrix(transposeArray(predictedLearning)));
-		request.addParameter(qi);
-
-		try {
-			// send the request to MATLAB
-			logger.debug("Sending compute quality indicators request to MATLAB...");
-			MLResult result = MATLAB.sendRequest(request);
-			logger.debug("Finished computing quality indicators in MATLAB.");
-
-			// get the computed mean and variance from the returned struct
-			qi = result.getResult(0).getAsStruct();
-			qualityIndicators = new QualityIndicators(getMetric(qi, "distribution.normal.mean"), getMetric(qi, "distribution.normal.variance"));
-
-			// create a distribution from the predicted values that will be used for validation
-			DistributionValues predictedDistribution = new DistributionValues();
-			for (Double value : predictedValidation) {
-				predictedDistribution.add((value - qualityIndicators.getMean()), qualityIndicators.getVariance());
-			}
-
-			this.observed = ScalarValues.fromArray(observedValidation);
-			this.predicted = predictedDistribution;
-		}
-		catch (IOException e) {
-			throw new ValidatorException("Couldn't perform validation.", e);
-		}
-		catch (MLException e) {
-			throw new ValidatorException("Couldn't perform validation.", e);
-		}
-		catch (ConfigException e) {
-			throw new ValidatorException("Couldn't perform validation.", e);
-		}
-
-		// continue with validation
 		calculateMetrics();
 	}
 

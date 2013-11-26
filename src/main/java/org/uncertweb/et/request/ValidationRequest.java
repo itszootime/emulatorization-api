@@ -6,8 +6,6 @@ import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.value.ScalarValues;
 import org.uncertweb.et.value.Values;
 
-import java.util.HashMap;
-
 public class ValidationRequest extends Request {
 
 	// emulator + simulator url, input spec
@@ -28,7 +26,6 @@ public class ValidationRequest extends Request {
 	// or these
 	private ScalarValues observed;
 	private Values predicted;
-	private HashMap<String, String> computeQualityIndicators;
 
 	public ValidationRequest() {
 
@@ -48,10 +45,6 @@ public class ValidationRequest extends Request {
 
 	public String getProcessIdentifier() {
 		return processIdentifier;
-	}
-
-	public HashMap<String, String> getComputeQualityIndicators() {
-		return computeQualityIndicators;
 	}
 
 	public Emulator getEmulator() {

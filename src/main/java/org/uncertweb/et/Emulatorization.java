@@ -16,17 +16,8 @@ import org.uncertweb.et.emulator.EmulatorEvaluationResult;
 import org.uncertweb.et.emulator.EmulatorEvaluator;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
-import org.uncertweb.et.request.DesignRequest;
-import org.uncertweb.et.request.EvaluateEmulatorRequest;
-import org.uncertweb.et.request.EvaluateProcessRequest;
-import org.uncertweb.et.request.GetProcessDescriptionRequest;
-import org.uncertweb.et.request.GetProcessIdentifiersRequest;
-import org.uncertweb.et.request.TrainEmulatorRequest;
-import org.uncertweb.et.request.Request;
-import org.uncertweb.et.request.ScreeningRequest;
-import org.uncertweb.et.request.SensitivityRequest;
-import org.uncertweb.et.request.StatusRequest;
-import org.uncertweb.et.request.ValidationRequest;
+import org.uncertweb.et.quality.QualityIndicators;
+import org.uncertweb.et.request.*;
 import org.uncertweb.et.response.DesignResponse;
 import org.uncertweb.et.response.EvaluateEmulatorResponse;
 import org.uncertweb.et.response.EvaluateProcessResponse;
@@ -120,12 +111,7 @@ public class Emulatorization {
 
 				Validator validator;
 				if (vRequest.getEmulator() == null) {
-					if (vRequest.getComputeQualityIndicators() != null) {
-						validator = new Validator(vRequest.getComputeQualityIndicators(), vRequest.getObserved(), vRequest.getPredicted());
-					}
-					else {
-						validator = new Validator(vRequest.getObserved(), vRequest.getPredicted());
-					}
+					validator = new Validator(vRequest.getObserved(), vRequest.getPredicted());
 				}
 				else {
 					if (vRequest.getDesign() != null) {
@@ -137,6 +123,11 @@ public class Emulatorization {
 				}
 
 				return validator;
+			}
+			else if (request instanceof QualityIndicatorsRequest) {
+				QualityIndicatorsRequest qRequest = (QualityIndicatorsRequest) request;
+
+				return new QualityIndicators(qRequest.getObserved(), qRequest.getPredicted(), qRequest.getLearningPercentage());
 			}
 			else if (request instanceof EvaluateEmulatorRequest) {
 				EvaluateEmulatorRequest eRequest = (EvaluateEmulatorRequest) request;
