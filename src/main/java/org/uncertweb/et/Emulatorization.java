@@ -127,7 +127,10 @@ public class Emulatorization {
 			else if (request instanceof QualityIndicatorsRequest) {
 				QualityIndicatorsRequest qRequest = (QualityIndicatorsRequest) request;
 
-				return new QualityIndicators(qRequest.getObserved(), qRequest.getPredicted(), qRequest.getLearningPercentage());
+				QualityIndicators qualityIndicators = new QualityIndicators();
+				qualityIndicators.compute(qRequest.getObserved(), qRequest.getPredicted(), qRequest.getLearningPercentage(), qRequest.getIndicators());
+
+				return qualityIndicators;
 			}
 			else if (request instanceof EvaluateEmulatorRequest) {
 				EvaluateEmulatorRequest eRequest = (EvaluateEmulatorRequest) request;

@@ -2,6 +2,9 @@ package org.uncertweb.et.quality;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,8 @@ public class QualityIndicators implements Respondable {
 
 	private static final Logger logger = LoggerFactory.getLogger(QualityIndicators.class);
 
+	private Map<String, List<String>> indicators;
+
 	@Include private ScalarValues observed;
 	@Include private Values predicted;
 
@@ -32,34 +37,40 @@ public class QualityIndicators implements Respondable {
 	@Include private double meanMAE;
 	@Include private double meanRMSE;
 	@Include private double meanCorrelation;
-	@Include private double medianBias;
-	@Include private double medianMAE;
-	@Include private double medianRMSE;
-	@Include private double medianCorrelation;
+	//@Include private double medianBias;
+	//@Include private double medianMAE;
+	//@Include private double medianRMSE;
+	//@Include private double medianCorrelation;
 	@Include private double brierScore;
-	@Include private double crps;
-	@Include private double crpsReliability;
-	@Include private double crpsResolution;
-	@Include private double crpsUncertainty;
-	@Include private double ignScore;
-	@Include private double ignReliability;
-	@Include private double ignResolution;
-	@Include private double ignUncertainty;
+	//@Include private double crps;
+	//@Include private double crpsReliability;
+	//@Include private double crpsResolution;
+	//@Include private double crpsUncertainty;
+	//@Include private double ignScore;
+	//@Include private double ignReliability;
+	//@Include private double ignResolution;
+	//@Include private double ignUncertainty;
 
 	@Include private PlotData vsPredictedMeanPlotData;
-	@Include private PlotData vsPredictedMedianPlotData;
+	//@Include private PlotData vsPredictedMedianPlotData;
 	@Include private PlotData standardScorePlotData;
 	@Include private PlotData meanResidualHistogramData;
 	@Include private PlotData meanResidualQQPlotData;
-	@Include private PlotData medianResidualHistogramData;
-	@Include private PlotData medianResidualQQPlotData;
+	//@Include private PlotData medianResidualHistogramData;
+	//@Include private PlotData medianResidualQQPlotData;
 	@Include private PlotData rankHistogramData;
 	@Include private PlotData reliabilityDiagramData;
 	@Include private PlotData coveragePlotData;
 
 	@Include private QualityIndicatorsResult qualityIndicatorsResult;
 
-	public QualityIndicators(ScalarValues observed, Values predicted, double learningPercentage) throws QualityIndicatorsException {
+	public QualityIndicators() {
+		indicators = new HashMap<String, List<String>>();
+		indicators.put("distribution", Arrays.asList("normal"));
+		indicators.put("statistics", Arrays.asList("correlation", "mean", "stdev", "skewness", "kurtosis", "median", "quantiles"));
+	}
+
+	public void compute(ScalarValues observed, Values predicted, double learningPercentage, Map<String, List<String>> requestedIndicators) throws QualityIndicatorsException {
 		// fraction of data to be used for learning: expressed as a percentage
 		double modifier = (learningPercentage / 100);
 
@@ -77,16 +88,26 @@ public class QualityIndicators implements Respondable {
 		double[] predictedLearning = Arrays.copyOfRange(predictedArray, 0, predictedIndex);
 		double[] predictedValidation = Arrays.copyOfRange(predictedArray, predictedIndex, predictedArray.length);
 
-		// create a new struct that the mean and variance will be returned in
+		// create a new struct that will contain all the QI computations
 		MLStruct qi = new MLStruct();
-		MLStruct distribution = new MLStruct();
-		MLStruct normal = new MLStruct();
-		normal.setField("compute", new MLScalar(1));
-		distribution.setField("normal", normal);
-		qi.setField("distribution", distribution);
+
+		// populate the QI struct, flagging those indicators that have been requested to be computed
+		for (Map.Entry<String, List<String>> entry : indicators.entrySet()) {
+			boolean keyExists = requestedIndicators.containsKey(entry.getKey());
+			MLStruct structKey = new MLStruct();
+
+			for (String field : entry.getValue()) {
+				boolean valueExists = (keyExists && requestedIndicators.get(entry.getKey()).contains(field));
+				MLStruct structVal = new MLStruct();
+				structVal.setField("compute", new MLScalar(valueExists ? 1 : 0));
+				structKey.setField(field, structVal);
+			}
+
+			qi.setField(entry.getKey(), structKey);
+		}
 
 		// construct a request to call the function that will compute the quality indicators
-		MLRequest request = new MLRequest("compute_quality_indicators", 1);
+		MLRequest request = new MLRequest("compute_cts_quality_indicators", 1);
 		request.addParameter(new MLMatrix(transposeArray(observedLearning)));
 		request.addParameter(new MLMatrix(transposeArray(predictedLearning)));
 		request.addParameter(qi);
@@ -145,7 +166,7 @@ public class QualityIndicators implements Respondable {
 	private void calculateMetrics() throws QualityIndicatorsException {
 		// build matlab request
 		// FIXME: problems if sending ensemble matrix with 2 cols (code will think it's mean/variance)
-		MLRequest request = new MLRequest("validate_predictions", 1);
+		MLRequest request = new MLRequest("validate_predictions_geoviqua", 1);
 		request.addParameter(new MLMatrix(transposeArray(observed.toArray())));
 		request.addParameter(new MLMatrix(predicted.toMatrix()));
 
@@ -160,27 +181,27 @@ public class QualityIndicators implements Respondable {
 			meanMAE = getMetric(metrics, "mean.mae");
 			meanRMSE = getMetric(metrics, "mean.rmse");
 			meanCorrelation = getMetric(metrics, "mean.correl");
-			medianBias = getMetric(metrics, "median.bias");
-			medianMAE = getMetric(metrics, "median.mae");
-			medianRMSE = getMetric(metrics, "median.rmse");
-			medianCorrelation = getMetric(metrics, "median.correl");
+			//medianBias = getMetric(metrics, "median.bias");
+			//medianMAE = getMetric(metrics, "median.mae");
+			//medianRMSE = getMetric(metrics, "median.rmse");
+			//medianCorrelation = getMetric(metrics, "median.correl");
 			brierScore = getMetric(metrics, "bs");
-			crps = getMetric(metrics, "crps.score");
-			crpsReliability = getMetric(metrics, "crps.rel");
-			crpsResolution = getMetric(metrics, "crps.res");
-			crpsUncertainty = getMetric(metrics, "crps.unc");
-			ignScore = getMetric(metrics, "ign.score");
-			ignReliability = getMetric(metrics, "ign.rel");
-			ignResolution = getMetric(metrics, "ign.res");
-			ignUncertainty = getMetric(metrics, "ign.unc");
+			//crps = getMetric(metrics, "crps.score");
+			//crpsReliability = getMetric(metrics, "crps.rel");
+			//crpsResolution = getMetric(metrics, "crps.res");
+			//crpsUncertainty = getMetric(metrics, "crps.unc");
+			//ignScore = getMetric(metrics, "ign.score");
+			//ignReliability = getMetric(metrics, "ign.rel");
+			//ignResolution = getMetric(metrics, "ign.res");
+			//ignUncertainty = getMetric(metrics, "ign.unc");
 
 			vsPredictedMeanPlotData = getPlotDataWithSD(metrics, "scattermean", "x", "y", "ysd");
-			vsPredictedMedianPlotData = getPlotDataWithRange(metrics, "scattermedian", "x", "y", "yrange25", "yrange75");
+			//vsPredictedMedianPlotData = getPlotDataWithRange(metrics, "scattermedian", "x", "y", "yrange25", "yrange75");
 			standardScorePlotData = getPlotData(metrics, "zscores");
 			meanResidualHistogramData = getPlotData(metrics, "meanresidual.histogram");
 			meanResidualQQPlotData = getPlotData(metrics, "meanresidqq");
-			medianResidualHistogramData = getPlotData(metrics, "medianresidual.histogram");
-			medianResidualQQPlotData = getPlotData(metrics, "medianresidqq");
+			//medianResidualHistogramData = getPlotData(metrics, "medianresidual.histogram");
+			//medianResidualQQPlotData = getPlotData(metrics, "medianresidqq");
 			rankHistogramData = getPlotData(metrics, "rankhist");
 			reliabilityDiagramData = getPlotData(metrics, "reliability");
 			coveragePlotData = getPlotData(metrics, "percent", "level", "value");
@@ -317,7 +338,7 @@ public class QualityIndicators implements Respondable {
 		return meanCorrelation;
 	}
 
-	public double getMedianBias() {
+	/*public double getMedianBias() {
 		return medianBias;
 	}
 
@@ -331,13 +352,13 @@ public class QualityIndicators implements Respondable {
 
 	public double getMedianCorrelation() {
 		return medianCorrelation;
-	}
+	}*/
 
 	public double getBrierScore() {
 		return brierScore;
 	}
 
-	public double getCRPS() {
+	/*public double getCRPS() {
 		return crps;
 	}
 
@@ -367,15 +388,15 @@ public class QualityIndicators implements Respondable {
 
 	public double getIGNUncertainty() {
 		return ignUncertainty;
-	}
+	}*/
 
 	public PlotData getVsPredictedMeanPlotData() {
 		return vsPredictedMeanPlotData;
 	}
 
-	public PlotData getVsPredictedMedianPlotData() {
+	/*public PlotData getVsPredictedMedianPlotData() {
 		return vsPredictedMedianPlotData;
-	}
+	}*/
 
 	public PlotData getStandardScorePlotData() {
 		return standardScorePlotData;
@@ -389,13 +410,13 @@ public class QualityIndicators implements Respondable {
 		return meanResidualQQPlotData;
 	}
 
-	public PlotData getMedianResidualHistogramData() {
+	/*public PlotData getMedianResidualHistogramData() {
 		return medianResidualHistogramData;
 	}
 
 	public PlotData getMedianResidualQQPlotData() {
 		return medianResidualQQPlotData;
-	}
+	}*/
 
 	public PlotData getRankHistogramData() {
 		return rankHistogramData;
