@@ -11,7 +11,7 @@ public class QualityIndicatorsRequest extends Request {
 	private ScalarValues observed;
 	private Values predicted;
 	private double learningPercentage;
-	private Map<String, List<String>> indicators;
+	private Map<String, List<String>> metrics;
 
 	public QualityIndicatorsRequest() {
 
@@ -29,8 +29,8 @@ public class QualityIndicatorsRequest extends Request {
 		return learningPercentage;
 	}
 
-	public Map<String, List<String>> getIndicators() {
-		return indicators;
+	public Map<String, List<String>> getMetrics() {
+		return metrics;
 	}
 
 }

@@ -128,7 +128,7 @@ public class Emulatorization {
 				QualityIndicatorsRequest qRequest = (QualityIndicatorsRequest) request;
 
 				QualityIndicators qualityIndicators = new QualityIndicators();
-				qualityIndicators.compute(qRequest.getObserved(), qRequest.getPredicted(), qRequest.getLearningPercentage(), qRequest.getIndicators());
+				qualityIndicators.compute(qRequest.getObserved(), qRequest.getPredicted(), qRequest.getLearningPercentage(), qRequest.getMetrics());
 
 				return qualityIndicators;
 			}

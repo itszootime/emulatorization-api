@@ -28,7 +28,7 @@ public class QualityIndicators implements Respondable {
 
 	private static final Logger logger = LoggerFactory.getLogger(QualityIndicators.class);
 
-	private Map<String, List<String>> indicators;
+	private Map<String, List<String>> metrics;
 
 	@Include private ScalarValues observed;
 	@Include private Values predicted;
@@ -50,12 +50,12 @@ public class QualityIndicators implements Respondable {
 	@Include private QualityIndicatorsResult qualityIndicatorsResult;
 
 	public QualityIndicators() {
-		indicators = new HashMap<String, List<String>>();
-		indicators.put("distribution", Arrays.asList("normal"));
-		indicators.put("statistics", Arrays.asList("correlation", "mean", "stdev", "skewness", "kurtosis", "median", "quantiles"));
+		metrics = new HashMap<String, List<String>>();
+		metrics.put("distribution", Arrays.asList("normal"));
+		metrics.put("statistics", Arrays.asList("correlation", "mean", "stdev", "skewness", "kurtosis", "median", "quantiles"));
 	}
 
-	public void compute(ScalarValues observed, Values predicted, double learningPercentage, Map<String, List<String>> requestedIndicators) throws QualityIndicatorsException {
+	public void compute(ScalarValues observed, Values predicted, double learningPercentage, Map<String, List<String>> requestedMetrics) throws QualityIndicatorsException {
 		// fraction of data to be used for learning: expressed as a percentage
 		double modifier = (learningPercentage / 100);
 
@@ -73,22 +73,24 @@ public class QualityIndicators implements Respondable {
 		double[] predictedLearning = Arrays.copyOfRange(predictedArray, 0, predictedIndex);
 		double[] predictedValidation = Arrays.copyOfRange(predictedArray, predictedIndex, predictedArray.length);
 
-		// create a new struct that will contain all the QI computations
+		// create a new struct that will contain all of the computed quality metrics
 		MLStruct qi = new MLStruct();
 
-		// populate the QI struct, flagging those indicators that have been requested to be computed
-		for (Map.Entry<String, List<String>> entry : indicators.entrySet()) {
-			boolean keyExists = requestedIndicators.containsKey(entry.getKey());
-			MLStruct structKey = new MLStruct();
+		// initialize the QI struct
+		for (Map.Entry<String, List<String>> metric : metrics.entrySet()) {
+			boolean keyExists = requestedMetrics.containsKey(metric.getKey());
+			MLStruct parent = new MLStruct();
 
-			for (String field : entry.getValue()) {
-				boolean valueExists = (keyExists && requestedIndicators.get(entry.getKey()).contains(field));
-				MLStruct structVal = new MLStruct();
-				structVal.setField("compute", new MLScalar(valueExists ? 1 : 0));
-				structKey.setField(field, structVal);
+			for (String field : metric.getValue()) {
+				// only compute those metrics that have been requested but also force the computation of a normal distribution
+				boolean compute = ((keyExists && requestedMetrics.get(metric.getKey()).contains(field)) ||
+									(metric.getKey().compareTo("distribution") == 0 && field.compareTo("normal") == 0));
+				MLStruct child = new MLStruct();
+				child.setField("compute", new MLScalar(compute ? 1 : 0));
+				parent.setField(field, child);
 			}
 
-			qi.setField(entry.getKey(), structKey);
+			qi.setField(metric.getKey(), parent);
 		}
 
 		// construct a request to call the function that will compute the quality indicators
@@ -103,7 +105,7 @@ public class QualityIndicators implements Respondable {
 			MLResult result = MATLAB.sendRequest(request);
 			logger.debug("Finished computing quality indicators in MATLAB.");
 
-			// get the computed mean and variance from the returned struct
+			// wrap the returned struct in a new object that will later be serialized as part of the response
 			qualityIndicatorsResult = new QualityIndicatorsResult(result.getResult(0).getAsStruct());
 
 			// create a distribution from the predicted values that will be used for validation
