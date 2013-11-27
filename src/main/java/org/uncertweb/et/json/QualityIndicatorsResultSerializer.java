@@ -1,12 +1,17 @@
 package org.uncertweb.et.json;
 
-import com.google.gson.*;
+import java.lang.reflect.Type;
+import java.util.Map;
+
 import org.uncertweb.et.quality.QualityIndicatorsResult;
 import org.uncertweb.matlab.value.MLStruct;
 import org.uncertweb.matlab.value.MLValue;
 
-import java.lang.reflect.Type;
-import java.util.Map;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.JsonParseException;
 
 public class QualityIndicatorsResultSerializer implements JsonSerializer<QualityIndicatorsResult> {
 
