@@ -16,6 +16,7 @@ import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.parameter.ParameterDescription;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.quality.QualityIndicators;
+import org.uncertweb.et.quality.QualityIndicatorsResult;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.response.Response;
 import org.uncertweb.et.sensitivity.AnalysisInputResult;
@@ -147,6 +148,7 @@ public class JSON {
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultSerializer());
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultDeserializer());
 		gsonBuilder.registerTypeAdapter(AnalysisInputResult.class, new AnalysisInputResultSerializer());
+		gsonBuilder.registerTypeAdapter(QualityIndicatorsResult.class, new QualityIndicatorsResultSerializer());
 
 		// for respondables
 		gsonBuilder.registerTypeAdapter(Validator.class, new RespondableSerializer());

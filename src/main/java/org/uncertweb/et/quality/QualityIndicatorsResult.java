@@ -1,29 +1,18 @@
 package org.uncertweb.et.quality;
 
+import org.uncertweb.matlab.value.MLStruct;
+
 public class QualityIndicatorsResult {
 
-	private double mean;
-	private double variance;
+	private MLStruct qi;
 
-	public QualityIndicatorsResult(double mean, double variance) {
-		this.mean = mean;
-		this.variance = variance;
+	public QualityIndicatorsResult(MLStruct qi) {
+
+		this.qi = qi;
 	}
 
-	public void setMean(double mean) {
-		this.mean = mean;
-	}
-
-	public double getMean() {
-		return mean;
-	}
-
-	public void setVariance(double variance) {
-		this.variance = variance;
-	}
-
-	public double getVariance() {
-		return variance;
+	public MLStruct getQi() {
+		return qi;
 	}
 
 }

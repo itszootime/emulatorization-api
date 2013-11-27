@@ -37,27 +37,12 @@ public class QualityIndicators implements Respondable {
 	@Include private double meanMAE;
 	@Include private double meanRMSE;
 	@Include private double meanCorrelation;
-	//@Include private double medianBias;
-	//@Include private double medianMAE;
-	//@Include private double medianRMSE;
-	//@Include private double medianCorrelation;
 	@Include private double brierScore;
-	//@Include private double crps;
-	//@Include private double crpsReliability;
-	//@Include private double crpsResolution;
-	//@Include private double crpsUncertainty;
-	//@Include private double ignScore;
-	//@Include private double ignReliability;
-	//@Include private double ignResolution;
-	//@Include private double ignUncertainty;
 
 	@Include private PlotData vsPredictedMeanPlotData;
-	//@Include private PlotData vsPredictedMedianPlotData;
 	@Include private PlotData standardScorePlotData;
 	@Include private PlotData meanResidualHistogramData;
 	@Include private PlotData meanResidualQQPlotData;
-	//@Include private PlotData medianResidualHistogramData;
-	//@Include private PlotData medianResidualQQPlotData;
 	@Include private PlotData rankHistogramData;
 	@Include private PlotData reliabilityDiagramData;
 	@Include private PlotData coveragePlotData;
@@ -119,13 +104,15 @@ public class QualityIndicators implements Respondable {
 			logger.debug("Finished computing quality indicators in MATLAB.");
 
 			// get the computed mean and variance from the returned struct
-			qi = result.getResult(0).getAsStruct();
-			qualityIndicatorsResult = new QualityIndicatorsResult(getMetric(qi, "distribution.normal.mean"), getMetric(qi, "distribution.normal.variance"));
+			qualityIndicatorsResult = new QualityIndicatorsResult(result.getResult(0).getAsStruct());
 
 			// create a distribution from the predicted values that will be used for validation
 			DistributionValues predictedDistribution = new DistributionValues();
 			for (Double value : predictedValidation) {
-				predictedDistribution.add((value - qualityIndicatorsResult.getMean()), qualityIndicatorsResult.getVariance());
+				predictedDistribution.add(
+						(value - getMetric(qualityIndicatorsResult.getQi(), "distribution.normal.mean")),
+						getMetric(qualityIndicatorsResult.getQi(), "distribution.normal.variance")
+				);
 			}
 
 			this.observed = ScalarValues.fromArray(observedValidation);
@@ -181,27 +168,12 @@ public class QualityIndicators implements Respondable {
 			meanMAE = getMetric(metrics, "mean.mae");
 			meanRMSE = getMetric(metrics, "mean.rmse");
 			meanCorrelation = getMetric(metrics, "mean.correl");
-			//medianBias = getMetric(metrics, "median.bias");
-			//medianMAE = getMetric(metrics, "median.mae");
-			//medianRMSE = getMetric(metrics, "median.rmse");
-			//medianCorrelation = getMetric(metrics, "median.correl");
 			brierScore = getMetric(metrics, "bs");
-			//crps = getMetric(metrics, "crps.score");
-			//crpsReliability = getMetric(metrics, "crps.rel");
-			//crpsResolution = getMetric(metrics, "crps.res");
-			//crpsUncertainty = getMetric(metrics, "crps.unc");
-			//ignScore = getMetric(metrics, "ign.score");
-			//ignReliability = getMetric(metrics, "ign.rel");
-			//ignResolution = getMetric(metrics, "ign.res");
-			//ignUncertainty = getMetric(metrics, "ign.unc");
 
 			vsPredictedMeanPlotData = getPlotDataWithSD(metrics, "scattermean", "x", "y", "ysd");
-			//vsPredictedMedianPlotData = getPlotDataWithRange(metrics, "scattermedian", "x", "y", "yrange25", "yrange75");
 			standardScorePlotData = getPlotData(metrics, "zscores");
 			meanResidualHistogramData = getPlotData(metrics, "meanresidual.histogram");
 			meanResidualQQPlotData = getPlotData(metrics, "meanresidqq");
-			//medianResidualHistogramData = getPlotData(metrics, "medianresidual.histogram");
-			//medianResidualQQPlotData = getPlotData(metrics, "medianresidqq");
 			rankHistogramData = getPlotData(metrics, "rankhist");
 			reliabilityDiagramData = getPlotData(metrics, "reliability");
 			coveragePlotData = getPlotData(metrics, "percent", "level", "value");
@@ -338,65 +310,13 @@ public class QualityIndicators implements Respondable {
 		return meanCorrelation;
 	}
 
-	/*public double getMedianBias() {
-		return medianBias;
-	}
-
-	public double getMedianMAE() {
-		return medianMAE;
-	}
-
-	public double getMedianRMSE() {
-		return medianRMSE;
-	}
-
-	public double getMedianCorrelation() {
-		return medianCorrelation;
-	}*/
-
 	public double getBrierScore() {
 		return brierScore;
 	}
 
-	/*public double getCRPS() {
-		return crps;
-	}
-
-	public double getCRPSReliability() {
-		return crpsReliability;
-	}
-
-	public double getCRPSResolution() {
-		return crpsResolution;
-	}
-
-	public double getCRPSUncertainty() {
-		return crpsUncertainty;
-	}
-
-	public double getIGNScore() {
-		return ignScore;
-	}
-
-	public double getIGNReliability() {
-		return ignReliability;
-	}
-
-	public double getIGNResolution() {
-		return ignResolution;
-	}
-
-	public double getIGNUncertainty() {
-		return ignUncertainty;
-	}*/
-
 	public PlotData getVsPredictedMeanPlotData() {
 		return vsPredictedMeanPlotData;
 	}
-
-	/*public PlotData getVsPredictedMedianPlotData() {
-		return vsPredictedMedianPlotData;
-	}*/
 
 	public PlotData getStandardScorePlotData() {
 		return standardScorePlotData;
@@ -409,14 +329,6 @@ public class QualityIndicators implements Respondable {
 	public PlotData getMeanResidualQQPlotData() {
 		return meanResidualQQPlotData;
 	}
-
-	/*public PlotData getMedianResidualHistogramData() {
-		return medianResidualHistogramData;
-	}
-
-	public PlotData getMedianResidualQQPlotData() {
-		return medianResidualQQPlotData;
-	}*/
 
 	public PlotData getRankHistogramData() {
 		return rankHistogramData;
