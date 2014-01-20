@@ -30,8 +30,8 @@ public class QualityIndicators implements Respondable {
 
 	private Map<String, List<String>> metrics;
 
-	@Include private ScalarValues observed;
-	@Include private Values predicted;
+	@Include private ScalarValues reference;
+	@Include private Values observed;
 
 	@Include private double meanBias;
 	@Include private double meanMAE;
@@ -39,7 +39,7 @@ public class QualityIndicators implements Respondable {
 	@Include private double meanCorrelation;
 	@Include private double brierScore;
 
-	@Include private PlotData vsPredictedMeanPlotData;
+	@Include private PlotData vsObservedMeanPlotData;
 	@Include private PlotData standardScorePlotData;
 	@Include private PlotData meanResidualHistogramData;
 	@Include private PlotData meanResidualQQPlotData;
@@ -55,23 +55,23 @@ public class QualityIndicators implements Respondable {
 		metrics.put("statistics", Arrays.asList("correlation", "mean", "stdev", "skewness", "kurtosis", "median", "quantiles"));
 	}
 
-	public void compute(ScalarValues observed, Values predicted, double learningPercentage, Map<String, List<String>> requestedMetrics) throws QualityIndicatorsException {
+	public void compute(ScalarValues reference, Values observed, double learningPercentage, Map<String, List<String>> requestedMetrics) throws QualityIndicatorsException {
 		// fraction of data to be used for learning: expressed as a percentage
 		double modifier = (learningPercentage / 100);
 
 		// convert to primitive arrays that have been randomised
-		double[] observedArray = observed.toShuffledArray();
-		double[] predictedArray = ((ScalarValues) predicted).toShuffledArray();
+		double[] referenceArray = reference.toShuffledArray();
+		double[] observedArray = ((ScalarValues) observed).toShuffledArray();
+
+		// splice the reference values to be used for learning and validation into separate arrays
+		int referenceIndex = (int) Math.round(referenceArray.length * modifier);
+		double[] referenceLearning = Arrays.copyOfRange(referenceArray, 0, referenceIndex);
+		double[] referenceValidation = Arrays.copyOfRange(referenceArray, referenceIndex, referenceArray.length);
 
 		// splice the observed values to be used for learning and validation into separate arrays
 		int observedIndex = (int) Math.round(observedArray.length * modifier);
 		double[] observedLearning = Arrays.copyOfRange(observedArray, 0, observedIndex);
 		double[] observedValidation = Arrays.copyOfRange(observedArray, observedIndex, observedArray.length);
-
-		// splice the predicted values to be used for learning and validation into separate arrays
-		int predictedIndex = (int) Math.round(predictedArray.length * modifier);
-		double[] predictedLearning = Arrays.copyOfRange(predictedArray, 0, predictedIndex);
-		double[] predictedValidation = Arrays.copyOfRange(predictedArray, predictedIndex, predictedArray.length);
 
 		// create a new struct that will contain all of the computed quality metrics
 		MLStruct qi = new MLStruct();
@@ -95,8 +95,8 @@ public class QualityIndicators implements Respondable {
 
 		// construct a request to call the function that will compute the quality indicators
 		MLRequest request = new MLRequest("compute_cts_quality_indicators", 1);
+		request.addParameter(new MLMatrix(transposeArray(referenceLearning)));
 		request.addParameter(new MLMatrix(transposeArray(observedLearning)));
-		request.addParameter(new MLMatrix(transposeArray(predictedLearning)));
 		request.addParameter(qi);
 
 		try {
@@ -108,17 +108,17 @@ public class QualityIndicators implements Respondable {
 			// wrap the returned struct in a new object that will later be serialized as part of the response
 			qualityIndicatorsResult = new QualityIndicatorsResult(result.getResult(0).getAsStruct());
 
-			// create a distribution from the predicted values that will be used for validation
-			DistributionValues predictedDistribution = new DistributionValues();
-			for (Double value : predictedValidation) {
-				predictedDistribution.add(
+			// create a distribution from the observed values that will be used for validation
+			DistributionValues observedDistribution = new DistributionValues();
+			for (Double value : observedValidation) {
+				observedDistribution.add(
 						(value - getMetric(qualityIndicatorsResult.getQi(), "distribution.normal.mean")),
 						getMetric(qualityIndicatorsResult.getQi(), "distribution.normal.variance")
 				);
 			}
 
-			this.observed = ScalarValues.fromArray(observedValidation);
-			this.predicted = predictedDistribution;
+			this.reference = ScalarValues.fromArray(referenceValidation);
+			this.observed = observedDistribution;
 		}
 		catch (IOException e) {
 			throw new QualityIndicatorsException("Couldn't compute quality indicators.", e);
@@ -156,8 +156,8 @@ public class QualityIndicators implements Respondable {
 		// build matlab request
 		// FIXME: problems if sending ensemble matrix with 2 cols (code will think it's mean/variance)
 		MLRequest request = new MLRequest("validate_predictions_geoviqua", 1);
-		request.addParameter(new MLMatrix(transposeArray(observed.toArray())));
-		request.addParameter(new MLMatrix(predicted.toMatrix()));
+		request.addParameter(new MLMatrix(transposeArray(reference.toArray())));
+		request.addParameter(new MLMatrix(observed.toMatrix()));
 
 		// send
 		try {
@@ -172,7 +172,7 @@ public class QualityIndicators implements Respondable {
 			meanCorrelation = getMetric(metrics, "mean.correl");
 			brierScore = getMetric(metrics, "bs");
 
-			vsPredictedMeanPlotData = getPlotDataWithSD(metrics, "scattermean", "x", "y", "ysd");
+			vsObservedMeanPlotData = getPlotDataWithSD(metrics, "scattermean", "x", "y", "ysd");
 			standardScorePlotData = getPlotData(metrics, "zscores");
 			meanResidualHistogramData = getPlotData(metrics, "meanresidual.histogram");
 			meanResidualQQPlotData = getPlotData(metrics, "meanresidqq");
@@ -288,12 +288,12 @@ public class QualityIndicators implements Respondable {
 		return array;
 	}
 
-	public ScalarValues getObserved() {
-		return observed;
+	public ScalarValues getReference() {
+		return reference;
 	}
 
-	public Values getPredicted() {
-		return predicted;
+	public Values getObserved() {
+		return observed;
 	}
 
 	public double getMeanBias() {
@@ -316,8 +316,8 @@ public class QualityIndicators implements Respondable {
 		return brierScore;
 	}
 
-	public PlotData getVsPredictedMeanPlotData() {
-		return vsPredictedMeanPlotData;
+	public PlotData getVsObservedMeanPlotData() {
+		return vsObservedMeanPlotData;
 	}
 
 	public PlotData getStandardScorePlotData() {

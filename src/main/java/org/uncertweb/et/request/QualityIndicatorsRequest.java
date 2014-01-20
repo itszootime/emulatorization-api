@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class QualityIndicatorsRequest extends Request {
 
-	private ScalarValues observed;
-	private Values predicted;
+	private ScalarValues reference;
+	private Values observed;
 	private double learningPercentage;
 	private Map<String, List<String>> metrics;
 
@@ -17,12 +17,12 @@ public class QualityIndicatorsRequest extends Request {
 
 	}
 
-	public ScalarValues getObserved() {
-		return observed;
+	public ScalarValues getReference() {
+		return reference;
 	}
 
-	public Values getPredicted() {
-		return predicted;
+	public Values getObserved() {
+		return observed;
 	}
 
 	public double getLearningPercentage() {
