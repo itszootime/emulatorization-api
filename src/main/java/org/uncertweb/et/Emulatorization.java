@@ -204,7 +204,7 @@ public class Emulatorization {
 					// the request is successful if the MATLAB version is returned
 					MLResult result = matlab_result.get(timeout, timeoutUnit);
 					matlabOK = true;
-					matlabMessage = "Ready (version " + result.getResult(0).getAsString().getString() + ")";
+					matlabMessage = "Ready (" + result.getResult(0).getAsString().getString() + ")";
 				}
 				// thrown if the task doesn't complete during the timeout period
 				catch (TimeoutException e) {
@@ -228,7 +228,7 @@ public class Emulatorization {
 					// the request is successful if a connection to Rserve is opened
 					c = rserve_result.get(timeout, timeoutUnit);
 					rserveOK = true;
-					rserveMessage = "Ready (version " + c.eval("R.Version()$version.string").asString() + ")";
+					rserveMessage = "Ready (" + c.eval("R.Version()$version.string").asString() + ")";
 				}
 				catch (TimeoutException e) {
 					rserveMessage = "Request to R timed out";
