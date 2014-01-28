@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +60,28 @@ public class QualityIndicators implements Respondable {
 		// fraction of data to be used for learning: expressed as a percentage
 		double modifier = (learningPercentage / 100);
 
-		// convert to primitive arrays that have been randomised
-		double[] referenceArray = reference.toShuffledArray();
-		double[] observedArray = ((ScalarValues) observed).toShuffledArray();
+		// convert to primitive arrays
+		double[] referenceArray = reference.toArray();
+		double[] observedArray = ((ScalarValues) observed).toArray();
+
+		if (referenceArray.length != observedArray.length) {
+			throw new QualityIndicatorsException("Reference and observed arrays must be the same length (reference: " + referenceArray.length + ", observed:" + observedArray.length + ")");
+		}
+
+		// shuffle both arrays using the Knuth-Fisher-Yates algorithm
+		Random rng = new Random();
+		for (int i = referenceArray.length - 1; i > 0; i--) {
+			int rand = rng.nextInt(i + 1);
+			double tmp;
+			// reference value
+			tmp = referenceArray[rand];
+			referenceArray[rand] = referenceArray[i];
+			referenceArray[i] = tmp;
+			// observed value
+			tmp = observedArray[rand];
+			observedArray[rand] = observedArray[i];
+			observedArray[i] = tmp;
+		}
 
 		// splice the reference values to be used for learning and validation into separate arrays
 		int referenceIndex = (int) Math.round(referenceArray.length * modifier);

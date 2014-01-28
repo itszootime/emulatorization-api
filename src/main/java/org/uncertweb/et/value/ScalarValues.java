@@ -89,22 +89,4 @@ public class ScalarValues implements Values, Iterable<Scalar> {
 		return array;
 	}
 
-    /**
-     * Returns a primitive array of this instance that has been
-     * shuffled using the Knuth-Fisher-Yates algorithm
-     * @return
-     */
-    public double[] toShuffledArray() {
-        double[] array = toArray();
-        Random rng = new Random();
-        for (int i = array.length - 1; i > 0; i--) {
-            int rand = rng.nextInt(i + 1);
-            // swap
-            double tmp = array[rand];
-            array[rand] = array[i];
-            array[i] = tmp;
-        }
-        return array;
-    }
-
 }
