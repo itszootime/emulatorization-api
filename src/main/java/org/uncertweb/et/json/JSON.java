@@ -15,6 +15,8 @@ import org.uncertweb.et.parameter.Input;
 import org.uncertweb.et.parameter.Output;
 import org.uncertweb.et.parameter.ParameterDescription;
 import org.uncertweb.et.process.ProcessEvaluationResult;
+import org.uncertweb.et.quality.QualityIndicators;
+import org.uncertweb.et.quality.QualityIndicatorsResult;
 import org.uncertweb.et.request.Request;
 import org.uncertweb.et.response.Response;
 import org.uncertweb.et.sensitivity.AnalysisInputResult;
@@ -41,7 +43,7 @@ import com.google.gson.JsonSerializer;
 
 /**
  * By default, images will be encoded using {@link Base64ImageStorage}.
- * 
+ *
  * @author Richard Jones
  *
  */
@@ -54,14 +56,14 @@ public class JSON {
 	public JSON() {
 		this(new Base64ImageStorage());
 	}
-	
+
 	public JSON(ImageStorage is) {
 		// setup gson builder
 		gsonBuilder = new GsonBuilder();
 		registerSerializers(gsonBuilder);
 		registerAlizers(gsonBuilder);
 		registerInstanceCreators(gsonBuilder);
-		
+
 		// set image storage
 		this.is = is;
 
@@ -73,7 +75,7 @@ public class JSON {
 		// FIXME: this should throw parse exceptions
 		return gson.fromJson(reader, classOfT);
 	}
-	
+
 	public String encode(Object obj) {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		OutputStreamWriter osw = new OutputStreamWriter(os);
@@ -120,7 +122,7 @@ public class JSON {
 					// FIXME: need exception
 				}
 				return null;
-			}			
+			}
 		});
 	}
 
@@ -134,22 +136,24 @@ public class JSON {
 		gsonBuilder.registerTypeAdapter(Input.class, new InputDeserializer());
 		gsonBuilder.registerTypeAdapter(Request.class, new RequestDeserializer());
 		gsonBuilder.registerTypeAdapter(Design.class, new DesignSerializer());
-		gsonBuilder.registerTypeAdapter(Design.class, new DesignDeserializer());		
+		gsonBuilder.registerTypeAdapter(Design.class, new DesignDeserializer());
 		gsonBuilder.registerTypeAdapter(ProcessEvaluationResult.class, new ProcessEvaluationResultSerializer());
-		gsonBuilder.registerTypeAdapter(ProcessEvaluationResult.class, new ProcessEvaluationResultDeserializer());		
+		gsonBuilder.registerTypeAdapter(ProcessEvaluationResult.class, new ProcessEvaluationResultDeserializer());
 		gsonBuilder.registerTypeAdapter(Emulator.class, new InstanceCreator<Emulator>() {
 			@Override
 			public Emulator createInstance(Type type) {
 				return new Emulator(null, null, null, null, null, null, null);
-			}			
+			}
 		});
 		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultSerializer());
-		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultDeserializer());	
+		gsonBuilder.registerTypeAdapter(EmulatorEvaluationResult.class, new EmulatorEvaluationResultDeserializer());
 		gsonBuilder.registerTypeAdapter(AnalysisInputResult.class, new AnalysisInputResultSerializer());
-		
+		gsonBuilder.registerTypeAdapter(QualityIndicatorsResult.class, new QualityIndicatorsResultSerializer());
+
 		// for respondables
 		gsonBuilder.registerTypeAdapter(Validator.class, new RespondableSerializer());
-		
+		gsonBuilder.registerTypeAdapter(QualityIndicators.class, new RespondableSerializer());
+
 		// for values
 		gsonBuilder.registerTypeAdapter(Values.class, new ValuesDeserializer());
 		gsonBuilder.registerTypeAdapter(SampleValues.class, new SampleValuesDeserializer());

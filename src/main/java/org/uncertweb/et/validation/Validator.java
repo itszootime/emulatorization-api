@@ -39,7 +39,7 @@ public class Validator implements Respondable {
 
 	@Include private ScalarValues observed;
 	@Include private Values predicted;
-	
+
 	@Include private double meanBias;
 	@Include private double meanMAE;
 	@Include private double meanRMSE;
@@ -57,24 +57,24 @@ public class Validator implements Respondable {
 	@Include private double ignReliability;
 	@Include private double ignResolution;
 	@Include private double ignUncertainty;
-	
+
 	@Include private PlotData vsPredictedMeanPlotData;
 	@Include private PlotData vsPredictedMedianPlotData;
 	@Include private PlotData standardScorePlotData;
-	@Include private PlotData meanResidualHistogramData;	
+	@Include private PlotData meanResidualHistogramData;
 	@Include private PlotData meanResidualQQPlotData;
 	@Include private PlotData medianResidualHistogramData;
 	@Include private PlotData medianResidualQQPlotData;
 	@Include private PlotData rankHistogramData;
 	@Include private PlotData reliabilityDiagramData;
 	@Include private PlotData coveragePlotData;
-	
+
 	public Validator(ScalarValues observed, Values predicted) throws ValidatorException {
 		this.observed = observed;
 		this.predicted = predicted;
 		calculateMetrics();
 	}
-	
+
 	private double[][] transposeArray(double[] array) {
 		// transpose array to matrix
 		double[][] transpose = new double[array.length][1];
@@ -83,7 +83,7 @@ public class Validator implements Respondable {
 		}
 		return transpose;
 	}
-	
+
 	private double[] transposeMatrix(double[][] matrix) {
 		// transpose matrix to array
 		double[] transpose = new double[matrix.length];
@@ -99,14 +99,14 @@ public class Validator implements Respondable {
 		MLRequest request = new MLRequest("validate_predictions", 1);
 		request.addParameter(new MLMatrix(transposeArray(observed.toArray())));
 		request.addParameter(new MLMatrix(predicted.toMatrix()));
-		
+
 		// send
 		try {
 			logger.debug("Sending validation request to MATLAB...");
 			MLResult result = MATLAB.sendRequest(request);
 			logger.debug("Finished validating in MATLAB.");
 			MLStruct metrics = result.getResult(0).getAsStruct();
-			
+
 			meanBias = getMetric(metrics, "mean.bias");
 			meanMAE = getMetric(metrics, "mean.mae");
 			meanRMSE = getMetric(metrics, "mean.rmse");
@@ -124,7 +124,7 @@ public class Validator implements Respondable {
 			ignReliability = getMetric(metrics, "ign.rel");
 			ignResolution = getMetric(metrics, "ign.res");
 			ignUncertainty = getMetric(metrics, "ign.unc");
-			
+
 			vsPredictedMeanPlotData = getPlotDataWithSD(metrics, "scattermean", "x", "y", "ysd");
 			vsPredictedMedianPlotData = getPlotDataWithRange(metrics, "scattermedian", "x", "y", "yrange25", "yrange75");
 			standardScorePlotData = getPlotData(metrics, "zscores");
@@ -146,18 +146,18 @@ public class Validator implements Respondable {
 			throw new ValidatorException("Couldn't perform validation.", e);
 		}
 	}
-	
+
 	private double getMetric(MLStruct metrics, String path) {
 		// navigate
 		MLValue current = metrics;
 		for (String p : path.split("\\.")) {
 			current = current.getAsStruct().getField(p);
 		}
-		
+
 		// return
 		return current.getAsScalar().getScalar();
 	}
-	
+
 	private PlotData getPlotData(MLStruct metrics, String path) {
 		return getPlotData(metrics, path, "x", "y");
 	}
@@ -168,12 +168,12 @@ public class Validator implements Respondable {
 		for (String p : path.split("\\.")) {
 			current = current.getField(p).getAsStruct();
 		}
-		
+
 		// build
 		double[] x = getValueAsArray(current.getField(xFieldName));
 		double[] y = getValueAsArray(current.getField(yFieldName));
 		MLValue n = current.getField("n");
-		
+
 		if (n != null) {
 			return new PlotData(x, y, getValueAsArray(n));
 		}
@@ -181,20 +181,20 @@ public class Validator implements Respondable {
 			return new PlotData(x, y);
 		}
 	}
-	
+
 	private PlotData getPlotDataWithSD(MLStruct metrics, String path, String xFieldName, String yFieldName, String ySDFieldName) {
 		// navigate
 		MLStruct current = metrics;
 		for (String p : path.split("\\.")) {
 			current = current.getField(p).getAsStruct();
 		}
-		
+
 		// build
 		double[] x = getValueAsArray(current.getField(xFieldName));
 		double[] y = getValueAsArray(current.getField(yFieldName));
 		double[] ySD = getValueAsArray(current.getField(ySDFieldName));
 		MLValue n = current.getField("n");
-		
+
 		double[][] yRange = new double[ySD.length][2];
 		for (int i = 0; i < yRange.length; i++) {
 			yRange[i] = new double[] { y[i] - ySD[i], y[i] + ySD[i] };
@@ -206,21 +206,21 @@ public class Validator implements Respondable {
 			return new PlotData(x, y, yRange);
 		}
 	}
-	
+
 	private PlotData getPlotDataWithRange(MLStruct metrics, String path, String xFieldName, String yFieldName, String yRangeMinName, String yRangeMaxName) {
 		// navigate
 		MLStruct current = metrics;
 		for (String p : path.split("\\.")) {
 			current = current.getField(p).getAsStruct();
 		}
-		
+
 		// build
 		double[] x = getValueAsArray(current.getField(xFieldName));
 		double[] y = getValueAsArray(current.getField(yFieldName));
 		double[] yRangeMin = getValueAsArray(current.getField(yRangeMinName));
 		double[] yRangeMax = getValueAsArray(current.getField(yRangeMaxName));
 		MLValue n = current.getField("n");
-		
+
 		double[][] yRange = new double[yRangeMin.length][2];
 		for (int i = 0; i < yRange.length; i++) {
 			yRange[i] = new double[] { yRangeMin[i], yRangeMax[i] };
@@ -232,7 +232,7 @@ public class Validator implements Respondable {
 			return new PlotData(x, y, yRange);
 		}
 	}
-	
+
 	private double[] getValueAsArray(MLValue field) {
 		double[] array;
 		if (field.isMatrix()) {
@@ -291,7 +291,7 @@ public class Validator implements Respondable {
 		// return
 		return new Validator(simulated, emulated);
 	}
-	
+
 	public ScalarValues getObserved() {
 		return observed;
 	}
@@ -299,7 +299,7 @@ public class Validator implements Respondable {
 	public Values getPredicted() {
 		return predicted;
 	}
-	
+
 	public double getMeanBias() {
 		return meanBias;
 	}
@@ -335,7 +335,7 @@ public class Validator implements Respondable {
 	public double getBrierScore() {
 		return brierScore;
 	}
-	
+
 	public double getCRPS() {
 		return crps;
 	}
@@ -351,7 +351,7 @@ public class Validator implements Respondable {
 	public double getCRPSUncertainty() {
 		return crpsUncertainty;
 	}
-	
+
 	public double getIGNScore() {
 		return ignScore;
 	}
@@ -371,7 +371,7 @@ public class Validator implements Respondable {
 	public PlotData getVsPredictedMeanPlotData() {
 		return vsPredictedMeanPlotData;
 	}
-	
+
 	public PlotData getVsPredictedMedianPlotData() {
 		return vsPredictedMedianPlotData;
 	}
@@ -383,7 +383,7 @@ public class Validator implements Respondable {
 	public PlotData getMeanResidualHistogramData() {
 		return meanResidualHistogramData;
 	}
-	
+
 	public PlotData getMeanResidualQQPlotData() {
 		return meanResidualQQPlotData;
 	}
@@ -391,19 +391,19 @@ public class Validator implements Respondable {
 	public PlotData getMedianResidualHistogramData() {
 		return medianResidualHistogramData;
 	}
-	
+
 	public PlotData getMedianResidualQQPlotData() {
 		return medianResidualQQPlotData;
 	}
-	
+
 	public PlotData getRankHistogramData() {
 		return rankHistogramData;
 	}
-	
+
 	public PlotData getReliabilityDiagramData() {
 		return reliabilityDiagramData;
 	}
-	
+
 	public PlotData getCoveragePlotData() {
 		return coveragePlotData;
 	}

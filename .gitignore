@@ -1,8 +1,10 @@
+.idea
 .DS_store
 .classpath
 .project
 .externalToolBuilders
 .settings
+emulatorization-api.iml
 src/main/resources/et.production.yml
 src/main/resources/et.yml
 src/main/resources/log4j.properties

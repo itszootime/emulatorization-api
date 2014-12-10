@@ -2,6 +2,13 @@ package org.uncertweb.et;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -16,17 +23,8 @@ import org.uncertweb.et.emulator.EmulatorEvaluationResult;
 import org.uncertweb.et.emulator.EmulatorEvaluator;
 import org.uncertweb.et.process.ProcessEvaluationResult;
 import org.uncertweb.et.process.ProcessEvaluator;
-import org.uncertweb.et.request.DesignRequest;
-import org.uncertweb.et.request.EvaluateEmulatorRequest;
-import org.uncertweb.et.request.EvaluateProcessRequest;
-import org.uncertweb.et.request.GetProcessDescriptionRequest;
-import org.uncertweb.et.request.GetProcessIdentifiersRequest;
-import org.uncertweb.et.request.TrainEmulatorRequest;
-import org.uncertweb.et.request.Request;
-import org.uncertweb.et.request.ScreeningRequest;
-import org.uncertweb.et.request.SensitivityRequest;
-import org.uncertweb.et.request.StatusRequest;
-import org.uncertweb.et.request.ValidationRequest;
+import org.uncertweb.et.quality.QualityIndicators;
+import org.uncertweb.et.request.*;
 import org.uncertweb.et.response.DesignResponse;
 import org.uncertweb.et.response.EvaluateEmulatorResponse;
 import org.uncertweb.et.response.EvaluateProcessResponse;
@@ -78,7 +76,7 @@ public class Emulatorization {
 
 				return new GetProcessDescriptionResponse(processDescription);
 			}
-			else if (request instanceof ScreeningRequest) {				
+			else if (request instanceof ScreeningRequest) {
 				ScreeningRequest sRequest = (ScreeningRequest) request;
 
 				int numTraj = sRequest.getNumTrajectories();
@@ -133,6 +131,14 @@ public class Emulatorization {
 
 				return validator;
 			}
+			else if (request instanceof QualityIndicatorsRequest) {
+				QualityIndicatorsRequest qRequest = (QualityIndicatorsRequest) request;
+
+				QualityIndicators qualityIndicators = new QualityIndicators();
+				qualityIndicators.compute(qRequest.getReference(), qRequest.getObserved(), qRequest.getLearningPercentage(), qRequest.getMetrics());
+
+				return qualityIndicators;
+			}
 			else if (request instanceof EvaluateEmulatorRequest) {
 				EvaluateEmulatorRequest eRequest = (EvaluateEmulatorRequest) request;
 
@@ -158,39 +164,83 @@ public class Emulatorization {
 					}
 					else {
 						results = Fast.run(sRequest.getInputs(), sRequest.getOutputs(), sRequest.getServiceURL(), sRequest.getProcessIdentifier(), sRequest.isPlot(), sRequest.getDesignSize());
-					}	
+					}
 				}
 
 				return new SensitivityResponse(results);
 			}
 			else if (request instanceof StatusRequest) {
+				// specify the timeout in seconds
+				int timeout = 5;
+				TimeUnit timeoutUnit = TimeUnit.SECONDS;
+				// thread pool for testing MATLAB and Rserve
+				ExecutorService executor = Executors.newFixedThreadPool(2);
+
+				// MATLAB task
 				boolean matlabOK = false;
 				String matlabMessage;
-				try {
-					MLRequest mlRequest = new MLRequest("matlab_version", 1);
-					MLResult result = MATLAB.sendRequest(mlRequest);
-					matlabOK = true;
-					//result.getResult(0).getAsString().getString()
-					matlabMessage =  "Ready";
-				}
-				catch (IOException e) {
-					matlabMessage = "Couldn't connect to MATLAB";
-				}
-				catch (MLException e) {
-					matlabMessage = "Couldn't get version information from MATLAB";
-				}
+				Callable<MLResult> check_matlab = new Callable<MLResult>() {
+					public MLResult call() throws MLException, IOException, ConfigException {
+						MLRequest mlRequest = new MLRequest("matlab_version", 1);
+						return MATLAB.sendRequest(mlRequest);
+					}
+				};
 
+				// RServe task
 				boolean rserveOK = false;
 				String rserveMessage;
 				RConnection c = null;
+				Callable<RConnection> check_rserve = new Callable<RConnection>() {
+					public RConnection call() throws RserveException, ConfigException {
+						return R.getConnection();
+					}
+				};
+
+				// submit tasks ready for execution
+				Future<MLResult> matlab_result = executor.submit(check_matlab);
+				Future<RConnection> rserve_result = executor.submit(check_rserve);
+
 				try {
-					c = R.getConnection();
-					rserveOK = true;
-					//c.eval("R.Version()$version.string").asString()
-					rserveMessage = "Ready";
+					// the request is successful if the MATLAB version is returned
+					MLResult result = matlab_result.get(timeout, timeoutUnit);
+					matlabOK = true;
+					matlabMessage = "Ready (" + result.getResult(0).getAsString().getString() + ")";
 				}
-				catch (RserveException e) {
-					rserveMessage = "Couldn't connect to R";
+				// thrown if the task doesn't complete during the timeout period
+				catch (TimeoutException e) {
+					matlabMessage = "Request to MATLAB timed out";
+				}
+				// thrown if the Callable throws an exception
+				catch (ExecutionException e) {
+					Throwable t = e.getCause();
+					if (t instanceof MLException) {
+						matlabMessage = "Couldn't get version information from MATLAB";
+					}
+					else if (t instanceof IOException) {
+						matlabMessage = "Couldn't connect to MATLAB";
+					}
+					else {
+						matlabMessage = t.getMessage();
+					}
+				}
+
+				try {
+					// the request is successful if a connection to Rserve is opened
+					c = rserve_result.get(timeout, timeoutUnit);
+					rserveOK = true;
+					rserveMessage = "Ready (" + c.eval("R.Version()$version.string").asString() + ")";
+				}
+				catch (TimeoutException e) {
+					rserveMessage = "Request to R timed out";
+				}
+				catch (ExecutionException e) {
+					Throwable t = e.getCause();
+					if (t instanceof RserveException) {
+						rserveMessage = "Couldn't connect to R";
+					}
+					else {
+						rserveMessage = t.getMessage();
+					}
 				}
 				finally {
 					if (c != null) {
@@ -198,6 +248,9 @@ public class Emulatorization {
 					}
 				}
 
+				executor.shutdownNow();
+
+				// respond with the status of the API and its components
 				return new StatusResponse("Ready", matlabOK, matlabMessage, rserveOK, rserveMessage);
 			}
 			else {
