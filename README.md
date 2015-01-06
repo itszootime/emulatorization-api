@@ -1,6 +1,6 @@
 # emulatorization-api
 
-Java API for emulator design, training and validation. Can be used either as a library in an existing Java project, or as a web service (backend to the [emulatorization-web project](https://github.com/itszootime/emulatorization-web)).
+Java API for emulator design, training and validation. Can be used either as a library in an existing project, or as a web service (backend to the [emulatorization-web project](https://github.com/itszootime/emulatorization-web)).
 
 ## Requirements
 
@@ -67,10 +67,15 @@ public static void main(String[] args) {
   List<Input> inputs = new ArrayList<Input>();
   inputs.add(new VariableInput("A", 0.0, 1.0));
 
-  Design design = LHSDesign.create(inputs, numSamples);
+  try {
+    Design design = LHSDesign.create(inputs, numSamples);
 
-  for (Double point : design.getPoints("A")) {
-    System.out.println(point);
+    for (Double point : design.getPoints("A")) {
+      System.out.println(point);
+    }
+  }
+  catch (Exception e) {
+    System.err.println(e.getMessage());
   }
 }
 ```
@@ -86,6 +91,7 @@ public static void main(String[] args) {
 ### Requests
 
 Type | Purpose
+---|---
 GetProcessIdentifiers | Retrieve a list of supported process identifiers from a web service.
 GetProcessDescription | Retrieve a description of a process on a web service.
 Screening | Perform input screening on a web service process.
@@ -96,6 +102,24 @@ EvaluateEmulator | Evaluate an emulator against a design.
 Validation | Compare simulator and emulator evaluation results.
 
 ### Examples
+
+#### Request a design
+
+```json
+{
+  "type": "DesignRequest",
+  "size": 50,
+  "inputs": [
+      {
+          "identifier": "A",
+          "range": {
+              "max": 1,
+              "min": 0
+          }
+      }
+  ]
+}
+```
 
 ## Further reading
 
