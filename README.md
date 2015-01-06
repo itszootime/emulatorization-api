@@ -100,6 +100,7 @@ EvaluateProcess | Evaluate a web service process against a design.
 TrainEmulator | Train an emulator using a design and process evaluation result.
 EvaluateEmulator | Evaluate an emulator against a design.
 Validation | Compare simulator and emulator evaluation results.
+QualityIndicators | Compute quality indicators from simulator and emulator evaluation results.
 
 ### Examples
 
