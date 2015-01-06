@@ -97,7 +97,7 @@
 		<dependency>
 			<groupId>org.uncertweb</groupId>
 			<artifactId>matlab-connector</artifactId>
-			<version>0.4</version>
+			<version>1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nuiton.thirdparty</groupId>
@@ -207,7 +207,6 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<delete file="${project.build.outputDirectory}/et.sample.yml" />
 										<delete file="${project.build.outputDirectory}/et.yml" />
 										<move file="${project.build.outputDirectory}/et.production.yml"
 											tofile="${project.build.outputDirectory}/et.yml" />
